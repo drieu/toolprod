@@ -1,0 +1,7 @@
+target
+wrapper
+.idea
+.classpath
+.project
+toolprod.iml
+toolprod-grailsPlugins.iml
