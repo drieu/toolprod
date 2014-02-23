@@ -10,6 +10,20 @@ class Web {
      */
     String name
 
+    /**
+     * IP address.
+     */
+    String ipAddress
+
+    /**
+     * Port Number.
+     */
+    Integer portNumber
+
+
     static constraints = {
+        name()
+        ipAddress()
+        portNumber()
     }
 }

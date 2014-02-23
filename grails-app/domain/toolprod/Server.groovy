@@ -10,6 +10,13 @@ class Server {
      */
     String name
 
+    /**
+     * IP adress
+     */
+    String ipAddress
+
     static constraints = {
+        name()
+        ipAddress()
     }
 }

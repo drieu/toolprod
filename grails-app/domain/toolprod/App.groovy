@@ -17,9 +17,13 @@ class App {
 
     /**
      * url.
+     * TODO : list of urls ?
      */
     String url
 
     static constraints = {
+        name(blank:false)
+        description(size:0..400)
+        url(size:0..350, url:true)
     }
 }
