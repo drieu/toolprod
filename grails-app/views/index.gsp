@@ -85,8 +85,6 @@
 		<div id="page-body" role="main">
 			<h1>Bienvenue sur ce site</h1>
 			<p>Commentaire ...</p>
-
-
 		</div>
         <g:link url="admin">Page Admin</g:link>
 	</body>
