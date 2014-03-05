@@ -117,6 +117,9 @@
             </g:each>
         </ul>
     </div>
+
+
+    <g:link controller="admin" action="init" >Link</g:link>
 </div>
 </body>
 </html>
