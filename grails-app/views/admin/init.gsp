@@ -5,15 +5,12 @@
     <title>Upload New Document</title>
 </head>
 <body>
-<div class="nav" role="navigation">
-    <ul><li><g:link class="list" action="list">Document List</g:link></li></ul>
-</div>
 <div class="content scaffold-create" role="main">
-    <h1>Upload New Document</h1>
+    <h1>Upload Your apps list</h1>
     <g:if test="${flash.message}"><div class="message" role="status">${flash.message}</div></g:if>
-    <g:uploadForm action="upload" controller="fr.edu.admin.AdminController">
+    <g:uploadForm action="upload" controller="admin">
         <fieldset class="form">
-            <input type="file" name="file" />
+            <input type="file" name="appLst" />
         </fieldset>
         <fieldset class="buttons">
             <g:submitButton name="upload" class="save" value="Upload" />

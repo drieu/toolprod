@@ -15,12 +15,44 @@ class AdminController {
 
     def upload() {
         if (request instanceof MultipartHttpServletRequest) {
-            def file = request.getFile('myFile')
-            if(!file.isEmpty()) {
-                flash.message='success'
+            def file = request.getFile('appLst')
+            if((file != null) && (!file.isEmpty())) {
+                InputStream inputStream;
+                BufferedReader br;
+                try {
+                    inputStream = file.inputStream;
+                    br = new BufferedReader(new InputStreamReader(inputStream))
+                    String strLine
+
+                    while ((strLine = br.readLine()) != null) {
+                        println("line :" + strLine)
+                    }
+                    flash.message="success"
+                } catch (IOException e) {
+                    flash.message = 'failed'
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            flash.message = "failed: " + e.getMessage()
+                            e.printStackTrace();
+                        }
+                    }
+                    if (br != null) {
+                        try {
+                            br.close();
+                        } catch (IOException e) {
+                            flash.message = 'failed: ' + e.getMessage()
+                            e.printStackTrace();
+                        }
+                    }
+                }
             } else {
                 flash.message = 'failed'
             }
+
         }
+        redirect(action:'init')
     }
 }
