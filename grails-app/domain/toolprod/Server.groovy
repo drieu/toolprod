@@ -15,8 +15,14 @@ class Server {
      */
     String ipAddress
 
+    static hasMany = [apps:App]
+
     static constraints = {
         name()
         ipAddress()
+    }
+
+    String toString() {
+        return "${name}"
     }
 }

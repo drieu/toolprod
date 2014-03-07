@@ -13,6 +13,10 @@ class AdminController {
 
     }
 
+    /**
+     * Upload a file and read content.
+     * @return flash.message for success and error.
+     */
     def upload() {
         if (request instanceof MultipartHttpServletRequest) {
             def file = request.getFile('appLst')
@@ -51,8 +55,7 @@ class AdminController {
             } else {
                 flash.message = 'failed'
             }
-
-        }
+s        }
         redirect(action:'init')
     }
 }
