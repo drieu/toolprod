@@ -6,6 +6,7 @@ class AdminController {
 
     def index() {
         println("Index action from AdminController !")
+        redirect(action:'upload')
     }
 
     def init() {

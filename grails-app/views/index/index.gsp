@@ -1,3 +1,4 @@
+<%@ page import="toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -87,5 +88,11 @@
 			<p>Commentaire ...</p>
 		</div>
         <g:link url="admin">Page Admin</g:link>
+        <g:each in="${lst}" var="server">
+            <p>Nom du serveur : ${server.name}</p>
+            <g:each in="${server.apps}" var="app">
+                <p>Nom de l'application : ${app.name}</p>
+            </g:each>
+        </g:each>
 	</body>
 </html>
