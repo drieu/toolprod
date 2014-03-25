@@ -37,68 +37,19 @@ class AdminController {
                             def params = strLine.tokenize()
                             final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
                             if (params.size() == NB_LINE_ELEMENT ) {
-                                String app = ""
-                                String url = ""
-                                String server = ""
-                                String port = ""
-
-                                app = params.get(1);
+                                String app = params.get(1);
                                 app = app.substring(1); // don't want the / in /appli
 
-                                url = params.get(2);
+                                String url = params.get(2);
 
-                                // extract server and port from http://webX.fr:PORT/APPLI
-                                if ((url != null) && (url.startsWith("http://")) && (url.contains(":"))) {
-                                    // extract after http://
-                                    String str = "";
-                                    int beginIndex = "http://".size();
-                                    str = url.substring(beginIndex);
+                                // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
+                                String server = extractServerFromHttpProxyPass(url);
+                                String port = extractPortFromHttpProxyPass(url);
 
-                                    int pos = str.indexOf(':');
-                                    if (pos > 0) {
-                                        // extract before :
-                                        server = str.substring(0, pos);
-                                        str = str.substring(pos+1);
-                                        if ((str != null) && (str.contains('/'))) {
-                                            pos = str.indexOf('/');
-                                            if (pos > 0) {
-                                                port = str.substring(0, pos);
-                                            }
-                                        }
-
-                                    } else { //webX.fr/appli/
-                                        pos = str.indexOf('/');
-                                        if (pos > 0) {
-                                            server = str.substring(0, pos);
-                                        } else {
-                                            server = str;
-                                        }
-                                    }
-                                }
-
-                                // extract server and port from https://webX.fr:PORT/APPLI
-                                if ((url != null) && (url.startsWith("https://")) && (url.contains(":"))) {
-                                    // extract after http://
-                                    String str = "";
-                                    int beginIndex = "https://".size();
-                                    str = url.substring(beginIndex);
-
-                                    int pos = url.indexOf(':');
-                                    println("beginIndex:" + beginIndex + " pos:" + pos + " str:" + str);
-                                    // extract before :
-                                    server = str.substring(0, pos);
-
-                                    str = url.substring( pos, url.length());
-                                    if ((str != null) && (str.contains('/'))) {
-                                        pos = url.indexOf('/');
-                                        port = str.substring(0, pos)
-                                    }
-                                }
                                 println("Extract from ProxyPass appli:" + app + " url:" + url + " server:" + server + " port:" + port);
                             }
                         }
 
-                        //println("line :" + strLine)
                     }
                     flash.message="success"
                 } catch (IOException e) {
@@ -126,5 +77,61 @@ class AdminController {
             }
         }
         redirect(action:'init')
+    }
+
+
+    def extractServerFromHttpProxyPass(String url) {
+        String server = "";
+        String strProtocol = ""
+        if (url.startsWith("http://")) {
+            strProtocol = "http://";
+        }
+        if (url.startsWith("https://")) {
+            strProtocol = "https://";
+        }
+        if ((url != null) && (!strProtocol.isEmpty()) && (url.contains(":"))) {
+            // extract after http://
+            String str = "";
+            int beginIndex = strProtocol.size();
+            str = url.substring(beginIndex);
+
+            int pos = str.indexOf(':');
+            if (pos > 0) {
+                // extract before :
+                server = str.substring(0, pos);
+            } else { //webX.fr/appli/
+                pos = str.indexOf('/');
+                if (pos > 0) {
+                    server = str.substring(0, pos);
+                } else {
+                    server = str;
+                }
+            }
+        }
+        return server;
+    }
+
+    def extractPortFromHttpProxyPass(String url) {
+        String port = "";
+        if ((url != null) && (url.startsWith("http://")) && (url.contains(":"))) {
+            // extract after http://
+            String str = "";
+            int beginIndex = "http://".size();
+            str = url.substring(beginIndex);
+
+            int pos = str.indexOf(':');
+            if (pos > 0) {
+                // extract before :
+                str = str.substring(pos+1);
+                if ((str != null) && (str.contains('/'))) {
+                    pos = str.indexOf('/');
+                    if (pos > 0) {
+                        port = str.substring(0, pos);
+                    }
+                }
+
+            }
+        }
+        return port;
     }
 }
