@@ -4,14 +4,18 @@ class IndexController {
 
     def index () {
         println ("MainController : index()")
-        def m = Machine.findAll()
-        def s = Server.findAll()
-        def server = Server.findByName("app1")
-        return [ machines: m, servers:s, server:server  ]
+
+        Server.TYPE type = Server.TYPE.WEBLOGIC
+        def s = Server.findAllByServerType(type)
+
+        println("app:" + params.get("app"))
+        def server = Server.findByName(params.get("app"))
+        return [ myType:type, servers:s, server:server  ]
 
     }
 
     def getServer() {
-        [ server : Server.findByName("web1") ]
+        //TODO retreive param app
+        redirect(action:"index", params: [app : "app1"])
     }
 }

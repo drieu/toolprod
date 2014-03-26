@@ -89,7 +89,7 @@
         <div class="col-md-3">
             <div class="list-group">
                 <a href="#" class="list-group-item active">
-                    Serveurs apache
+                    Serveurs ${myType}
                 </a>
                 <g:each in="${servers}" var="serv">
                     <a href="<g:createLink action="getServer"/>" class="list-group-item">
