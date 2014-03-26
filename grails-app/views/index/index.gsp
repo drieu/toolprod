@@ -91,10 +91,11 @@
                 <a href="#" class="list-group-item active">
                     Serveurs apache
                 </a>
-                <a href="#" class="list-group-item">web1</a>
-                <a href="#" class="list-group-item">web2</a>
-                <a href="#" class="list-group-item">web3</a>
-                <a href="#" class="list-group-item">web4</a>
+                <g:each in="${servers}" var="serv">
+                    <a href="<g:createLink action="getServer"/>" class="list-group-item">
+                            ${serv.name}
+                    </a>
+                </g:each>
             </div>
 
 
@@ -102,7 +103,43 @@
         </div>
 
         <div class="col-md-9">
-            test
+            <div class="row">
+                <p class="text-left">
+                    <dl class="dl-horizontal">
+                        <dt>Serveur</dt>
+                        <dd>Nom : ${server?.name}</dd>
+                        <dd>Port : ${server?.portNumber}</dd>
+                        <dd>Type : ${server?.serverType}</dd>
+                    </dl>
+                </p>
+            </div>
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Liste des applications</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>url</th>
+                            </tr>
+                            </thead>
+                            <g:each in="${server?.apps}" var="app">
+                                <tr>
+                                    <td></td>
+                                    <td>${app?.name}</td>
+                                    <td>${app?.description}</td>
+                                    <td>${app?.url}</td>
+                                </tr>
+                            </g:each>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

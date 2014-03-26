@@ -1,32 +1,48 @@
 import toolprod.App
+import toolprod.Machine
 import toolprod.Server
 
 class BootStrap {
 
     def init = { servletContext ->
-        App tsApp = new App(name: "ts", description: "Teleservices", url: "http://teleservices.ac-limoges.fr/ts" )
+
+        createWebLogicData("weblo.ac-test.fr", "app1", Server.TYPE.WEBLOGIC, "8080", "ts", "Teleservice", "http://teleservices.ac-limoges.fr/ts"  )
+        createWebLogicData("weblo2.ac-test.fr", "app2", Server.TYPE.WEBLOGIC, "8081", "app2", "Teleservice", "http://app2.ac-limoges.fr/app2"  )
+
+    }
+
+    /**
+     * Create Test data at startUp.
+     * @param machineName
+     * @param serverName
+     * @param portNumber
+     * @param appName
+     * @param appDesc
+     * @param appUrl
+     * @return
+     */
+    def createWebLogicData(String machineName, String serverName, Server.TYPE myType, String portNumber, String appName, String appDesc, String appUrl) {
+        Machine machine = new Machine(name: machineName, ipAddress: "127.0.0.1")
+        Server server = new Server(name: serverName, serverType: myType, portNumber: portNumber)
+
+        App tsApp = new App(name: appName, description: appDesc, url: appUrl )
         if (!tsApp.save()) {
             log.error("Bootstrap : Can't save ts App")
         } else {
             log.info("Bootstrap : Save ts App OK.")
         }
-        Server serv = new Server(name: "appliloc5.ac-limoges.fr", ipAddress: "127.0.0.1")
-        serv.addToApps(tsApp)
-        if (!serv.save()) {
+        server.addToApps(tsApp)
+        if (!server.save()) {
             log.error("Bootstrap : Can't save tsApp server")
         } else {
             log.info("Bootstrap : Save server OK.")
         }
-        Server serv1 = new Server(name: "appliloc6.ac-limoges.fr", ipAddress: "127.0.0.1")
-        if (!serv1.save()) {
-            log.error("Bootstrap : Can't save server1")
-        } else {
-            log.info("Bootstrap : Save server OK.")
-        }
-
-
+        machine.addToServers(server)
+        machine.save()
 
     }
+
+
     def destroy = {
     }
 }

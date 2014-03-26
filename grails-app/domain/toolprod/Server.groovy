@@ -1,7 +1,7 @@
 package toolprod
 
 /**
- * Servers.
+ * Servers like Apache, Weblogic
  */
 class Server {
 
@@ -11,15 +11,21 @@ class Server {
     String name
 
     /**
-     * IP adress
+     * Port Number.
      */
-    String ipAddress
+    Integer portNumber
+
+    TYPE serverType
+
+    enum TYPE {
+        APACHE, WEBLOGIC
+    }
 
     static hasMany = [apps:App]
 
     static constraints = {
         name()
-        ipAddress()
+        portNumber()
     }
 
     String toString() {
