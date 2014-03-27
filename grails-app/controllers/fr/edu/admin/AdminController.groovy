@@ -12,7 +12,6 @@ class AdminController {
 
     def init() {
         println("Init action from AdminController !")
-
     }
 
     /**
@@ -28,10 +27,12 @@ class AdminController {
                 if (bResult) {
                     println("Extract from ProxyPass appli:" + parser.appName + " url:" + parser.appUrl + " server:" + parser.appServer + " port:" + parser.appPort);
                 }
+//                  Modules
+//                for (String module in parser.modules) {
+//                    println("Module :" + module)
+//                }
+                parser.parseXml(file.inputStream)
 
-                for (String module in parser.modules) {
-                    println("Module :" + module)
-                }
             } else {
                 flash.message = 'failed'
             }

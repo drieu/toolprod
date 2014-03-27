@@ -18,7 +18,9 @@ class HttpdParser {
     private static final String PROXY_PASS = "ProxyPass"
     private static final String SPACE = ' '
     private static final String LOAD_MODULE = "LoadModule"
+    private static final String SERVER_NAME = "ServerName"
 
+    def serverName = EMPTY
 
     def appName = EMPTY
 
@@ -49,7 +51,7 @@ class HttpdParser {
 
                 while ((strLine = br.readLine()) != null) {
 
-                    //ProxyPass               /appli http://webX.fr:PORT/APPLI
+                    //If ProxyPass               /appli http://webX.fr:PORT/APPLI
                     if (strLine.startsWith(PROXY_PASS + SPACE)) {
                         def params = strLine.tokenize()
                         final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
@@ -67,8 +69,14 @@ class HttpdParser {
                         }
                     }
 
+                    // If LoadModule
                     if (strLine.startsWith(LOAD_MODULE + SPACE)) {
                         modules = getApacheModules(strLine)
+                    }
+                    // If ServerName
+                    if (strLine.startsWith(SERVER_NAME)) {
+                        def params = strLine.tokenize()
+                        serverName = params.get(1);
                     }
 
                 }
@@ -97,6 +105,24 @@ class HttpdParser {
             println("Can't parse a null file.")
         }
         return bResult
+    }
+
+    /**
+     * TODO : <IfModule prefork.c> error
+     * @param inputStream
+     */
+    def parseXml(InputStream inputStream) {
+        def xml = extractXmlFromApacheConf(inputStream)
+        try {
+            def conf = new XmlParser().parseText(xml)
+            def locations = conf.Location.findAll();
+            for (Node location : locations) {
+                println("Location:" + location.toString())
+            }
+
+        } catch(Exception e) {
+            println("Exception : " + e.getMessage())
+        }
     }
 
     /**
@@ -195,5 +221,70 @@ class HttpdParser {
             }
         }
         modules
+    }
+
+
+
+    /**
+     * Extract xml part of http.conf and create a new xml with it.
+     * @param inputStream
+     * @return xml string (e.g:<xml></xml>)
+     */
+    def extractXmlFromApacheConf(InputStream inputStream) {
+        def xml = ""
+        xml +="<conf>"
+
+        BufferedReader br;
+        if (inputStream != null) {
+            try {
+                br = new BufferedReader(new InputStreamReader(inputStream))
+                String strLine
+
+                boolean bXml = false
+
+                String xmlEnd = ""
+                while ((strLine = br.readLine()) != null) {
+                    if (bXml) {
+                        xml += strLine
+                    }
+                    if ( (strLine.startsWith("<")) && (!strLine.startsWith("</"))) {
+                        def params = strLine.tokenize()
+                        String xmlStart = params.get(0)
+                        if (xmlStart != null) {
+                            xml += strLine
+                            String str = xmlStart.substring(1) //e.g:<Location
+                            xmlEnd = "</" + str  //e.g:</Location
+                            bXml = true
+                        }
+                    }
+
+                    if ( (xmlEnd != null) && (!xmlEnd.isEmpty()) && (strLine.startsWith(xmlEnd))) {
+                        xml += strLine
+                        bXml = false
+                    }
+                }
+            } catch (IOException e) {
+                println("Failed to parse file : " + e.printStackTrace())
+            } finally {
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        println("Failed to parse file : " + e.printStackTrace())
+                    }
+                }
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        println("Failed to parse file : " + e.getMessage())
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        xml +="</conf>"
+        println(xml)
+        return xml
     }
 }
