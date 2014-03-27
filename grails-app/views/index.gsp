@@ -86,6 +86,11 @@
 			<h1>Bienvenue sur ce site</h1>
 			<p>Commentaire ...</p>
 		</div>
+
+        <g:each in="${servers}" controller="main" var="server">
+            <p>Server: ${server}</p>
+        </g:each>
+
         <g:link url="admin">Page Admin</g:link>
 	</body>
 </html>
