@@ -87,24 +87,19 @@ class HttpdParser {
     /**
      * Extract server in HTTP ProxyPass
      * @param myUrl e.g: http://webX.fr:PORT/APPLI
-     * @return
+     * @return server e.g : webX.fr in http://webX.fr:PORT/APPLI
      */
     def extractServerFromHttpProxyPass(String myUrl) {
         String result = EMPTY;
-        String strProtocol = EMPTY
-        if (myUrl.startsWith(HTTP)) {
-            strProtocol = HTTP;
-        }
-        if (myUrl.startsWith(HTTPS)) {
-            strProtocol = HTTPS;
-        }
-        if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON))) {
+        String strProtocol = extractProtocol(myUrl)
+
+        if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON.toString()))) {
             // extract after http://
             String str = EMPTY;
             int beginIndex = strProtocol.size();
             str = myUrl.substring(beginIndex);
 
-            int pos = str.indexOf(COLON);
+            int pos = str.indexOf(COLON.toString());
             if (pos > 0) {
                 // extract before :
                 result = str.substring(0, pos);
@@ -123,17 +118,18 @@ class HttpdParser {
     /**
      * Extract server in HTTPS ProxyPass
      * @param myUrl e.g: http://webX.fr:PORT/APPLI
-     * @return
+     * @return port e.g : PORT in http://webX.fr:PORT/APPLI
      */
     def extractPortFromHttpProxyPass(String myUrl) {
         String strPort = EMPTY;
-        if ((myUrl != null) && (myUrl.startsWith(HTTP)) && (myUrl.contains(COLON))) {
+        String strProtocol = extractProtocol(myUrl)
+        if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON.toString()))) {
             // extract after http://
             String str = EMPTY;
             int beginIndex = HTTP.size();
             str = myUrl.substring(beginIndex);
 
-            int pos = str.indexOf(COLON);
+            int pos = str.indexOf(COLON.toString());
             if (pos > 0) {
                 // extract before :
                 str = str.substring(pos+1);
@@ -146,5 +142,25 @@ class HttpdParser {
             }
         }
         return strPort;
+    }
+
+    /**
+     * Extract protocol HTTP or HTTP from url.
+     * @param myUrl e.g:http://webX.fr:PORT/APPLI
+     * @return HTTP or HTTP. If no protocol set, return ""
+     */
+    private String extractProtocol(String myUrl) {
+        String strProtocol = EMPTY
+        if ( myUrl != null ) {
+            if (myUrl.startsWith(HTTP)) {
+                strProtocol = HTTP;
+            } else if (myUrl.startsWith(HTTPS)) {
+                strProtocol = HTTPS;
+            } else {
+                println("extractServerFromHttpsProxyPass : Can't extract server because no protocol is set.")
+                strProtocol = EMPTY;
+            }
+        }
+        strProtocol
     }
 }
