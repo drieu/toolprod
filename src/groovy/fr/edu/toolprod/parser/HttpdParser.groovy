@@ -17,6 +17,7 @@ class HttpdParser {
 
     private static final String PROXY_PASS = "ProxyPass"
     private static final String SPACE = ' '
+    private static final String LOAD_MODULE = "LoadModule"
 
 
     def appName = EMPTY
@@ -28,6 +29,11 @@ class HttpdParser {
     def appPort = EMPTY
 
     /**
+     * Modules Apache list.
+     */
+    def modules = []
+
+    /**
      * Parse file line by line
      * @param inputStream
      * @return true if no error occurs during parsing.
@@ -35,51 +41,60 @@ class HttpdParser {
     def parse(InputStream inputStream) {
         boolean bResult = false;
         BufferedReader br;
-        try {
-            br = new BufferedReader(new InputStreamReader(inputStream))
-            String strLine
 
-            while ((strLine = br.readLine()) != null) {
+        if (inputStream != null) {
+            try {
+                br = new BufferedReader(new InputStreamReader(inputStream))
+                String strLine
 
-                //ProxyPass               /appli http://webX.fr:PORT/APPLI
-                if (strLine.startsWith(PROXY_PASS + SPACE)) {
-                    def params = strLine.tokenize()
-                    final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
-                    if (params.size() == NB_LINE_ELEMENT ) {
-                        def tmpApp = params.get(1);
-                        appName = tmpApp.substring(1); // don't want the / in /appli
+                while ((strLine = br.readLine()) != null) {
 
-                        appUrl = params.get(2);
+                    //ProxyPass               /appli http://webX.fr:PORT/APPLI
+                    if (strLine.startsWith(PROXY_PASS + SPACE)) {
+                        def params = strLine.tokenize()
+                        final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
+                        if (params.size() == NB_LINE_ELEMENT ) {
+                            def tmpApp = params.get(1);
+                            appName = tmpApp.substring(1); // don't want the / in /appli
+                            appUrl = params.get(2);
 
-                        // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
-                        appServer = extractServerFromHttpProxyPass(appUrl);
-                        appPort = extractPortFromHttpProxyPass(appUrl);
+                            // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
+                            appServer = extractServerFromHttpProxyPass(appUrl);
+                            appPort = extractPortFromHttpProxyPass(appUrl);
 
-                        println("Extract from ProxyPass appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
+
+                            println("Extract from ProxyPass appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
+                        }
+                    }
+
+                    if (strLine.startsWith(LOAD_MODULE + SPACE)) {
+                        modules = getApacheModules(strLine)
+                    }
+
+                }
+                bResult = true;
+            } catch (IOException e) {
+                println("Failed to parse file : " + e.printStackTrace())
+            } finally {
+                bResult = false;
+                if (inputStream != null) {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        println("Failed to parse file : " + e.printStackTrace())
                     }
                 }
-
-            }
-            bResult = true;
-        } catch (IOException e) {
-            println("Failed to parse file : " + e.printStackTrace())
-        } finally {
-            bResult = false;
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    println("Failed to parse file : " + e.printStackTrace())
+                if (br != null) {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        println("Failed to parse file : " + e.getMessage())
+                        e.printStackTrace();
+                    }
                 }
             }
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    println("Failed to parse file : " + e.getMessage())
-                    e.printStackTrace();
-                }
-            }
+        } else {
+            println("Can't parse a null file.")
         }
         return bResult
     }
@@ -162,5 +177,23 @@ class HttpdParser {
             }
         }
         strProtocol
+    }
+
+    /**
+     *
+     * @param str e.g:LoadModule access_module modules/mod_access.so
+     */
+    def getApacheModules(String strLine) {
+        if ((strLine != null) && (!strLine.isEmpty())) {
+            def params = strLine.tokenize();
+            final int NB_LINE_ELEMENT = 3; // Number element in LoadModule line.
+            if (params.size() == NB_LINE_ELEMENT ) {
+                String module = params.get(1);
+                if ((module != null) && (!module.isEmpty())) {
+                    modules.add(module);
+                }
+            }
+        }
+        modules
     }
 }
