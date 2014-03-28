@@ -231,35 +231,54 @@ class HttpdParser {
      * @return xml string (e.g:<xml></xml>)
      */
     def extractXmlFromApacheConf(InputStream inputStream) {
-        def xml = ""
-        xml +="<conf>"
+        def xml = "" //TODO : unused
 
         BufferedReader br;
         if (inputStream != null) {
             try {
+
                 br = new BufferedReader(new InputStreamReader(inputStream))
                 String strLine
 
                 boolean bXml = false
 
-                String xmlEnd = ""
+                String name
+                String weblo //TODO put a list
+                boolean bCT = false
+
                 while ((strLine = br.readLine()) != null) {
                     if (bXml) {
                         xml += strLine
                     }
-                    if ( (strLine.startsWith("<")) && (!strLine.startsWith("</"))) {
+                    if ( (strLine.startsWith("<Location" + SPACE))) {
                         def params = strLine.tokenize()
                         String xmlStart = params.get(0)
+
+                        //extract name for Location
+                        name = extractLocationName(strLine)
                         if (xmlStart != null) {
                             xml += strLine
                             String str = xmlStart.substring(1) //e.g:<Location
-                            xmlEnd = "</" + str  //e.g:</Location
                             bXml = true
                         }
                     }
 
-                    if ( (xmlEnd != null) && (!xmlEnd.isEmpty()) && (strLine.startsWith(xmlEnd))) {
+                    if (bXml) {
+                        if (strLine.contains("AuthName CT")) {
+                            bCT = true
+                        }
+                        if (strLine.contains("WebLogicCluster")) {
+                            def params = strLine.tokenize()
+                            weblo = params.get(1)
+                        }
+                    }
+
+                    if (strLine.startsWith("</Location>")) {
                         xml += strLine
+
+                        println("name:" + name)
+                        println("weblo:" + weblo)
+                        println("CT:" + bCT)
                         bXml = false
                     }
                 }
@@ -283,8 +302,31 @@ class HttpdParser {
                 }
             }
         }
-        xml +="</conf>"
-        println(xml)
         return xml
+    }
+
+    /**
+     * Extract Name contains in <Location /NAME> line.
+     * It will delete / and > in /NAME>
+     * @param line e.g: <Location /NAME>
+     * @return NAME or ""
+     */
+    def extractLocationName(String line) {
+        String name = EMPTY
+
+        if (line != null) {
+            def params = line.tokenize()
+            String location = params.get(0)
+            String locationName = params.get(1)
+            if ((location != null) && (location.contains("<Location")) && (locationName != null)) {
+                name = locationName
+                if (locationName.startsWith("/")) {
+                    if (locationName.endsWith(">")) {
+                        name= locationName.substring(1, (name.length() - 1))
+                    }
+                }
+            }
+        }
+        return name
     }
 }
