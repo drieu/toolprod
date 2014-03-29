@@ -1,8 +1,8 @@
 package fr.edu.admin
 
-import toolprod.Web
+import toolprod.Machine
 
 class WebController {
 
-    def scaffold = Web
+    def scaffold = Machine
 }

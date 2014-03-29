@@ -3,7 +3,7 @@ package toolprod
 /**
  * List all application list in apache configuration
  */
-class Web {
+class Machine {
 
     /**
      * Name of the web server.
@@ -15,15 +15,12 @@ class Web {
      */
     String ipAddress
 
-    /**
-     * Port Number.
-     */
-    Integer portNumber
+
+    static hasMany = [servers : Server]
 
 
     static constraints = {
         name()
         ipAddress()
-        portNumber()
     }
 }
