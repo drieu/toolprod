@@ -16,7 +16,7 @@ class Machine {
     String ipAddress
 
 
-    static hasMany = [servers : Server]
+    static hasMany = [apps : App]
 
 
     static constraints = {

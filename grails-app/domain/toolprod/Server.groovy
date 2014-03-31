@@ -21,7 +21,6 @@ class Server {
         APACHE, WEBLOGIC
     }
 
-    static hasMany = [apps:App]
 
     static constraints = {
         name()

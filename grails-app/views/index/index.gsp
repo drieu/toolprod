@@ -78,6 +78,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Outils <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">Recherche dans le LDAP</a></li>
+                            <li><a href="#">Page d'admin</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -89,11 +90,11 @@
         <div class="col-md-3">
             <div class="list-group">
                 <a href="#" class="list-group-item active">
-                    Serveurs ${myType}
+                    Machines
                 </a>
-                <g:each in="${servers}" var="serv">
-                    <a href="<g:createLink action="getServer"/>" class="list-group-item">
-                            ${serv.name}
+                <g:each in="${machines}" var="machine">
+                    <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
+                            ${machine.name}
                     </a>
                 </g:each>
             </div>
@@ -106,10 +107,9 @@
             <div class="row">
                 <p class="text-left">
                     <dl class="dl-horizontal">
-                        <dt>Serveur</dt>
-                        <dd>Nom : ${server?.name}</dd>
-                        <dd>Port : ${server?.portNumber}</dd>
-                        <dd>Type : ${server?.serverType}</dd>
+                        <dt>Machine </dt>
+                        <dd>Nom : ${machine?.name}</dd>
+                        <dd>IP : ${machine?.ipAddress}</dd>
                     </dl>
                 </p>
             </div>
@@ -128,7 +128,7 @@
                                 <th>url</th>
                             </tr>
                             </thead>
-                            <g:each in="${server?.apps}" var="app">
+                            <g:each in="${apps}" var="app">
                                 <tr>
                                     <td></td>
                                     <td>${app?.name}</td>

@@ -21,6 +21,9 @@ class App {
      */
     String url
 
+    static hasMany = [servers : Server]
+
+
     static constraints = {
         name(blank:false)
         description(size:0..400)

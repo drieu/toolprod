@@ -24,6 +24,7 @@ class BootStrap {
     def createWebLogicData(String machineName, String serverName, Server.TYPE myType, String portNumber, String appName, String appDesc, String appUrl) {
         Machine machine = new Machine(name: machineName, ipAddress: "127.0.0.1")
         Server server = new Server(name: serverName, serverType: myType, portNumber: portNumber)
+        server.save();
 
         App tsApp = new App(name: appName, description: appDesc, url: appUrl )
         if (!tsApp.save()) {
@@ -31,13 +32,13 @@ class BootStrap {
         } else {
             log.info("Bootstrap : Save ts App OK.")
         }
-        server.addToApps(tsApp)
-        if (!server.save()) {
-            log.error("Bootstrap : Can't save tsApp server")
-        } else {
-            log.info("Bootstrap : Save server OK.")
-        }
-        machine.addToServers(server)
+        HashSet servers= new HashSet<>();
+        servers.add(server);
+        tsApp.servers = servers;
+
+        Set apps = new HashSet();
+        apps.add(tsApp);
+        machine.apps = apps;
         machine.save()
 
     }
