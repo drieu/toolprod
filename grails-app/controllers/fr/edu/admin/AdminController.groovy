@@ -31,7 +31,7 @@ class AdminController {
 //                for (String module in parser.modules) {
 //                    println("Module :" + module)
 //                }
-                parser.parseXml(file.inputStream)
+                //parser.parseXml(file.inputStream)
 
             } else {
                 flash.message = 'failed'

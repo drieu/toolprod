@@ -1,4 +1,9 @@
 package fr.edu.toolprod.parser
+
+import toolprod.App
+import toolprod.Machine
+import toolprod.Server
+
 /**
  * Parse httpd.conf file.
  * User: drieu
@@ -66,6 +71,31 @@ class HttpdParser {
 
 
                             println("Extract from ProxyPass appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
+
+                            App lineApp = App.findByName(appName)
+                            if ( lineApp == null ) {
+                                App app = new App(name: appName, description: "TEST", url: appUrl )
+                                if (!app.save()) {
+                                    println("Can't save App")
+                                } else {
+                                    println("Save App OK.")
+                                    Machine machine = Machine.findByName(appServer)
+                                    if (machine == null) {
+                                        machine = new Machine(name: appServer, ipAddress: "127.0.0.1")
+                                    }
+                                    Set<App> machineApps = machine.apps
+                                    if (machineApps == null) {
+                                        machineApps = new HashSet<>()
+                                    }
+                                    machineApps.add(app)
+                                    machine.apps = machineApps
+                                    if (!machine.save()) {
+                                        println("Can't Save machine " + appServer)
+                                    } else {
+                                        println("Save machine " + appServer)
+                                    }
+                                }
+                            }
                         }
                     }
 

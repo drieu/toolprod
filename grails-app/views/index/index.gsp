@@ -78,7 +78,7 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Outils <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li><a href="#">Recherche dans le LDAP</a></li>
-                            <li><a href="#">Page d'admin</a></li>
+                            <li><a href="/toolprod/admin">Page d'admin</a></li>
                         </ul>
                     </li>
                 </ul>
