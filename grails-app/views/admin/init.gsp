@@ -1,14 +1,28 @@
+<%@ page import="toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="layout" content="main">
-    <title>Upload New Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Welcome to Production !</title>
+    <g:javascript library='jquery'/>
+    <g:javascript library='bootstrap'/>
+    <r:layoutResources/>
 </head>
+
 <body>
+<div class="container">
 <div class="content scaffold-create" role="main">
     <h1>Upload Your apps list</h1>
-    <g:if test="${flash.message}"><div class="message" role="status">${flash.message}</div></g:if>
-    <g:uploadForm action="upload" controller="admin">
+    <g:if test="${flash.error}">
+        <div class="alert alert-error" style="display: block">${flash.error}</div>
+    </g:if>
+    <g:if test="${flash.message}">
+        <div class="message" role="status">${flash.message}</div>
+    </g:if>
+    <g:uploadForm action="init" controller="admin">
         <fieldset class="form">
             <input type="file" name="appLst" />
         </fieldset>
@@ -17,5 +31,6 @@
         </fieldset>
     </g:uploadForm>
 </div>
+<r:layoutResources/>
 </body>
 </html>

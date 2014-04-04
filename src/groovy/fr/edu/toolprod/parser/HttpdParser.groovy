@@ -1,5 +1,6 @@
 package fr.edu.toolprod.parser
 
+import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Machine
 import toolprod.Server
@@ -25,15 +26,7 @@ class HttpdParser {
     private static final String LOAD_MODULE = "LoadModule"
     private static final String SERVER_NAME = "ServerName"
 
-    def serverName = EMPTY
-
-    def appName = EMPTY
-
-    def appUrl = EMPTY
-
-    def appServer = EMPTY
-
-    def appPort = EMPTY
+    private static final log = LogFactory.getLog(this)
 
     /**
      * Modules Apache list.
@@ -49,6 +42,13 @@ class HttpdParser {
         boolean bResult = false;
         BufferedReader br;
 
+        def serverName = EMPTY
+        def appName = EMPTY
+        def appUrl = EMPTY
+        def appServer = EMPTY
+        def appPort = EMPTY
+
+        log.info("Start parsing file ")
         if (inputStream != null) {
             try {
                 br = new BufferedReader(new InputStreamReader(inputStream))
@@ -70,15 +70,14 @@ class HttpdParser {
                             appPort = extractPortFromHttpProxyPass(appUrl);
 
 
-                            println("Extract from ProxyPass appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
 
                             App lineApp = App.findByName(appName)
                             if ( lineApp == null ) {
                                 App app = new App(name: appName, description: "TEST", url: appUrl )
                                 if (!app.save()) {
-                                    println("Can't save App")
+                                    log.info("Can't save appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
                                 } else {
-                                    println("Save App OK.")
+                                    log.info("Save App OK appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort)
                                     Machine machine = Machine.findByName(appServer)
                                     if (machine == null) {
                                         machine = new Machine(name: appServer, ipAddress: "127.0.0.1")
@@ -90,11 +89,13 @@ class HttpdParser {
                                     machineApps.add(app)
                                     machine.apps = machineApps
                                     if (!machine.save()) {
-                                        println("Can't Save machine " + appServer)
+                                        log.error("Can't Save machine " + appServer)
                                     } else {
-                                        println("Save machine " + appServer)
+                                        log.info("Save machine " + appServer)
                                     }
                                 }
+                            } else {
+                                log.debug("Application " + appName + " still exists in database.")
                             }
                         }
                     }
@@ -112,47 +113,30 @@ class HttpdParser {
                 }
                 bResult = true;
             } catch (IOException e) {
-                println("Failed to parse file : " + e.printStackTrace())
-            } finally {
                 bResult = false;
+                log.error("Failed to parse file : " + e.printStackTrace())
+            } finally {
                 if (inputStream != null) {
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        println("Failed to parse file : " + e.printStackTrace())
+                        log.error("Failed to parse file : " + e.printStackTrace())
                     }
                 }
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        println("Failed to parse file : " + e.getMessage())
+                        log.error("Failed to parse file : " + e.getMessage())
                         e.printStackTrace();
                     }
                 }
             }
         } else {
-            println("Can't parse a null file.")
+            log.error("Can't parse a null file.")
         }
+        log.info("End of parsing file ")
         return bResult
-    }
-
-    /**
-     * TODO : <IfModule prefork.c> error
-     * @param inputStream
-     */
-    def parseXml(InputStream inputStream) {
-        def xml = extractXmlFromApacheConf(inputStream)
-        try {
-            def conf = new XmlParser().parseText(xml)
-            def locations = conf.Location.findAll();
-            for (Node location : locations) {
-                println("Location:" + location.toString())
-            }
-
-        } catch(Exception e) {
-            println("Exception : " + e.getMessage())
-        }
     }
 
     /**
@@ -228,7 +212,7 @@ class HttpdParser {
             } else if (myUrl.startsWith(HTTPS)) {
                 strProtocol = HTTPS;
             } else {
-                println("extractServerFromHttpsProxyPass : Can't extract server because no protocol is set.")
+                log.warning("extractServerFromHttpsProxyPass : Can't extract server because no protocol is set.")
                 strProtocol = EMPTY;
             }
         }
@@ -306,27 +290,27 @@ class HttpdParser {
                     if (strLine.startsWith("</Location>")) {
                         xml += strLine
 
-                        println("name:" + name)
-                        println("weblo:" + weblo)
-                        println("CT:" + bCT)
+                        log.debug("name:" + name)
+                        log.debug("weblo:" + weblo)
+                        log.debug("CT:" + bCT)
                         bXml = false
                     }
                 }
             } catch (IOException e) {
-                println("Failed to parse file : " + e.printStackTrace())
+                log.error("Failed to parse file : " + e.printStackTrace())
             } finally {
                 if (inputStream != null) {
                     try {
                         inputStream.close();
                     } catch (IOException e) {
-                        println("Failed to parse file : " + e.printStackTrace())
+                        log.error("Failed to parse file : " + e.printStackTrace())
                     }
                 }
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        println("Failed to parse file : " + e.getMessage())
+                        log.error("Failed to parse file : " + e.getMessage())
                         e.printStackTrace();
                     }
                 }

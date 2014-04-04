@@ -97,9 +97,17 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    }
+
+    // Set level for all application artifacts
+    info "grails.app"
+    debug "fr.edu.toolprod"
+
+// Set for a specific controller in the default package debug "grails.app.controllers.YourController"
+// Set for a specific domain class debug "grails.app.domain.org.example.Book"
+// Set for all taglibs info "grails.app.taglib"
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
