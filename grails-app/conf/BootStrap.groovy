@@ -7,7 +7,7 @@ class BootStrap {
     def init = { servletContext ->
 
         createWebLogicData("weblo.ac-test.fr", "app1", Server.TYPE.WEBLOGIC, "8080", "ts", "Teleservice", "http://teleservices.ac-limoges.fr/ts"  )
-        createWebLogicData("weblo2.ac-test.fr", "app2", Server.TYPE.WEBLOGIC, "8081", "app2", "Teleservice", "http://app2.ac-limoges.fr/app2"  )
+        createWebLogicData("web3.ac-limoges.fr", "app2", Server.TYPE.APACHE, "80", "app2", "Teleservice", "http://app2.ac-limoges.fr/app2"  )
 
     }
 

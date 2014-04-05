@@ -38,7 +38,7 @@ class HttpdParser {
      * @param inputStream
      * @return true if no error occurs during parsing.
      */
-    def parse(InputStream inputStream) {
+    def parse(Server server, InputStream inputStream) {
         boolean bResult = false;
         BufferedReader br;
 
@@ -49,7 +49,7 @@ class HttpdParser {
         def appPort = EMPTY
 
         log.info("Start parsing file ")
-        if (inputStream != null) {
+        if ((server != null) && (inputStream != null)) {
             try {
                 br = new BufferedReader(new InputStreamReader(inputStream))
                 String strLine
@@ -74,25 +74,25 @@ class HttpdParser {
                             App lineApp = App.findByName(appName)
                             if ( lineApp == null ) {
                                 App app = new App(name: appName, description: "TEST", url: appUrl )
+                                app.addServer(server)
+                                log.info(app)
                                 if (!app.save()) {
                                     log.info("Can't save appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
                                 } else {
                                     log.info("Save App OK appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort)
+                                    server.addToLinkApps(appName)
                                     Machine machine = Machine.findByName(appServer)
                                     if (machine == null) {
                                         machine = new Machine(name: appServer, ipAddress: "127.0.0.1")
                                     }
-                                    Set<App> machineApps = machine.apps
-                                    if (machineApps == null) {
-                                        machineApps = new HashSet<>()
-                                    }
-                                    machineApps.add(app)
-                                    machine.apps = machineApps
+                                    machine.addApplication(app)
+                                    machine.addServer(server)
                                     if (!machine.save()) {
                                         log.error("Can't Save machine " + appServer)
                                     } else {
                                         log.info("Save machine " + appServer)
                                     }
+
                                 }
                             } else {
                                 log.debug("Application " + appName + " still exists in database.")

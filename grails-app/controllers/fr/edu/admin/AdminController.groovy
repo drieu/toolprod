@@ -3,6 +3,7 @@ package fr.edu.admin
 import fr.edu.toolprod.parser.HttpdParser
 import org.apache.commons.logging.LogFactory
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import toolprod.Server
 
 class AdminController {
 
@@ -17,9 +18,18 @@ class AdminController {
         if (request instanceof MultipartHttpServletRequest) {
             log.info("ici")
             def file = request.getFile('appLst')
-            if((file != null) && (!file.isEmpty())) {
+            def serverName = request.getParameterValues("servername")
+
+            if((serverName != null) && (file != null) && (!file.isEmpty())) {
+
+                Server server = Server.findByName(serverName)
+                if (server == null) {
+                    server = new Server(name: serverName,portNumber: 80, serverType: Server.TYPE.APACHE)
+                    log.info(server)
+                    server.save()
+                }
                 HttpdParser parser = new HttpdParser();
-                boolean bResult = parser.parse(file.inputStream);
+                boolean bResult = parser.parse(server, file.inputStream);
                 if (bResult) {
                     flash.message = 'Import successfull'
                 } else {

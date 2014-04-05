@@ -15,12 +15,30 @@ class Machine {
      */
     String ipAddress
 
+    Set<App> apps = []
+    Set<Server> servers = []
+    static hasMany = [apps : App, servers : Server]
 
-    static hasMany = [apps : App]
 
 
     static constraints = {
         name()
         ipAddress()
+    }
+
+    def addApplication(App app) {
+        if (app == null) {
+            throw new IllegalArgumentException("Can't add a null server to Machine apps list !")
+        }
+        apps.add(app)
+        this.save()
+    }
+
+    def addServer(Server server) {
+        if (server == null) {
+            throw new IllegalArgumentException("Can't add a null server to Machine servers list !")
+        }
+        servers.add(server)
+
     }
 }

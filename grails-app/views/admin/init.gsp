@@ -11,7 +11,6 @@
     <g:javascript library='bootstrap'/>
     <r:layoutResources/>
 </head>
-
 <body>
 <div class="container">
 <div class="content scaffold-create" role="main">
@@ -26,6 +25,7 @@
         <fieldset class="form">
             <input type="file" name="appLst" />
         </fieldset>
+        Server name:<input type="text" name="servername" value="web3.ac-limoges.fr"/>
         <fieldset class="buttons">
             <g:submitButton name="upload" class="save" value="Upload" />
         </fieldset>
