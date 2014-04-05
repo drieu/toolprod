@@ -52,8 +52,10 @@ class App {
         if (servers == null) {
             servers = new ArrayList<Server>()
         }
+
         log.info("Add server to servers list.")
         servers.add(server)
+
     }
 
     @Override

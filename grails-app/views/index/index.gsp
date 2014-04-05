@@ -116,6 +116,34 @@
             <div class="row">
                 <div class="panel panel-default">
                     <div class="panel-heading">
+                        <h3 class="panel-title">Liste des serveurs web</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>type</th>
+                            </tr>
+                            </thead>
+                            <g:each in="${machineServers}" var="mServ">
+                                <tr>
+                                    <td></td>
+                                    <td>${mServ?.name}</td>
+                                    <td>${mServ?.portNumber}</td>
+                                    <td>${mServ?.serverType}</td>
+                                </tr>
+                            </g:each>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         <h3 class="panel-title">Liste des applications</h3>
                     </div>
                     <div class="panel-body">

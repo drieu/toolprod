@@ -32,7 +32,7 @@ class BootStrap {
         } else {
             log.info("Bootstrap : Save ts App OK.")
         }
-        HashSet servers= new HashSet<>();
+        List servers= new ArrayList();
         servers.add(server);
         tsApp.servers = servers;
 

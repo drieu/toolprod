@@ -74,6 +74,7 @@ class HttpdParser {
                             App lineApp = App.findByName(appName)
                             if ( lineApp == null ) {
                                 App app = new App(name: appName, description: "TEST", url: appUrl )
+
                                 app.addServer(server)
                                 log.info(app)
                                 if (!app.save()) {

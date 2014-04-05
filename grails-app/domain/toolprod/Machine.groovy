@@ -38,7 +38,9 @@ class Machine {
         if (server == null) {
             throw new IllegalArgumentException("Can't add a null server to Machine servers list !")
         }
-        servers.add(server)
+        if((name != null) && name.contains(server.name)) {
+            servers.add(server)
+        }
 
     }
 }
