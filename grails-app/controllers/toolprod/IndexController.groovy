@@ -18,9 +18,10 @@ class IndexController {
             machineServers = machine.servers
         }
 
-        List<App> results = new ArrayList<>()
+        List<App> results = null
         param = params.get("query")
         if (param != null) {
+            results = new ArrayList<>();
             results = App.withCriteria {
                 or {
                     ilike('name', "%" + param + "%")

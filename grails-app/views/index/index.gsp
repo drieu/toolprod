@@ -105,21 +105,20 @@
         </div>
 
         <div class="col-md-9">
-            <div class="row">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Résultats de la recherche</h3>
-                    </div>
-                    <div class="panel-body">
+            <g:if test="${searchResults != null && searchResults.isEmpty()}">
+                <div class="alert alert-success alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <p class="alert-link">Search return no result !</p>
+                </div>
+            </g:if>
+            <g:if test="${searchResults != null && !searchResults.isEmpty()}">
+                <div class="row">
+
+                    <div class="alert alert-success alert-dismissable">
+                        <i>Résultats de la recherche</i>
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                         <table class="table table-hover table-striped">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nom</th>
-                                <th>Description</th>
-                                <th>url</th>
-                            </tr>
-                            </thead>
+                            <tbody>
                             <g:each in="${searchResults}" var="app">
                                 <tr>
                                     <td></td>
@@ -128,10 +127,11 @@
                                     <td>${app?.url}</td>
                                 </tr>
                             </g:each>
+                            </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
+           </g:if>
             <div class="row">
                 <p class="text-left">
                     <dl class="dl-horizontal">
