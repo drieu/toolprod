@@ -5,6 +5,8 @@ package toolprod
  */
 class App {
 
+    static searchable = true
+
     /**
      * Application name.
      */

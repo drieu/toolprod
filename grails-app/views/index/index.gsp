@@ -67,12 +67,13 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
-                    <form class="navbar-form navbar-left" role="search">
+                    %{--<form class="navbar-form navbar-left" role="search" controller="IndexController" action="search" method="GET">--}%
+                        <g:form class="navbar-form navbar-left" role="search" controller="index" action="search" method="GET">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="serveur, application ...">
+                                <g:textField class="form-control" name="query" value="${params.query}" placeholder="serveur, application ..."/>
                         </div>
-                        <button type="submit" class="btn btn-default">Recherche</button>
-                    </form>
+                        </g:form>
+                    %{--</form>--}%
                     <li><a href="#">Wiki</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Outils <b class="caret"></b></a>
@@ -104,6 +105,33 @@
         </div>
 
         <div class="col-md-9">
+            <div class="row">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Résultats de la recherche</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom</th>
+                                <th>Description</th>
+                                <th>url</th>
+                            </tr>
+                            </thead>
+                            <g:each in="${searchResults}" var="app">
+                                <tr>
+                                    <td></td>
+                                    <td>${app?.name}</td>
+                                    <td>${app?.description}</td>
+                                    <td>${app?.url}</td>
+                                </tr>
+                            </g:each>
+                        </table>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <p class="text-left">
                     <dl class="dl-horizontal">

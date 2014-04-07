@@ -12,14 +12,24 @@ class IndexController {
 
         println("machine:" + params.get("machine"))
         String param = params.get("machine")
-        println(param)
         if (param != null) {
             machine = Machine.findByName(param);
             apps = machine.apps
             machineServers = machine.servers
         }
 
-        return [ apps: apps, machines: machines, machine:machine, machineServers:machineServers ]
+        List<App> results = new ArrayList<>()
+        param = params.get("query")
+        if (param != null) {
+            results = App.withCriteria {
+                or {
+                    ilike('name', "%" + param + "%")
+                    ilike('description', "%" + param + "%")
+                }
+            }
+        }
+
+        return [ apps: apps, machines: machines, machine:machine, machineServers:machineServers, searchResults: results]
 
     }
 
@@ -28,7 +38,12 @@ class IndexController {
         redirect(action:"index", params: [machine : selectMachine])
     }
 
+    def search() {
+        def query = params.get("query")
+        println("search query :" + query)
 
+        redirect(action:"index", params: [query : query])
+    }
 
 // TODO : by server type
 //    def getServersByType() {
