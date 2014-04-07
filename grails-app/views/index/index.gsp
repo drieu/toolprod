@@ -142,7 +142,7 @@
                 </p>
             </div>
             <div class="row">
-                <div class="panel panel-default">
+                <div class="panel panel-info">
                     <div class="panel-heading">
                         <h3 class="panel-title">Liste des serveurs web</h3>
                     </div>
@@ -170,7 +170,7 @@
             </div>
 
             <div class="row">
-                <div class="panel panel-default">
+                <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">Liste des applications</h3>
                     </div>
