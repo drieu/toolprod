@@ -15,6 +15,20 @@ class IndexControllerSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
+
+    void "test empty getMachineApps"() {
+        when:
+        controller.getMachineApps()
+
+        then:
+        response.redirectedUrl == '/?machine='
+    }
+
+    void "test empty search"() {
+        when:
+        controller.search()
+
+        then:
+        response.redirectedUrl == '/?query='
     }
 }
