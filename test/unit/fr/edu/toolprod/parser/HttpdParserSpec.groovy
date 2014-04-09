@@ -36,7 +36,7 @@ class HttpdParserSpec extends GrailsUnitTestCase {
 
     void testParseWithNull() {
         HttpdParser parser = new HttpdParser()
-        assertFalse(parser.parse(null))
+        assertFalse(parser.parse(null, null))
     }
 
     void testGetApacheModules() {
@@ -51,6 +51,6 @@ class HttpdParserSpec extends GrailsUnitTestCase {
         modules = parser.getApacheModules("LoadModule access_module modules/mod_access.so")
         assertNotNull("Module list should be empty and not null", modules)
         assertEquals(1, modules.size())
-        assertTrue(modules.contains("access_module modules/mod_access.so"))
+        assertTrue(modules.contains("access_module"))
     }
 }

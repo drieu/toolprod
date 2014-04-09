@@ -213,7 +213,7 @@ class HttpdParser {
             } else if (myUrl.startsWith(HTTPS)) {
                 strProtocol = HTTPS;
             } else {
-                log.warning("extractServerFromHttpsProxyPass : Can't extract server because no protocol is set.")
+                log.warn("extractServerFromHttpsProxyPass : Can't extract server because no protocol is set.")
                 strProtocol = EMPTY;
             }
         }
@@ -231,6 +231,7 @@ class HttpdParser {
             if (params.size() == NB_LINE_ELEMENT ) {
                 String module = params.get(1);
                 if ((module != null) && (!module.isEmpty())) {
+                    log.debug("add module :" + module)
                     modules.add(module);
                 }
             }
