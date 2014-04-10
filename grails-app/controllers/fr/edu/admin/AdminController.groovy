@@ -42,6 +42,7 @@ class AdminController {
                 //parser.parseXml(file.inputStream)
 
             } else {
+                log.debug("init() servername:" + serverName)
                 flash.error = 'Import failed because file is null or is empty'
             }
         }

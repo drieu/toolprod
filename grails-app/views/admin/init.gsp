@@ -13,23 +13,39 @@
 </head>
 <body>
 <div class="container">
-<div class="content scaffold-create" role="main">
-    <h1>Upload Your apps list</h1>
-    <g:if test="${flash.error}">
-        <div class="alert alert-error" style="display: block">${flash.error}</div>
-    </g:if>
-    <g:if test="${flash.message}">
-        <div class="message" role="status">${flash.message}</div>
-    </g:if>
-    <g:uploadForm action="init" controller="admin">
-        <fieldset class="form">
-            <input type="file" name="appLst" />
-        </fieldset>
-        Server name:<input type="text" name="servername" value="web3.ac-limoges.fr"/>
-        <fieldset class="buttons">
-            <g:submitButton name="upload" class="save" value="Upload" />
-        </fieldset>
-    </g:uploadForm>
+    <g:applyLayout name="menu" />
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Import de fichier de configuration Apache</h3>
+        </div>
+        <div class="panel-body">
+            <g:if test="${flash.error}">
+                <div class="alert alert-warning alert-dismissable">${flash.error}</div>
+            </g:if>
+            <g:if test="${flash.message}">
+                <div class="alert alert-success alert-dismissable">${flash.message}</div>
+            </g:if>
+
+
+            <g:uploadForm action="init" controller="admin">
+
+                <form role="form">
+                    <div class="form-group">
+                        <label for="appLst">Choix du fichier à parser</label>
+                        <input type="file" id="appLst" name="appLst">
+                        <p class="help-block">Vous devez choisir un fichier httpd.conf</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="servername">Server name</label>
+                        <input type="text" class="form-control" id="servername" name="servername" placeholder="web3.ac-limoges.fr" value="web3.ac-limoges.fr">
+                    </div>
+                    <button type="submit" class="btn btn-info">Submit</button>
+                </form>
+
+            </g:uploadForm>
+        </div>
+    </div>
 </div>
 <r:layoutResources/>
 </body>
