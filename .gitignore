@@ -5,3 +5,4 @@ wrapper
 .project
 toolprod.iml
 toolprod-grailsPlugins.iml
+servers.properties
