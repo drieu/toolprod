@@ -79,6 +79,8 @@ class HttpdParser {
                                 if (!app.save()) {
                                     log.info("Can't save application app :" + app);
                                 } else {
+
+                                    server.addToLinkApps(appName)
                                     log.info("Save application app OK :" + app)
                                     server.addToLinkApps(appName)
                                     Machine machine = Machine.findByName(appServer)

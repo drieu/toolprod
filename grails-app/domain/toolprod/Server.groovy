@@ -22,6 +22,7 @@ class Server {
 
     List<String> linkToApps = []
 
+
     TYPE serverType
 
     enum TYPE {

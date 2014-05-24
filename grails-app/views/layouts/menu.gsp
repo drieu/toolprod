@@ -18,33 +18,33 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Serveurs <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Serveurs apache</a></li>
+                        <li><a href="/toolprod/webServer/apache">Serveurs apache</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Serveur Ldap</a></li>
+                        <li><a href="/toolprod/webServer/weblogic">Serveur weblogic</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Autres Serveurs</a></li>
+                        <li class="disabled"><a href="#">Autres Serveurs</a></li>
                         <li class="divider"></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Bases <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Base DB2</a></li>
+                        <li class="disabled"><a href="#">Base DB2</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Base Mysql</a></li>
+                        <li class="disabled"><a href="#">Base Mysql</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Base SQL Server</a></li>
+                        <li class="disabled"><a href="#">Base SQL Server</a></li>
                         <li class="divider"></li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Application Weblogic</a></li>
+                        <li class="disabled"><a href="#">Application Weblogic</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Application PHP</a></li>
+                        <li class="disabled"><a href="#">Application PHP</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Autre</a></li>
+                        <li class="disabled"><a href="#">Autre</a></li>
                         <li class="divider"></li>
                     </ul>
                 </li>
