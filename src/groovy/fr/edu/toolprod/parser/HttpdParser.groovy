@@ -62,7 +62,7 @@ class HttpdParser {
                         final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
                         if (params.size() == NB_LINE_ELEMENT ) {
                             def tmpApp = params.get(1);
-                            appName = tmpApp.substring(1); // don't want the / in /appli
+                            appName = extractAppNameInProxyPass(tmpApp);
                             appUrl = params.get(2);
 
                             // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
@@ -73,14 +73,13 @@ class HttpdParser {
 
                             App lineApp = App.findByName(appName)
                             if ( lineApp == null ) {
-                                App app = new App(name: appName, description: "TEST", url: appUrl )
-
+                                //TODO : description
+                                App app = new App(name: appName, description: "test", url: appUrl )
                                 app.addServer(server)
-                                log.info(app)
                                 if (!app.save()) {
-                                    log.info("Can't save appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort);
+                                    log.info("Can't save application app :" + app);
                                 } else {
-                                    log.info("Save App OK appli:" + appName + " url:" + appUrl + " server:" + appServer + " port:" + appPort)
+                                    log.info("Save application app OK :" + app)
                                     server.addToLinkApps(appName)
                                     Machine machine = Machine.findByName(appServer)
                                     if (machine == null) {
@@ -91,25 +90,25 @@ class HttpdParser {
                                     if (!machine.save()) {
                                         log.error("Can't Save machine " + appServer)
                                     } else {
-                                        log.info("Save machine " + appServer)
+                                        log.info("Save machine OK:" + appServer)
                                     }
 
                                 }
                             } else {
-                                log.debug("Application " + appName + " still exists in database.")
+                                log.debug("Application App " + appName + " still exists in database.")
                             }
                         }
                     }
 
                     // If LoadModule
-                    if (strLine.startsWith(LOAD_MODULE + SPACE)) {
-                        modules = getApacheModules(strLine)
-                    }
+//                    if (strLine.startsWith(LOAD_MODULE + SPACE)) {
+//                        modules = getApacheModules(strLine)
+//                    }
                     // If ServerName
-                    if (strLine.startsWith(SERVER_NAME)) {
-                        def params = strLine.tokenize()
-                        serverName = params.get(1);
-                    }
+//                    if (strLine.startsWith(SERVER_NAME)) {
+//                        def params = strLine.tokenize()
+//                        serverName = params.get(1);
+//                    }
 
                 }
                 bResult = true;
@@ -138,6 +137,25 @@ class HttpdParser {
         }
         log.info("End of parsing file ")
         return bResult
+    }
+
+    /**
+     * Extract app name without '/'
+     * @param param e.g: '/app/'
+     * @return empty or string(e.g:'app')
+     */
+    def extractAppNameInProxyPass(String param) {
+        String result = ""
+        if ((param != null) && (param.size() > 1)) {
+            result = param;
+            if (result.startsWith("/")) {
+                result = result.substring(1);
+            }
+            if (result.endsWith("/")) {
+                result = result.substring(0, (result.length() - 1))
+            }
+        }
+        result
     }
 
     /**
@@ -246,7 +264,7 @@ class HttpdParser {
      * @param inputStream
      * @return xml string (e.g:<xml></xml>)
      */
-    def extractXmlFromApacheConf(InputStream inputStream) {
+    def parseLocationFromApacheConf(InputStream inputStream) {
         def xml = "" //TODO : unused
 
         BufferedReader br;
@@ -259,7 +277,7 @@ class HttpdParser {
                 boolean bXml = false
 
                 String name
-                String weblo //TODO put a list
+                List<String> weblos = new ArrayList<>() //TODO put a list
                 boolean bCT = false
 
                 while ((strLine = br.readLine()) != null) {
@@ -284,8 +302,14 @@ class HttpdParser {
                             bCT = true
                         }
                         if (strLine.contains("WebLogicCluster")) {
-                            def params = strLine.tokenize()
-                            weblo = params.get(1)
+                            def params = strLine.tokenize(",")
+                            log.info("params wbelo:" + params.toString())
+                            for(String weblo :params) {
+                                log.info("weblo:" + weblo)
+                                if (!weblo.contains("WebLogicCluster")) {
+                                    weblos.add(weblo)
+                                }
+                            }
                         }
                     }
 
@@ -293,11 +317,67 @@ class HttpdParser {
                         xml += strLine
 
                         log.debug("name:" + name)
-                        log.debug("weblo:" + weblo)
+                        log.debug("weblo:" + weblos.toString())
                         log.debug("CT:" + bCT)
-                        bXml = false
+
+                        App app = App.findByName(name)
+                        if ( app == null ) {
+                            app = new App(name: name, description: "TODO_NOTNULL", url: "TODO_NOTNULL" )
+
+                            if (app.save()) {
+                                log.info("Save OK : App save:" + app.name)
+                            } else {
+                                log.error("error can't save Machine:" + name)
+                            }
+                        } else {
+                            log.info("Application still exist")
+                        }
+
+
+                        for(String str : weblos) {
+                            def params = str.tokenize(":")
+                            log.info(params.toString())
+                            if (params.size() == 2) {
+                                String machinName = params.get(0)
+                                String port = params.get(1)
+
+
+                                Server server = Server.findByName(machinName)
+                                if (server == null) {
+                                    server = new Server(name: machinName, portNumber: port, serverType: Server.TYPE.WEBLOGIC)
+                                }
+                                server.addToLinkApps(machinName)
+                                boolean bSave = server.save()
+                                if (bSave) {
+                                    log.info("Save OK : Server save:" + machinName)
+                                } else {
+                                    log.error("error can't save Server:" + machinName)
+                                }
+
+
+                                log.info("Searching machine name :" + machinName)
+                                Machine machine = Machine.findByName(machinName);
+                                if ((machine == null) && (machinName != null) ) {
+                                    machine = new Machine(name:machinName, ipAddress: "127.0.0.1");
+                                }
+                                machine.addApplication(app)
+                                machine.addServer(server)
+                                bSave = machine.save()
+                                if (bSave) {
+                                    log.info("Save OK : Machine save:" + machinName)
+                                } else {
+                                    log.error("error can't save Machine:" + machinName)
+                                }
+                                app.addServer(server)
+
+                            }
+
+                            }
+                            bXml = false
+                        }
+                        //TODO : Add app server
+
                     }
-                }
             } catch (IOException e) {
                 log.error("Failed to parse file : " + e.printStackTrace())
             } finally {

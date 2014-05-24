@@ -2,6 +2,7 @@ package toolprod
 
 /**
  * Application class.
+ * TODO : CT
  */
 class App {
 
@@ -55,8 +56,12 @@ class App {
             servers = new ArrayList<Server>()
         }
 
-        log.info("Add server to servers list.")
-        servers.add(server)
+        if (!servers.contains(server)) {
+            log.debug("Add server to the server list.")
+            servers.add(server)
+        } else {
+            log.debug("Server still in server list.")
+        }
 
     }
 

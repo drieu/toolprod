@@ -81,7 +81,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Nom</th>
-                                <th>Description</th>
+                                <th>Port</th>
                                 <th>type</th>
                             </tr>
                             </thead>
@@ -101,7 +101,7 @@
             <div class="row">
                 <div class="panel panel-success">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Liste des applications</h3>
+                        <h3 class="panel-title">Liste des applications locales</h3>
                     </div>
                     <div class="panel-body">
                         <table class="table table-hover table-striped">

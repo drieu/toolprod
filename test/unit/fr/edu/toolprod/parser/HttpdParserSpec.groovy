@@ -6,6 +6,19 @@ import grails.test.GrailsUnitTestCase
  */
 class HttpdParserSpec extends GrailsUnitTestCase {
 
+
+
+
+    void testExtractAppNameInProxyPass() {
+        HttpdParser parser = new HttpdParser()
+        assertEquals("myapp", parser.extractAppNameInProxyPass("/myapp/"))
+        assertEquals("myapp", parser.extractAppNameInProxyPass("/myapp"))
+        assertEquals("myapp", parser.extractAppNameInProxyPass("myapp/"))
+        assertEquals("", parser.extractAppNameInProxyPass(""))
+        assertEquals("", parser.extractAppNameInProxyPass(null))
+
+    }
+
     void testExtractServerFromHttpProxyPassUsual() {
         HttpdParser parser = new HttpdParser()
         assertEquals("web.fr", parser.extractServerFromHttpProxyPass("http://web.fr:82/myapp"))

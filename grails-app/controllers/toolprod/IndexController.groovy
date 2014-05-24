@@ -3,19 +3,21 @@ package toolprod
 class IndexController {
 
     def index () {
-        println ("MainController : index()")
+        log.info ("MainController : index()")
 
-        def machines = Machine.findAll();
-        def apps
+        def machines = Machine.findAll("from Machine as m order by m.name");
+        def apps = new HashSet()
         def machine
         def machineServers
 
-        println("machine:" + params.get("machine"))
+        log.debug("Parameter machine passed in request:" + params.get("machine"))
         String param = params.get("machine")
         if (param != null) {
             machine = Machine.findByName(param);
-            apps = machine.apps
-            machineServers = machine.servers
+            if ( machine != null) {
+                apps = machine.apps
+                machineServers = machine.servers
+            }
         }
 
         List<App> results = null
@@ -41,7 +43,7 @@ class IndexController {
 
     def search() {
         def query = params.get("query")
-        println("search query :" + query)
+        log.debug("search query :" + query)
 
         redirect(action:"index", params: [query : query])
     }

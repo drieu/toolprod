@@ -31,7 +31,7 @@ class Server {
 
     static constraints = {
         name()
-        portNumber()
+        portNumber(defaultValue:80)
     }
 
     @Override

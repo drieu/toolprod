@@ -16,7 +16,6 @@ class AdminController {
     def init() {
         log.info("Init action from AdminController : init()")
         if (request instanceof MultipartHttpServletRequest) {
-            log.info("ici")
             def file = request.getFile('appLst')
             def serverName = request.getParameterValues("servername")
 
@@ -24,9 +23,17 @@ class AdminController {
 
                 Server server = Server.findByName(serverName)
                 if (server == null) {
+                    //TODO : port
                     server = new Server(name: serverName,portNumber: 80, serverType: Server.TYPE.APACHE)
-                    log.info(server)
-                    server.save()
+                    if( !server.save()) {
+                        log.error("Can't save Server :" + server )
+                        flash.error = 'Error when parsing file.'
+                        throw new Exception("Can't save Server !")
+                    } else {
+                        log.info("Save successful :" + server);
+                    }
+                } else {
+                    log.debug("Server " + serverName + " exists in database")
                 }
                 HttpdParser parser = new HttpdParser();
                 boolean bResult = parser.parse(server, file.inputStream);
@@ -39,7 +46,7 @@ class AdminController {
 //                for (String module in parser.modules) {
 //                    println("Module :" + module)
 //                }
-                //parser.parseXml(file.inputStream)
+                parser.parseLocationFromApacheConf(file.inputStream)
 
             } else {
                 log.debug("init() servername:" + serverName)
