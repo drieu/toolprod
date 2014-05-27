@@ -20,7 +20,11 @@ class Server {
 
     Server child
 
+    /**
+     * List all references applications.
+     */
     List<String> linkToApps = []
+    static hasMany = [ linkToApps: String]
 
 
     TYPE serverType

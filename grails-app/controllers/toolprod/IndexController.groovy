@@ -36,6 +36,10 @@ class IndexController {
 
     }
 
+    /**
+     * Get machine name and redirect to index page.
+     *
+     **/
     def getMachineApps() {
         def selectMachine = params.get("machine")
         redirect(action:"index", params: [machine : selectMachine])
@@ -44,13 +48,7 @@ class IndexController {
     def search() {
         def query = params.get("query")
         log.debug("search query :" + query)
-
         redirect(action:"index", params: [query : query])
     }
 
-// TODO : by server type
-//    def getServersByType() {
-//        def type = params.get("type")
-//        List<Server> servers = Server.findByServerType(type)
-//    }
 }

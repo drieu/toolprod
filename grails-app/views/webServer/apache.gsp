@@ -22,7 +22,7 @@
                     Serveurs ${type}
                 </a>
                 <g:each in="${servers}" var="server">
-                    <a href="<g:createLink action="getMachineApps" params="[server:server.name]" />" class="list-group-item">
+                    <a href="<g:createLink action="getWebServer" params="[name:server.name]" />" class="list-group-item">
                         ${server.name}
                     </a>
                 </g:each>
@@ -30,7 +30,52 @@
         </div>
 
         <div class="col-md-9">
-
+            <div class="row">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Serveur web</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom</th>
+                                <th>Port</th>
+                            </tr>
+                            </thead>
+                                <tr>
+                                    <td></td>
+                                    <td>${selectServer?.name}</td>
+                                    <td>${selectServer?.portNumber}</td>
+                                </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Liste des applications référencées</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom de l'application</th>
+                            </tr>
+                            </thead>
+                            <g:each in="${selectServer?.linkToApps}" var="linkAppName">
+                                <tr>
+                                    <td></td>
+                                    <td>${linkAppName}</td>
+                                </tr>
+                            </g:each>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     </div>

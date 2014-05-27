@@ -79,10 +79,10 @@ class HttpdParser {
                                 if (!app.save()) {
                                     log.info("Can't save application app :" + app);
                                 } else {
-
-                                    server.addToLinkApps(appName)
                                     log.info("Save application app OK :" + app)
                                     server.addToLinkApps(appName)
+                                    server.save()
+                                    log.info("Save in list apps of server OK :" + appName)
                                     Machine machine = Machine.findByName(appServer)
                                     if (machine == null) {
                                         machine = new Machine(name: appServer, ipAddress: "127.0.0.1")
