@@ -22,8 +22,21 @@
 <div class="container">
     <g:applyLayout name="menu"/>
     <g:if test="${app != null}">
-        <h1>Application : ${app.name}</h1>
+        <h1>Application : ${app?.name}</h1>
         <br/>
+        <pre>Description : <small>${app?.description}</small></pre>
+        <br/>
+        <dl class="dl-horizontal">
+            <dt>URL</dt>
+            <dd><a href="${app.url}">${app.url}</a></dd>
+            <dt>Serveur web</dt>
+            <dd>
+                <g:each in="${app?.servers}" var="server">
+                    ${server?.name} ( ${server?.serverType?.toString()} )
+                </g:each>
+            </dd>
+        </dl>
+
     </g:if>
     <g:else>
         <div class="well well-lg">Pas d'application !</div>
