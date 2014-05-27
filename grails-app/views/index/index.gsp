@@ -60,70 +60,72 @@
                         </table>
                     </div>
                 </div>
-           </g:if>
-            <div class="row">
-                <p class="text-left">
-                    <dl class="dl-horizontal">
-                        <dt>Machine </dt>
-                        <dd>Nom : ${machine?.name}</dd>
-                        <dd>IP : ${machine?.ipAddress}</dd>
-                    </dl>
-                </p>
-            </div>
-            <div class="row">
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Liste des serveurs web</h3>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nom</th>
-                                <th>Port</th>
-                                <th>type</th>
-                            </tr>
-                            </thead>
-                            <g:each in="${machineServers}" var="mServ">
+            </g:if>
+            <g:if test="${machine != null}">
+                <div class="row">
+                    <p class="text-left">
+                        <dl class="dl-horizontal">
+                            <dt>Machine </dt>
+                            <dd>Nom : ${machine?.name}</dd>
+                            <dd>IP : ${machine?.ipAddress}</dd>
+                        </dl>
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Liste des serveurs web</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-hover table-striped">
+                                <thead>
                                 <tr>
-                                    <td></td>
-                                    <td>${mServ?.name}</td>
-                                    <td>${mServ?.portNumber}</td>
-                                    <td>${mServ?.serverType}</td>
+                                    <th>#</th>
+                                    <th>Nom</th>
+                                    <th>Port</th>
+                                    <th>type</th>
                                 </tr>
-                            </g:each>
-                        </table>
+                                </thead>
+                                <g:each in="${machineServers}" var="mServ">
+                                    <tr>
+                                        <td></td>
+                                        <td>${mServ?.name}</td>
+                                        <td>${mServ?.portNumber}</td>
+                                        <td>${mServ?.serverType}</td>
+                                    </tr>
+                                </g:each>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="panel panel-success">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Liste des applications locales</h3>
-                    </div>
-                    <div class="panel-body">
-                        <table class="table table-hover table-striped">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Nom</th>
-                                <th>Description</th>
-                                <th>url</th>
-                            </tr>
-                            </thead>
-                            <g:each in="${apps}" var="app">
+                <div class="row">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Liste des applications locales</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-hover table-striped">
+                                <thead>
                                 <tr>
-                                    <td></td>
-                                    <td>${app?.name}</td>
-                                    <td>${app?.description}</td>
-                                    <td>${app?.url}</td>
+                                    <th>#</th>
+                                    <th>Nom</th>
+                                    <th>Description</th>
+                                    <th>url</th>
                                 </tr>
-                            </g:each>
-                        </table>
+                                </thead>
+                                <g:each in="${apps}" var="app">
+                                    <tr>
+                                        <td></td>
+                                        <td>${app?.name}</td>
+                                        <td>${app?.description}</td>
+                                        <td>${app?.url}</td>
+                                    </tr>
+                                </g:each>
+                            </table>
+                        </div>
                     </div>
-                </div>
+            </g:if>
             </div>
         </div>
     </div>
