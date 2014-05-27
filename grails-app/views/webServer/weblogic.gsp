@@ -18,7 +18,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="list-group">
-                <a href="#" class="list-group-item active">
+                <a href="#" class="list-group-item list-group-item-warning">
                     Serveurs ${type}
                 </a>
                 <g:each in="${servers}" var="server">
@@ -33,7 +33,7 @@
 
                 <g:if test="${selectServer != null}">
                     <div class="row">
-                        <div class="panel panel-info">
+                        <div class="panel panel-warning">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Serveur web</h3>
                             </div>
@@ -56,7 +56,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="panel panel-success">
+                        <div class="panel panel-warning">
                             <div class="panel-heading">
                                 <h3 class="panel-title">Liste des applications référencées</h3>
                             </div>

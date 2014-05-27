@@ -13,16 +13,17 @@
 
 <body>
 <div class="container">
-    <g:applyLayout name="menu" />
+    <g:applyLayout name="menu"/>
 
     <div class="row">
         <div class="col-md-3">
             <div class="list-group">
-                <a href="#" class="list-group-item active">
+                <a href="#" class="list-group-item list-group-item-success">
                     Serveurs ${type}
                 </a>
                 <g:each in="${servers}" var="server">
-                    <a href="<g:createLink action="getWebServer" params="[name:server.name]" />" class="list-group-item">
+                    <a href="<g:createLink action="getWebServer" params="[name: server.name]"/>"
+                       class="list-group-item">
                         ${server.name}
                     </a>
                 </g:each>
@@ -32,10 +33,11 @@
         <div class="col-md-9">
             <g:if test="${selectServer != null}">
                 <div class="row">
-                    <div class="panel panel-info">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h3 class="panel-title">Serveur web</h3>
                         </div>
+
                         <div class="panel-body">
                             <table class="table table-hover table-striped">
                                 <thead>
@@ -45,20 +47,22 @@
                                     <th>Port</th>
                                 </tr>
                                 </thead>
-                                    <tr>
-                                        <td></td>
-                                        <td>${selectServer?.name}</td>
-                                        <td>${selectServer?.portNumber}</td>
-                                    </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>${selectServer?.name}</td>
+                                    <td>${selectServer?.portNumber}</td>
+                                </tr>
                             </table>
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <h3 class="panel-title">Liste des applications référencées</h3>
                         </div>
+
                         <div class="panel-body">
                             <table class="table table-hover table-striped">
                                 <thead>
@@ -83,9 +87,8 @@
             </g:else>
         </div>
     </div>
-    </div>
-
-    <r:layoutResources/>
 </div>
+
+<r:layoutResources/>
 </body>
 </html>

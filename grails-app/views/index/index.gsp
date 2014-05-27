@@ -116,7 +116,7 @@
                                 </thead>
                                 <g:each in="${apps}" var="app">
                                     <tr>
-                                        <td></td>
+                                        <td><td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td></td>
                                         <td>${app?.name}</td>
                                         <td>${app?.description}</td>
                                         <td>${app?.url}</td>
