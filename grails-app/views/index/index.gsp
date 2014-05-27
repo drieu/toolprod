@@ -87,12 +87,12 @@
                                 </tr>
                                 </thead>
                                 <g:each in="${machineServers}" var="mServ">
-                                    <tr>
-                                        <td></td>
-                                        <td>${mServ?.name}</td>
-                                        <td>${mServ?.portNumber}</td>
-                                        <td>${mServ?.serverType}</td>
-                                    </tr>
+                                        <tr>
+                                            <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                            <td>${mServ?.name}</td>
+                                            <td>${mServ?.portNumber}</td>
+                                            <td>${mServ?.serverType}</td>
+                                        </tr>
                                 </g:each>
                             </table>
                         </div>
@@ -126,6 +126,9 @@
                         </div>
                     </div>
             </g:if>
+            <g:else>
+                <div class="well well-lg">Merci de choisir une machine dans la liste !</div>
+            </g:else>
             </div>
         </div>
     </div>
