@@ -1,13 +1,12 @@
 package fr.edu.toolprod.parser
 
+
 import grails.test.GrailsUnitTestCase
 /**
  * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
  */
+
 class HttpdParserSpec extends GrailsUnitTestCase {
-
-
-
 
     void testExtractAppNameInProxyPass() {
         HttpdParser parser = new HttpdParser()

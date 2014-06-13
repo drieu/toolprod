@@ -38,9 +38,22 @@ class Machine {
         if (server == null) {
             throw new IllegalArgumentException("Can't add a null server to Machine servers list !")
         }
-        if((name != null) && name.contains(server.name)) {
+        if(name != null) {
             servers.add(server)
         }
 
+    }
+
+
+    @Override
+    public java.lang.String toString() {
+        return "Machine{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                ", apps=" + apps +
+                ", servers=" + servers +
+                ", version=" + version +
+                '}';
     }
 }

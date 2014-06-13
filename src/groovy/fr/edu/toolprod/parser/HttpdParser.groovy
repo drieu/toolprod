@@ -1,5 +1,7 @@
 package fr.edu.toolprod.parser
 
+import fr.edu.toolprod.bean.AppBean
+import fr.edu.toolprod.bean.ServerBean
 import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Machine
@@ -23,24 +25,202 @@ class HttpdParser {
 
     private static final String PROXY_PASS = "ProxyPass"
     private static final String SPACE = ' '
-    private static final String LOAD_MODULE = "LoadModule"
+    private static final String SERVER_MODULE = "LoadModule"
     private static final String SERVER_NAME = "ServerName"
+    private static final String SERVER_PORT = "Listen"
+    private static final String MACHINE_DEFAULT_IP = "127.0.0.1"
 
     private static final log = LogFactory.getLog(this)
 
-    /**
-     * Modules Apache list.
-     */
-    def modules = []
+    private Machine machine
+
+    private Server server
+
+    private InputStream inputStream
+
+    private BufferedReader br;
+
+
+    HttpdParser(InputStream input, String machineName) {
+        inputStream = input;
+        defineMachine(machineName);
+        if (machine == null) {
+            throw new IllegalArgumentException("Machine must exist !")
+        }
+
+        defineApacheServer(machineName);
+    }
+
+    private def defineMachine(String machineName) {
+        if (machineName == null || machineName.isEmpty()) {
+            throw new IllegalArgumentException("MachineName must not be null !")
+        }
+        machine = Machine.findByName(machineName)
+        if (machine == null) {
+            machine = new Machine(name: machineName, ipAddress: "127.0.0.1")
+            machine.save()
+            log.info("Save OK machine:" + machine)
+        } else {
+            log.debug("Machine still exists :" + machine)
+        }
+    }
+
+
+    private def defineApacheServer(String defaultServerName) {
+        boolean bResult = false;
+
+        String strLine
+        String serverName
+        String port = 80
+        List<String> modules = []
+
+        def appName = EMPTY
+        def appUrl = EMPTY
+        def appServer = EMPTY
+        def appPort = EMPTY
+
+        ServerBean serverBean = new ServerBean();
+        List<AppBean> appBeans = new ArrayList<>();
+
+        try {
+            br = new BufferedReader(new InputStreamReader(inputStream))
+
+            while ((strLine = br.readLine()) != null) {
+                // If ServerName
+                if (strLine.startsWith(SERVER_NAME)) {
+                    def params = strLine.tokenize()
+                    serverName = params.get(1);
+                    serverBean.name = serverName;
+                }
+                // If port
+                if (strLine.startsWith(SERVER_PORT)) {
+                    def params = strLine.tokenize()
+                    def portTmp = params.get(1);
+                    if (portTmp != null) {
+                        port = portTmp;
+                    }
+                    serverBean.portNumber = port;
+                }
+
+                // If LoadModule
+                if (strLine.startsWith(SERVER_MODULE + SPACE)) {
+                    def tmp = getApacheModules(strLine);
+                    if (tmp != null && !tmp.isEmpty()) {
+                        serverBean.addToModules(tmp);
+                    }
+                }
+
+                if (strLine.startsWith(PROXY_PASS + SPACE)) {
+                    def params = strLine.tokenize()
+                    final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
+                    if (params.size() == NB_LINE_ELEMENT ) {
+                        def tmpApp = params.get(1);
+                        appName = extractAppNameInProxyPass(tmpApp);
+                        appUrl = params.get(2);
+
+                        // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
+                        appServer = extractServerFromHttpProxyPass(appUrl);
+                        appPort = extractPortFromHttpProxyPass(appUrl);
+
+                        AppBean appBean = new AppBean();
+                        appBean.name = appName;
+                        appBean.serverUrl = appUrl;
+                        appBean.serverPort = appPort;
+                        appBeans.add(appBean);
+                    }
+
+                }
+            }
+
+        } catch (IOException e) {
+            bResult = false;
+            log.error("Failed to parse file : " + e.printStackTrace())
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    log.error("Failed to parse file : " + e.printStackTrace())
+                }
+            }
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    log.error("Failed to parse file : " + e.getMessage())
+                    e.printStackTrace();
+                }
+            }
+        }
+        log.info("ServerBean info:" + serverBean.toString());
+
+        // SAVE
+        // Create Machine
+        // Create Server
+        Server server = Server.saveServer(serverBean)
+        if (!machine.getServers()?.contains(server)) {
+            machine.addServer(server);
+            machine.save();
+            log.info("Save OK server " + serverName + " in machine " + machine.name);
+        }
+        for (AppBean appBean : appBeans) {
+
+            App app = App.saveApp(appBean);
+            if (app != null) {
+                server.addToLinkApps(appBean.name);
+                server.save();
+
+                machine.addApplication(app)
+                machine.addServer(server)
+                if (!machine.save()) {
+                    log.error("Can't Save machine " + appServer)
+                } else {
+                    log.info("Save machine OK:" + appServer)
+                }
+            }
+
+//            App lineApp = App.findByName(appName)
+//            if ( lineApp == null ) {
+//                //TODO : description
+//                App app = new App(name: appName, description: "test", url: appUrl )
+//                app.addServer(server)
+//                if (!app.save()) {
+//                    log.info("Can't save application app :" + app);
+//                } else {
+//                    log.info("Save application app OK :" + app)
+//                    server.addToLinkApps(appName)
+//                    server.save()
+//                    log.info("Save in list apps of server OK :" + appName)
+//                    Machine machine = Machine.findByName(appServer)
+//                    if (machine == null) {
+//                        machine = new Machine(name: appServer, ipAddress: "127.0.0.1")
+//                    }
+//                    machine.addApplication(app)
+//                    machine.addServer(server)
+//                    if (!machine.save()) {
+//                        log.error("Can't Save machine " + appServer)
+//                    } else {
+//                        log.info("Save machine OK:" + appServer)
+//                    }
+//
+//                }
+//            } else {
+//                log.debug("Application App " + appName + " still exists in database.")
+//            }
+        }
+
+
+    }
+
+
 
     /**
      * Parse file line by line
      * @param inputStream
      * @return true if no error occurs during parsing.
      */
-    def parse(Server server, InputStream inputStream) {
+    def parse() {
         boolean bResult = false;
-        BufferedReader br;
 
         def serverName = EMPTY
         def appName = EMPTY
@@ -53,8 +233,13 @@ class HttpdParser {
             try {
                 br = new BufferedReader(new InputStreamReader(inputStream))
                 String strLine
+                log.info("Ici")
 
                 while ((strLine = br.readLine()) != null) {
+                    log.info("Line : " + strLine)
+
+
+
 
                     //If ProxyPass               /appli http://webX.fr:PORT/APPLI
                     if (strLine.startsWith(PROXY_PASS + SPACE)) {
@@ -102,43 +287,36 @@ class HttpdParser {
                         }
                     }
 
-                    // If LoadModule
-//                    if (strLine.startsWith(LOAD_MODULE + SPACE)) {
-//                        modules = getApacheModules(strLine)
-//                    }
-                    // If ServerName
-//                    if (strLine.startsWith(SERVER_NAME)) {
-//                        def params = strLine.tokenize()
-//                        serverName = params.get(1);
-//                    }
-
                 }
                 bResult = true;
             } catch (IOException e) {
                 bResult = false;
                 log.error("Failed to parse file : " + e.printStackTrace())
-            } finally {
-                if (inputStream != null) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        log.error("Failed to parse file : " + e.printStackTrace())
-                    }
-                }
-                if (br != null) {
-                    try {
-                        br.close();
-                    } catch (IOException e) {
-                        log.error("Failed to parse file : " + e.getMessage())
-                        e.printStackTrace();
-                    }
-                }
             }
+
         } else {
             log.error("Can't parse a null file.")
         }
         log.info("End of parsing file ")
         return bResult
+    }
+
+    def close() {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error("Failed to parse file : " + e.printStackTrace())
+            }
+        }
+        if (br != null) {
+            try {
+                br.close();
+            } catch (IOException e) {
+                log.error("Failed to parse file : " + e.getMessage())
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -245,18 +423,15 @@ class HttpdParser {
      * @param str e.g:LoadModule access_module modules/mod_access.so
      */
     def getApacheModules(String strLine) {
+        String module = ""
         if ((strLine != null) && (!strLine.isEmpty())) {
             def params = strLine.tokenize();
             final int NB_LINE_ELEMENT = 3; // Number element in LoadModule line.
             if (params.size() == NB_LINE_ELEMENT ) {
-                String module = params.get(1);
-                if ((module != null) && (!module.isEmpty())) {
-                    log.debug("add module :" + module)
-                    modules.add(module);
-                }
+                module = params.get(1);
             }
         }
-        modules
+        module
     }
 
 

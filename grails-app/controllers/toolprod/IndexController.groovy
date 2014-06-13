@@ -13,10 +13,12 @@ class IndexController {
         log.debug("Parameter machine passed in request:" + params.get("machine"))
         String param = params.get("machine")
         if (param != null) {
+
             machine = Machine.findByName(param);
             if ( machine != null) {
                 apps = machine.apps
                 machineServers = machine.servers
+                log.info("Machine:" + machine.toString())
             }
         }
 

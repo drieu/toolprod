@@ -1,5 +1,8 @@
 package toolprod
 
+import fr.edu.toolprod.bean.ServerBean
+import org.apache.commons.logging.LogFactory
+
 /**
  * Servers like Apache, Weblogic
  */
@@ -21,11 +24,15 @@ class Server {
     Server child
 
     /**
-     * List all references applications.
+     * List references application.
      */
     List<String> linkToApps = []
-    static hasMany = [ linkToApps: String]
 
+    /**
+     * List Apache modules.
+     */
+    List<String> modules = []
+    static hasMany = [ linkToApps: String, modules: String]
 
     TYPE serverType
 
@@ -33,6 +40,7 @@ class Server {
         APACHE, WEBLOGIC
     }
 
+    private static final log = LogFactory.getLog(this)
 
     static constraints = {
         name()
@@ -60,5 +68,23 @@ class Server {
         linkToApps.add(appName)
     }
 
+    /**
+     * Save a Server in database by using data in serverBean
+     * @param serverBean
+     */
+    public static saveServer(ServerBean serverBean) {
+        if (serverBean == null) {
+            throw new IllegalArgumentException("Can't save a Server with a null serverBean !")
+        }
+        Server server = Server.find{name==serverBean.name; portNumber==serverBean.portNumber}
+        if (server == null) {
+            server = new Server(name: serverBean.name,portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
+            server.modules = serverBean.modules;
+            server.save();
 
+        } else {
+            log.info("Server " + serverBean.name + " exists in database");
+        }
+        return server
+    }
 }

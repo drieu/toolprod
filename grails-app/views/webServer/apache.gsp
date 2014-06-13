@@ -81,6 +81,30 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Liste des modules</h3>
+                        </div>
+
+                        <div class="panel-body">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nom du modules</th>
+                                </tr>
+                                </thead>
+                                <g:each in="${selectServer?.modules}" var="module">
+                                    <tr>
+                                        <td></td>
+                                        <td>${module}</td>
+                                    </tr>
+                                </g:each>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </g:if>
             <g:else>
                 <div class="well well-lg">Merci de choisir un serveur apache dans la liste !</div>

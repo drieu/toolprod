@@ -17,26 +17,14 @@ class AdminController {
         log.info("Init action from AdminController : init()")
         if (request instanceof MultipartHttpServletRequest) {
             def file = request.getFile('appLst')
-            def serverName = request.getParameterValues("servername")
+            def machineName = request.getParameterValues("machinename")
+            log.info("Name of machine : " + machineName[0])
+            if((machineName != null) && (file != null) && (!file.isEmpty())) {
 
-            if((serverName != null) && (file != null) && (!file.isEmpty())) {
 
-                Server server = Server.findByName(serverName)
-                if (server == null) {
-                    //TODO : port
-                    server = new Server(name: serverName,portNumber: 80, serverType: Server.TYPE.APACHE)
-                    if( !server.save()) {
-                        log.error("Can't save Server :" + server )
-                        flash.error = 'Error when parsing file.'
-                        throw new Exception("Can't save Server !")
-                    } else {
-                        log.info("Save successful :" + server);
-                    }
-                } else {
-                    log.debug("Server " + serverName + " exists in database")
-                }
-                HttpdParser parser = new HttpdParser();
-                boolean bResult = parser.parse(server, file.inputStream);
+                HttpdParser parser = new HttpdParser(file.inputStream, machineName[0]);
+
+                boolean bResult = parser.parse();
                 if (bResult) {
                     flash.message = 'Import successfull'
                 } else {
@@ -49,7 +37,7 @@ class AdminController {
                 parser.parseLocationFromApacheConf(file.inputStream)
 
             } else {
-                log.debug("init() servername:" + serverName)
+                log.debug("init() machineName:" + machineName)
                 flash.error = 'Import failed because file is null or is empty'
             }
         }

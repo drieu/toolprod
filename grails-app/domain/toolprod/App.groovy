@@ -1,5 +1,7 @@
 package toolprod
 
+import fr.edu.toolprod.bean.AppBean
+
 /**
  * Application class.
  * TODO : CT
@@ -65,6 +67,17 @@ class App {
 
     }
 
+    public static saveApp(AppBean appBean) {
+        App lineApp = App.findByName{name==appBean.name}
+        if ( lineApp == null ) {
+            //TODO : description
+            App app = new App(name: appBean.name, description: appBean.description )
+            app.save();
+        }
+        return lineApp;
+    }
+
+
     @Override
     public java.lang.String toString() {
         return "App{" +
@@ -76,4 +89,7 @@ class App {
                 ", version=" + version +
                 '}';
     }
+
+
+
 }
