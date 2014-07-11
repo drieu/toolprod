@@ -37,7 +37,7 @@
                         <p class="help-block">Vous devez choisir un fichier httpd.conf</p>
                     </div>
                     <div class="form-group">
-                        <label for="servername">Nom de la machine</label>
+                        <label for="machinename">Nom de la machine</label>
                         <input type="text" class="form-control" id="machinename" name="machinename" placeholder="web3.ac-limoges.fr" value="appliloc5.ac-limoges.fr">
                     </div>
                     <button type="submit" class="btn btn-info">Submit</button>

@@ -30,4 +30,13 @@ class AppBean {
     String serverPort
 
 
+    @Override
+    public java.lang.String toString() {
+        return "AppBean{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", serverUrl='" + serverUrl + '\'' +
+                ", serverPort='" + serverPort + '\'' +
+                '}';
+    }
 }

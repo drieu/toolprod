@@ -40,6 +40,11 @@ class HttpdParser {
 
     private BufferedReader br;
 
+    private String result = ""
+
+    String getResult() {
+        return result
+    }
 
     HttpdParser(InputStream input, String machineName) {
         inputStream = input;
@@ -47,8 +52,6 @@ class HttpdParser {
         if (machine == null) {
             throw new IllegalArgumentException("Machine must exist !")
         }
-
-        defineApacheServer(machineName);
     }
 
     private def defineMachine(String machineName) {
@@ -66,8 +69,9 @@ class HttpdParser {
     }
 
 
-    private def defineApacheServer(String defaultServerName) {
-        boolean bResult = false;
+    def parse() {
+        boolean bResult = true;
+        result = "";
 
         String strLine
         String serverName
@@ -133,13 +137,16 @@ class HttpdParser {
             }
 
         } catch (IOException e) {
-            bResult = false;
+            bResult = false
+            result += "Impossible de parser le fichier !<br/>"
             log.error("Failed to parse file : " + e.printStackTrace())
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
+                    bResult = false
+                    result += "Impossible de parser le fichier !<br/>"
                     log.error("Failed to parse file : " + e.printStackTrace())
                 }
             }
@@ -147,6 +154,8 @@ class HttpdParser {
                 try {
                     br.close();
                 } catch (IOException e) {
+                    bResult = false
+                    result += "Impossible de parser le fichier !<br/>"
                     log.error("Failed to parse file : " + e.getMessage())
                     e.printStackTrace();
                 }
@@ -163,9 +172,28 @@ class HttpdParser {
             machine.save();
             log.info("Save OK server " + serverName + " in machine " + machine.name);
         }
-        for (AppBean appBean : appBeans) {
 
-            App app = App.saveApp(appBean);
+        log.info("Number of application found in this file :" + appBeans.size())
+
+        for (AppBean appBean : appBeans) {
+            App app = null;
+
+
+            App lineApp = App.findByName{name==appBean.name}
+            if ( lineApp == null ) {
+                if (appBean.description == null) {
+                    log.info("Initialize description to EMPY")
+                    appBean.description = "EMPTY";
+                }
+                app = new App(name: appBean.name, description: appBean.description, url:appBean.serverUrl )
+                app.save();
+                log.info("Save App " + appBean.name + " OK")
+                result = result + "Ajout de l'application :" + appBean.name + "\n"
+            } else {
+                log.warn("App " + appBean.name + "still exists in database.")
+            }
+
+
             if (app != null) {
                 server.addToLinkApps(appBean.name);
                 server.save();
@@ -179,36 +207,10 @@ class HttpdParser {
                 }
             }
 
-//            App lineApp = App.findByName(appName)
-//            if ( lineApp == null ) {
-//                //TODO : description
-//                App app = new App(name: appName, description: "test", url: appUrl )
-//                app.addServer(server)
-//                if (!app.save()) {
-//                    log.info("Can't save application app :" + app);
-//                } else {
-//                    log.info("Save application app OK :" + app)
-//                    server.addToLinkApps(appName)
-//                    server.save()
-//                    log.info("Save in list apps of server OK :" + appName)
-//                    Machine machine = Machine.findByName(appServer)
-//                    if (machine == null) {
-//                        machine = new Machine(name: appServer, ipAddress: "127.0.0.1")
-//                    }
-//                    machine.addApplication(app)
-//                    machine.addServer(server)
-//                    if (!machine.save()) {
-//                        log.error("Can't Save machine " + appServer)
-//                    } else {
-//                        log.info("Save machine OK:" + appServer)
-//                    }
-//
-//                }
-//            } else {
-//                log.debug("Application App " + appName + " still exists in database.")
-//            }
+
         }
 
+        result
 
     }
 
@@ -219,7 +221,7 @@ class HttpdParser {
      * @param inputStream
      * @return true if no error occurs during parsing.
      */
-    def parse() {
+  /*  def parse() {
         boolean bResult = false;
 
         def serverName = EMPTY
@@ -228,7 +230,7 @@ class HttpdParser {
         def appServer = EMPTY
         def appPort = EMPTY
 
-        log.info("Start parsing file ")
+        log.info("Start parsing file ...")
         if ((server != null) && (inputStream != null)) {
             try {
                 br = new BufferedReader(new InputStreamReader(inputStream))
@@ -237,9 +239,6 @@ class HttpdParser {
 
                 while ((strLine = br.readLine()) != null) {
                     log.info("Line : " + strLine)
-
-
-
 
                     //If ProxyPass               /appli http://webX.fr:PORT/APPLI
                     if (strLine.startsWith(PROXY_PASS + SPACE)) {
@@ -299,7 +298,7 @@ class HttpdParser {
         }
         log.info("End of parsing file ")
         return bResult
-    }
+    }*/
 
     def close() {
         if (inputStream != null) {

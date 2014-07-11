@@ -26,9 +26,9 @@ class AdminController {
 
                 boolean bResult = parser.parse();
                 if (bResult) {
-                    flash.message = 'Import successfull'
+                    flash.message = parser.result
                 } else {
-                    flash.error = 'Error when parsing file.'
+                    flash.error = parser.result
                 }
 //                  Modules
 //                for (String module in parser.modules) {

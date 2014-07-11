@@ -1,6 +1,7 @@
 package toolprod
 
 import fr.edu.toolprod.bean.AppBean
+import org.apache.commons.logging.LogFactory
 
 /**
  * Application class.
@@ -30,6 +31,9 @@ class App {
 
     static hasMany = [servers : Server]
 
+    private static final log = LogFactory.getLog(this)
+
+    private static final String  EMPTY = "";
 
     static constraints = {
         name(blank:false)
@@ -65,16 +69,6 @@ class App {
             log.debug("Server still in server list.")
         }
 
-    }
-
-    public static saveApp(AppBean appBean) {
-        App lineApp = App.findByName{name==appBean.name}
-        if ( lineApp == null ) {
-            //TODO : description
-            App app = new App(name: appBean.name, description: appBean.description )
-            app.save();
-        }
-        return lineApp;
     }
 
 
