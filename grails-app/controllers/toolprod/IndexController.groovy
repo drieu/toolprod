@@ -17,6 +17,7 @@ class IndexController {
             machine = Machine.findByName(param);
             if ( machine != null) {
                 apps = machine.apps
+                apps = apps.sort{it.name}
                 machineServers = machine.servers
                 log.info("Machine:" + machine.toString())
             }
@@ -31,6 +32,7 @@ class IndexController {
                     ilike('name', "%" + param + "%")
                     ilike('description', "%" + param + "%")
                 }
+                order("name", "asc")
             }
         }
 

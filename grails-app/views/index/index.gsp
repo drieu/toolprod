@@ -53,7 +53,7 @@
                                     <td></td>
                                     <td>${app?.name}</td>
                                     <td>${app?.description}</td>
-                                    <td>${app?.url}</td>
+                                    <td><a href="${app?.url}">${app?.url}</a></td>
                                 </tr>
                             </g:each>
                             </tbody>
@@ -115,16 +115,46 @@
                                 </tr>
                                 </thead>
                                 <g:each in="${apps}" var="app">
+                                    <g:if test="${app.url.contains(machine.name)}" >
                                     <tr>
                                         <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                         <td>${app?.name}</td>
                                         <td>${app?.description}</td>
-                                        <td>${app?.url}</td>
+                                        <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
                                     </tr>
+                                    </g:if>
                                 </g:each>
                             </table>
                         </div>
-                    </div>
+                </div>
+                <div class="row">
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Liste des applications référencées</h3>
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nom</th>
+                                        <th>Description</th>
+                                        <th>url</th>
+                                    </tr>
+                                    </thead>
+                    <g:each in="${apps}" var="app">
+                        <g:if test="${!app.url.contains(machine.name)}" >
+                            <tr>
+                                <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                <td>${app?.name}</td>
+                                <td>${app?.description}</td>
+                                <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
+                            </tr>
+                        </g:if>
+                    </g:each>
+                    </table>
+                </div>
+            </div>
             </g:if>
             <g:else>
                 <div class="well well-lg">Merci de choisir une machine dans la liste !</div>

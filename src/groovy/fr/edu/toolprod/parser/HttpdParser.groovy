@@ -163,10 +163,22 @@ class HttpdParser {
         }
         log.info("ServerBean info:" + serverBean.toString());
 
+        Server server;
+        if ( (serverBean.name == null)) {
+            log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
+            server = new Server(name:machine.name, portNumber: 80, serverType: Server.TYPE.APACHE )
+        } else {
+            server = Server.saveServer(serverBean)
+        }
+
+        if (server == null) {
+            result = "Import du fichier impossible: Pas de serveur web Apache associé au fichier."
+            return false;
+        }
+
         // SAVE
         // Create Machine
         // Create Server
-        Server server = Server.saveServer(serverBean)
         if (!machine.getServers()?.contains(server)) {
             machine.addServer(server);
             machine.save();
@@ -209,8 +221,11 @@ class HttpdParser {
 
 
         }
-
-        result
+        if (bResult) {
+            result += " Import SUCCESS"
+        } else {
+            result += " Import FAILED"
+        }
 
     }
 

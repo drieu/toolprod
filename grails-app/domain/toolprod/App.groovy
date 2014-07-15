@@ -35,6 +35,10 @@ class App {
 
     private static final String  EMPTY = "";
 
+    static mapping = {
+        sort "name":"asc";
+    }
+
     static constraints = {
         name(blank:false)
         description(size:0..400)

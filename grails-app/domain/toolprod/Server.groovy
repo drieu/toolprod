@@ -76,6 +76,7 @@ class Server {
         if (serverBean == null) {
             throw new IllegalArgumentException("Can't save a Server with a null serverBean !")
         }
+        log.info("serverBean:" + serverBean)
         Server server = Server.find{name==serverBean.name; portNumber==serverBean.portNumber}
         if (server == null) {
             server = new Server(name: serverBean.name,portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
@@ -83,7 +84,7 @@ class Server {
             server.save();
 
         } else {
-            log.info("Server " + serverBean.name + " exists in database");
+            log.info("Server still " + serverBean.name + " exist in database");
         }
         return server
     }
