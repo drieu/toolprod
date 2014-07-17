@@ -55,12 +55,12 @@ class HttpdParserSpec extends GrailsUnitTestCase {
         HttpdParser parser = new HttpdParser()
 
         // Null case.
-        def modules = parser.getApacheModules(null)
+        def modules = parser.extractLoadModule(null)
         assertNotNull("Module list should be empty and not null", modules)
         assertEquals(0, modules.size())
 
         //Usual case.
-        modules = parser.getApacheModules("LoadModule access_module modules/mod_access.so")
+        modules = parser.extractLoadModule("LoadModule access_module modules/mod_access.so")
         assertNotNull("Module list should be empty and not null", modules)
         assertEquals(1, modules.size())
         assertTrue(modules.contains("access_module"))

@@ -22,7 +22,7 @@
                     Serveurs ${type}
                 </a>
                 <g:each in="${servers}" var="server">
-                    <a href="<g:createLink action="getMachineApps" params="[server:server.name]" />" class="list-group-item">
+                    <a href="<g:createLink action="getWebServer" params="[name:server.name, type:'weblogic', port: server.portNumber]" />" class="list-group-item">
                         ${server.name}
                     </a>
                 </g:each>

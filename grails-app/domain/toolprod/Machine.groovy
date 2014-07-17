@@ -23,7 +23,7 @@ class Machine {
 
     static constraints = {
         name()
-        ipAddress()
+        ipAddress(nullable: true)
     }
 
     def addApplication(App app) {
