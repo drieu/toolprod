@@ -28,7 +28,7 @@ class Machine {
 
     def addApplication(App app) {
         if (app == null) {
-            throw new IllegalArgumentException("Can't add a null server to Machine apps list !")
+            throw new IllegalArgumentException("Can't add a null application to Machine apps list !")
         }
         apps.add(app)
         this.save()

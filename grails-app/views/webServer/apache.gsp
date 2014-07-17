@@ -22,9 +22,9 @@
                     Serveurs ${type}
                 </a>
                 <g:each in="${servers}" var="server">
-                    <a href="<g:createLink action="getWebServer" params="[name: server.name]"/>"
+                    <a href="<g:createLink action="getWebServer" params="[name: server.name , type:'apache', port: server.portNumber]"/>"
                        class="list-group-item">
-                        ${server.name}
+                        ${server.name} : ${server.portNumber}
                     </a>
                 </g:each>
             </div>

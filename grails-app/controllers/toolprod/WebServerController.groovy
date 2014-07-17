@@ -16,8 +16,9 @@ class WebServerController {
         def type = Server.TYPE.APACHE.toString()
 
         String param = params.get("name")
+        String port = params.get("port")
         if (param != null) {
-            selectServer = Server.findByName(param);
+            selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
             log.info("linkapps :" + selectServer.linkToApps)
 
         }
@@ -61,6 +62,9 @@ class WebServerController {
      */
     def getWebServer() {
         def name = params.get("name")
-        redirect(action:"apache", params: [name : name])
+        String type = params.get("type")
+        String port = params.get("port")
+        type = type.toLowerCase()
+        redirect(action:type, params: [name : name, port : port])
     }
 }

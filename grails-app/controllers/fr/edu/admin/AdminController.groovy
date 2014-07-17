@@ -34,7 +34,7 @@ class AdminController {
 //                for (String module in parser.modules) {
 //                    println("Module :" + module)
 //                }
-                parser.parseLocationFromApacheConf(file.inputStream)
+                //parser.parseLocationFromApacheConf(file.inputStream)
 
             } else {
                 log.debug("init() machineName:" + machineName)

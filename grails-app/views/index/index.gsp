@@ -88,7 +88,7 @@
                                 </thead>
                                 <g:each in="${machineServers}" var="mServ">
                                         <tr>
-                                            <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                            <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name,type:mServ?.serverType.toString()]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                             <td>${mServ?.name}</td>
                                             <td>${mServ?.portNumber}</td>
                                             <td>${mServ?.serverType}</td>
