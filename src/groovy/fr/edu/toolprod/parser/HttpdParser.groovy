@@ -2,6 +2,7 @@ package fr.edu.toolprod.parser
 
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
+import fr.edu.toolprod.parser.XmlParser
 import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Machine
@@ -54,6 +55,10 @@ class HttpdParser {
         }
     }
 
+    /**
+     * Define Machine before parsing file (use in constructor).
+     * @param machineName String.
+     */
     private def defineMachine(String machineName) {
         if (machineName == null || machineName.isEmpty()) {
             throw new IllegalArgumentException("MachineName must not be null !")
@@ -63,178 +68,42 @@ class HttpdParser {
     }
 
     /**
-     * Extract name of Server in ServerName.
-     * e.g : ServerName web...
-     * @param line of httpd.conf
-     * @return ServerName
+     * Main method for parse a httpd file.
+     * @return bResult true if OK and false if error. ( error message is stored in result private attribute.
      */
-    def extractListen(String line) {
-        String result = "80"
-        if (line.startsWith(SERVER_PORT)) {
-            def params = line.tokenize()
-            if (params != null) {
-                result = params.get(1);
-            }
-        }
-        return result
-    }
-
-    /**
-     * Extract name of Server in ServerName.
-     * e.g : ServerName web...
-     * @param line of httpd.conf
-     * @return ServerName
-     */
-    def extractServerName(String line) {
-        String result = ""
-        if (line.startsWith(SERVER_NAME)) {
-            def params = line.tokenize()
-            if (params != null) {
-
-                result = params.get(1);
-
-            }
-        }
-        return result
-    }
-
-    /**
-     * Extract module in LoadModule
-     * @param str e.g:LoadModule access_module modules/mod_access.so
-     * @return module (e.g:access_module)
-     */
-    def extractLoadModule(String strLine) {
-        String module = ""
-        if ((strLine != null) && (!strLine.isEmpty())) {
-            def params = strLine.tokenize();
-            final int NB_LINE_ELEMENT = 3; // Number element in LoadModule line.
-            if (params.size() == NB_LINE_ELEMENT ) {
-                module = params.get(1);
-            }
-        }
-        module
-    }
-
-    /**
-     * Extract server and port in ProxyPass
-     * @param line (e.g : http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI )
-     * @return AppBean
-     */
-    def extractProxyPass(String line) {
-        AppBean appBean = null;
-        def params = line.tokenize()
-        final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
-        if (params.size() == NB_LINE_ELEMENT ) {
-            def tmpApp = params.get(1);
-            String appName = extractAppNameInProxyPass(tmpApp);
-            String appUrl = params.get(2);
-
-            // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
-            String appServer = extractServerFromHttpProxyPass(appUrl);
-            String appPort = extractPortFromHttpProxyPass(appUrl);
-
-            appBean = new AppBean();
-            appBean.name = appName;
-            appBean.serverUrl = appUrl;
-            appBean.serverPort = appPort;
-        }
-        return appBean
-    }
-
-    /**
-     * Extract a line with server and port in WebLogicCluster
-     * @param line (e.g: WebLogicCluster webgrh1.ac-limoges.fr:14012, webgrh2.ac-limoges.fr:14012)
-     * @return
-     */
-    def extractWebLogicCluster(String line) {
-        String result = ""
-        if (line.contains("WebLogicCluster")) {
-            def params = line.tokenize(",")
-            log.debug("params wbelo:" + params.toString())
-            for(String weblo :params) {
-                log.debug("weblo:" + weblo)
-
-                final String weblogicClusterLine = "WebLogicCluster "
-                if (weblo.contains(weblogicClusterLine)) {
-                    weblo = weblo.substring(weblogicClusterLine.size() + 1,weblo.size())
-                    result =weblo
-                }
-            }
-        }
-        return result
-    }
-
-    def saveWeblo(List<String> weblos, AppBean appBean) {
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,"TODO","http://test.com");
-        app.save(failOnError: true)
-        log.info("App find or create:" + app)
-        for(String str : weblos) {
-            log.info("parse weblo string:" + str)
-            def params = str.tokenize(":")
-            log.info(params.toString())
-            if (params.size() == 2) {
-                String machinName = params.get(0)
-                String portTest = params.get(1)
-
-                Server server = Server.findOrCreateByNameAndPortNumberAndServerType(machinName,portTest,Server.TYPE.WEBLOGIC)
-                server.addToLinkApps(appBean.name)
-                server.save(failOnError: true)
-                log.info("Server find or create:" + server)
-
-
-                Machine machine = Machine.findOrCreateByName(machinName)
-                machine.addApplication(app)
-                machine.addServer(server)
-                machine.save(failOnError: true)
-                app.addServer(server)
-                log.info("Machine find or create:" + machine)
-            }
-
-        }
-    }
-
     def parse() {
         boolean bResult = true;
         result = "";
 
         String strLine
-        String serverName
-        String port = 80
-        List<String> modules = []
-
-        def appName = EMPTY
-        def appUrl = EMPTY
-        def appServer = EMPTY
-        def appPort = EMPTY
-
         ServerBean serverBean = new ServerBean();
         List<AppBean> appBeans = new ArrayList<>();
 
         try {
 
-            boolean bXml = false
+            boolean bLocationTag = false; // identify begin and end of xml tag Location
 
             String name
             List<String> weblos = new ArrayList<>() //TODO put a list
-            boolean bCT = false
 
             br = new BufferedReader(new InputStreamReader(inputStream))
 
             while ((strLine = br.readLine()) != null) {
 
+                log.debug("strLine:" + strLine)
                 // If ServerName
                 if (strLine.startsWith(SERVER_NAME)) {
-                    serverBean.name = extractServerName(strLine)
+                    serverBean.name = XmlParser.parseServerName(strLine)
                 }
 
                 // If port
                 if (strLine.startsWith(SERVER_PORT)) {
-                    serverBean.portNumber = extractListen(strLine)
+                    serverBean.portNumber = XmlParser.parseListen(strLine)
                 }
 
                 // If LoadModule
                 if (strLine.startsWith(SERVER_MODULE + SPACE)) {
-                    def tmp = extractLoadModule(strLine);
+                    def tmp = XmlParser.parseLoadModule(strLine);
                     if (tmp != null && !tmp.isEmpty()) {
                         serverBean.addToModules(tmp);
                     }
@@ -242,7 +111,7 @@ class HttpdParser {
 
                 // If ProxyPass
                 if (strLine.startsWith(PROXY_PASS + SPACE)) {
-                    AppBean appBean = extractProxyPass(strLine)
+                    AppBean appBean = XmlParser.parseProxyPass(strLine)
                     if (appBean != null) {
                         appBeans.add(appBean);
                     }
@@ -254,33 +123,29 @@ class HttpdParser {
                     String xmlStart = params.get(0)
 
                     //extract name for Location
-                    name = extractLocationName(strLine)
+                    name = XmlParser.parseLocationName(strLine)
                     if (xmlStart != null) {
                         String str = xmlStart.substring(1) //e.g:<Location
-                        bXml = true
+                        bLocationTag = true
                     }
                 }
 
-                if (bXml) {
-                    if (strLine.contains("AuthName CT")) {
-                        bCT = true
-                    }
-
+                if (bLocationTag) {
                     // If WebLogicCluster
-                    String weblo = extractWebLogicCluster(strLine)
-                    if (!weblo.isEmpty()) {
-                        weblos.add(weblo)
+                    List<String> lst = XmlParser.parseWebLogicCluster(strLine)
+                    for(String str : lst) {
+                        weblos.add(str);
                     }
-
+                    log.info(weblos.toString())
                 }
 
                 if (strLine.startsWith("</Location>")) {
-                    log.debug("name:" + name + " weblo:" + weblos.toString() + " CT:" + bCT)
+                    log.debug("name:" + name + " weblo:" + weblos.toString())
                     AppBean appBean = new AppBean(name:name, serverUrl:"http://test.com", serverPort:80);
                     appBeans.add(appBean);
                     saveWeblo(weblos, appBean)
 
-                    bXml = false
+                    bLocationTag = false
                 }
             }
 
@@ -295,31 +160,113 @@ class HttpdParser {
                 bResult = false
             }
         }
+        if (!saveParsingData(serverBean, appBeans)) {
+            bResult = false;
+        }
+
+
+        if (bResult) {
+            result += " Import SUCCESS"
+        } else {
+            result += " Import FAILED"
+        }
+
+    }
+
+    /**
+     * Save weblogic server and weblogic application in database.
+     * @param weblos List<String>
+     * @param appBean AppBean
+     */
+    def saveWeblo(List<String> weblos, AppBean appBean) {
+        if ((weblos == null) || (appBean == null)) {
+            throw new IllegalArgumentException("Bad parameter fot saveWeblo() method !")
+        }
+        log.info("saveWeblo() weblos:" + weblos.toString() + " appBean:" + appBean.toString())
+
+        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,"TODO","http://test.com");
+        app.save(failOnError: true)
+
+        log.info("saveWeblo() App find or create:" + app)
+        for(String str : weblos) {
+
+            def params = str.tokenize(":")
+            log.info(params.toString())
+            if (params.size() == 2) {
+                String machinName = params.get(0)
+                String portTest = params.get(1)
+
+                Server server = Server.findOrCreateByNameAndPortNumberAndServerType(machinName,portTest,Server.TYPE.WEBLOGIC)
+                server.addToLinkApps(appBean.name)
+                server.save(failOnError: true)
+                log.info("saveWeblo() Server find or create:" + server)
+
+
+                Machine machine = Machine.findOrCreateByName(machinName)
+                machine.addApplication(app)
+                machine.addServer(server)
+                machine.save(failOnError: true)
+                log.info("saveWeblo() Machine find or create:" + machine)
+
+                app.addServer(server)
+                app.save(failOnError: true)
+            }
+        }
+    }
+
+    /**
+     * Save parsing data
+     * @param serverBean
+     * @param appBeans
+     * @return
+     */
+    def saveParsingData(ServerBean serverBean, List<AppBean> appBeans) {
         log.info("ServerBean info:" + serverBean.toString());
+        String port = 80
+        boolean bResult = true
 
         // Create Server
         Server server;
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
-            server = new Server(name:machine.name, portNumber: 80, serverType: Server.TYPE.APACHE )
+            server = new Server(name:machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
             // TODO ?
         } else {
             server = Server.saveServer(serverBean)
         }
 
         if (server == null) {
-            result = "Import du fichier impossible: Pas de serveur web Apache associé au fichier."
-            return false;
+            result += "Import du fichier impossible: Pas de serveur web Apache associé au fichier."
+            bResult = false;
+        } else {
+            if (!machine.getServers()?.contains(server)) {
+                machine.addServer(server);
+                machine.save();
+                log.info("Save OK server " + server.name + " in machine " + machine.name);
+            }
+
+            log.info("Number of application found in this file :" + appBeans.size())
+
+            saveAppBean(appBeans, server)
+        }
+        return bResult;
+    }
+
+    /**
+     * Save a List of AppBean found in parse file.
+     * @param appBeans List<AppBean>
+     * @param server Server
+     */
+    def saveAppBean(List<AppBean> appBeans, Server server) {
+
+        if (appBeans == null) {
+            throw new IllegalArgumentException("saveAppBean() appBeans must not be null ! ")
         }
 
-        // SAVE
-        if (!machine.getServers()?.contains(server)) {
-            machine.addServer(server);
-            machine.save();
-            log.info("Save OK server " + serverName + " in machine " + machine.name);
+        if (server == null) {
+            throw new IllegalArgumentException("saveAppBean() server must not be null ! ")
         }
 
-        log.info("Number of application found in this file :" + appBeans.size())
 
         for (AppBean appBean : appBeans) {
 
@@ -338,7 +285,6 @@ class HttpdParser {
                     server.save(failOnError: true);
                 } else {
                     log.debug("Nothing to save application:" + appBean.name + " still exist in the app list of web server:" + server.name )
-
                 }
 
                 // Add to the machine app list only if it's a local application ( same name of machine in URL )
@@ -353,16 +299,12 @@ class HttpdParser {
                 }
             }
         }
-        if (bResult) {
-            result += " Import SUCCESS"
-        } else {
-            result += " Import FAILED"
-        }
-
     }
 
-
-
+    /**
+     * Close inpustream fo file to parse.
+     * @return String result EMPTY if there is no error or a message.
+     */
     def close() {
         String result = ""
         if (inputStream != null) {
@@ -385,130 +327,5 @@ class HttpdParser {
         return result
     }
 
-    /**
-     * Extract app name without '/'
-     * @param param e.g: '/app/'
-     * @return empty or string(e.g:'app')
-     */
-    def extractAppNameInProxyPass(String param) {
-        String result = ""
-        if ((param != null) && (param.size() > 1)) {
-            result = param;
-            if (result.startsWith("/")) {
-                result = result.substring(1);
-            }
-            if (result.endsWith("/")) {
-                result = result.substring(0, (result.length() - 1))
-            }
-        }
-        result
-    }
 
-    /**
-     * Extract server in HTTP ProxyPass
-     * @param myUrl e.g: http://webX.fr:PORT/APPLI
-     * @return server e.g : webX.fr in http://webX.fr:PORT/APPLI
-     */
-    def extractServerFromHttpProxyPass(String myUrl) {
-        String result = EMPTY;
-        String strProtocol = extractProtocol(myUrl)
-
-        if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON.toString()))) {
-            // extract after http://
-            String str = EMPTY;
-            int beginIndex = strProtocol.size();
-            str = myUrl.substring(beginIndex);
-
-            int pos = str.indexOf(COLON.toString());
-            if (pos > 0) {
-                // extract before :
-                result = str.substring(0, pos);
-            } else { //webX.fr/appli/
-                pos = str.indexOf(SLASH);
-                if (pos > 0) {
-                    result = str.substring(0, pos);
-                } else {
-                    result = str;
-                }
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Extract server in HTTPS ProxyPass
-     * @param myUrl e.g: http://webX.fr:PORT/APPLI
-     * @return port e.g : PORT in http://webX.fr:PORT/APPLI
-     */
-    def extractPortFromHttpProxyPass(String myUrl) {
-        String strPort = EMPTY;
-        String strProtocol = extractProtocol(myUrl)
-        if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON.toString()))) {
-            // extract after http://
-            String str = EMPTY;
-            int beginIndex = HTTP.size();
-            str = myUrl.substring(beginIndex);
-
-            int pos = str.indexOf(COLON.toString());
-            if (pos > 0) {
-                // extract before :
-                str = str.substring(pos+1);
-                if ((str != null) && (str.contains(SLASH))) {
-                    pos = str.indexOf(SLASH);
-                    if (pos > 0) {
-                        strPort = str.substring(0, pos);
-                    }
-                }
-            }
-        }
-        return strPort;
-    }
-
-    /**
-     * Extract protocol HTTP or HTTP from url.
-     * @param myUrl e.g:http://webX.fr:PORT/APPLI
-     * @return HTTP or HTTP. If no protocol set, return ""
-     */
-    private String extractProtocol(String myUrl) {
-        String strProtocol = EMPTY
-        if ( myUrl != null ) {
-            if (myUrl.startsWith(HTTP)) {
-                strProtocol = HTTP;
-            } else if (myUrl.startsWith(HTTPS)) {
-                strProtocol = HTTPS;
-            } else {
-                log.warn("extractServerFromHttpsProxyPass : Can't extract server because no protocol is set.")
-                strProtocol = EMPTY;
-            }
-        }
-        strProtocol
-    }
-
-
-
-
-    /**
-     * Extract Name contains in <Location /NAME> line.
-     * It will delete / and > in /NAME>
-     * @param line e.g: <Location /NAME>
-     * @return NAME or ""
-     */
-    def extractLocationName(String line) {
-        String name = EMPTY
-
-        if (line != null) {
-            def params = line.tokenize()
-            String location = params.get(0)
-            String locationName = params.get(1)
-            if ((location != null) && (location.contains("<Location")) && (locationName != null)) {
-                name = locationName
-                if (locationName.startsWith("/")) {
-                    if (locationName.endsWith(">")) {
-                        name= locationName.substring(1, (name.length() - 1))
-                    }
-                }
-            }
-        }
-        return name
-    }
 }
