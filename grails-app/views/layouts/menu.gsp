@@ -26,17 +26,17 @@
                         <li class="divider"></li>
                     </ul>
                 </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Bases <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li class="disabled"><a href="#">Base DB2</a></li>
-                        <li class="divider"></li>
-                        <li class="disabled"><a href="#">Base Mysql</a></li>
-                        <li class="divider"></li>
-                        <li class="disabled"><a href="#">Base SQL Server</a></li>
-                        <li class="divider"></li>
-                    </ul>
-                </li>
+                %{--<li class="dropdown">--}%
+                    %{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Bases <b class="caret"></b></a>--}%
+                    %{--<ul class="dropdown-menu">--}%
+                        %{--<li class="disabled"><a href="#">Base DB2</a></li>--}%
+                        %{--<li class="divider"></li>--}%
+                        %{--<li class="disabled"><a href="#">Base Mysql</a></li>--}%
+                        %{--<li class="divider"></li>--}%
+                        %{--<li class="disabled"><a href="#">Base SQL Server</a></li>--}%
+                        %{--<li class="divider"></li>--}%
+                    %{--</ul>--}%
+                %{--</li>--}%
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications <b class="caret"></b></a>
                     <ul class="dropdown-menu">

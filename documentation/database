@@ -1,0 +1,5 @@
+
+create database toolprod;
+GRANT ALL ON toolprod.* TO 'root'@'localhost' IDENTIFIED BY 'TODO';
+GRANT ALL ON toolprod.* TO 'root'@'%' IDENTIFIED BY 'TODO';
+flush privileges;

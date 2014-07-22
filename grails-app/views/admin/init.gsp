@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-group">
                         <label for="machinename">Nom de la machine</label>
-                        <input type="text" class="form-control" id="machinename" name="machinename" placeholder="web3.ac-limoges.fr" value="appliloc5.ac-limoges.fr">
+                        <input type="text" class="form-control" id="machinename" name="machinename" placeholder="web3.ac-limoges.fr" value="">
                     </div>
                     <button type="submit" class="btn btn-info">Submit</button>
                 </form>

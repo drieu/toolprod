@@ -1,3 +1,5 @@
 This file was created by IntelliJ IDEA 12.1.6 for binding GitHub repository
 
-TODO : https://github.com/kkapelon/Apache-Httpd-conf-Reader
+Bug :
+- WebLogicHost and WebLogicPort for eid
+- Pb application dans include.frontal ==> appliloc5 (creation annuaire_web)
