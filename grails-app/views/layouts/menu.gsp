@@ -21,9 +21,9 @@
                         <li><a href="/toolprod/webServer/apache">Serveurs apache</a></li>
                         <li class="divider"></li>
                         <li><a href="/toolprod/webServer/weblogic">Serveur weblogic</a></li>
-                        <li class="divider"></li>
-                        <li class="disabled"><a href="#">Autres Serveurs</a></li>
-                        <li class="divider"></li>
+                        %{--<li class="divider"></li>--}%
+                        %{--<li class="disabled"><a href="#">Autres Serveurs</a></li>--}%
+                        %{--<li class="divider"></li>--}%
                     </ul>
                 </li>
                 %{--<li class="dropdown">--}%
@@ -37,17 +37,15 @@
                         %{--<li class="divider"></li>--}%
                     %{--</ul>--}%
                 %{--</li>--}%
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li class="disabled"><a href="#">Application Weblogic</a></li>
-                        <li class="divider"></li>
-                        <li class="disabled"><a href="#">Application PHP</a></li>
-                        <li class="divider"></li>
-                        <li class="disabled"><a href="#">Autre</a></li>
-                        <li class="divider"></li>
-                    </ul>
-                </li>
+                %{--<li class="dropdown">--}%
+                    %{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications <b class="caret"></b></a>--}%
+                    %{--<ul class="dropdown-menu">--}%
+                        %{--<li class="disabled"><a href="#">Application Weblogic</a></li>--}%
+                        %{--<li class="divider"></li>--}%
+                        %{--<li class="disabled"><a href="#">Application PHP</a></li>--}%
+                        %{--<li class="divider"></li>--}%
+                    %{--</ul>--}%
+                %{--</li>--}%
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
@@ -58,11 +56,11 @@
                     </div>
                 </g:form>
             %{--</form>--}%
-                <li><a href="#">Wiki</a></li>
+                <li><a href="http://dialdev2.ac-limoges.fr/wikipie/doku.php?id=accueil" target="_blank">Wiki</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Outils <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Recherche dans le LDAP</a></li>
+                        %{--<li><a href="">Recherche dans le LDAP</a></li>--}%
                         <li><a href="/toolprod/admin">Page d'admin</a></li>
                     </ul>
                 </li>
