@@ -1,5 +1,8 @@
 package toolprod
 
+/**
+ * Controller for Apache and Weblogic.
+ */
 class WebServerController {
 
     /**
