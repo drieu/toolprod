@@ -23,7 +23,7 @@
                 </a>
                 <g:each in="${servers}" var="server">
                     <a href="<g:createLink action="getWebServer" params="[name:server.name, type:'weblogic', port: server.portNumber]" />" class="list-group-item">
-                        ${server.name}
+                        ${server?.name}:${server?.portNumber}
                     </a>
                 </g:each>
             </div>
@@ -70,7 +70,7 @@
                                     </thead>
                                     <g:each in="${selectServer?.linkToApps}" var="linkAppName">
                                         <tr>
-                                            <td></td>
+                                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                             <td>${linkAppName}</td>
                                         </tr>
                                     </g:each>

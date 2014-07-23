@@ -3,23 +3,43 @@ package toolprod
 class WebServerController {
 
     /**
+     * Parameter name in request.
+     */
+    public static final String NAME_PARAM = "name";
+
+    /**
+     * Parameter port in request.
+     */
+    public static final String PORT_PARAM = "port";
+
+    /**
+     * Parameter type in request.
+     */
+    public static final String TYPE_PARAM = "type";
+
+    /**
+     * Use to set empty parameter.
+     */
+    public static final String EMPTY_PARAM = "";
+
+    /**
      * Show apache web page.
      * @return
      */
     def apache() {
-        log.info("apache of WebController")
+        log.debug("WebServerController:apache()")
         def selectServer = null
         def servers = Server.findAll("from Server as s where s.serverType=:type",[type:Server.TYPE.APACHE])
         if (servers.isEmpty()) {
-            log.info("No result return by query !")
+            log.info("WebServerController:apache() No result return by query !")
         }
         def type = Server.TYPE.APACHE.toString()
 
-        String param = params.get("name")
-        String port = params.get("port")
+        String param = params.get(NAME_PARAM)
+        String port = params.get(PORT_PARAM)
         if (param != null) {
             selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
-            log.info("linkapps :" + selectServer.linkToApps)
+            log.info("WebServerController:apache() linkapps :" + selectServer.linkToApps)
 
         }
         return [servers: servers, type: type, selectServer: selectServer]
@@ -30,18 +50,20 @@ class WebServerController {
      * @return
      */
     def weblogic() {
-        log.info("weblogic of WebController")
+        log.debug("WebServerController:weblogic()")
         def selectServer = null
         def servers = Server.findAll("from Server as s where s.serverType=:type",[type:Server.TYPE.WEBLOGIC])
         if (servers.isEmpty()) {
-            log.info("No result return by query !")
+            log.info("WebServerController:weblogic() No result return by query !")
         }
         def type = Server.TYPE.WEBLOGIC.toString()
 
-        String param = params.get("name")
+        String param = params.get(NAME_PARAM)
+        String port = params.get(PORT_PARAM)
+
         if (param != null) {
-            selectServer = Server.findByName(param);
-            log.info("linkapps :" + selectServer.linkToApps)
+            selectServer = Server.findByNameAndPortNumber(param, port);
+            log.debug("WebServerController:weblogic() linkapps :" + selectServer.linkToApps)
 
         }
         return [servers: servers, type: type, selectServer:selectServer]
@@ -49,10 +71,9 @@ class WebServerController {
 
     /**
      * Get the selected weblogic name.
-     * @return
      */
     def getWeblogicServer() {
-        def name = params.get("name")
+        def name = params.get(NAME_PARAM)
         redirect(action:"weblogic", params: [name : name])
     }
 
@@ -61,9 +82,12 @@ class WebServerController {
      * @return server name.
      */
     def getWebServer() {
-        def name = params.get("name")
-        String type = params.get("type")
-        String port = params.get("port")
+        def name = params.get(NAME_PARAM)
+        String type = params.get(TYPE_PARAM)
+        String port = params.get(PORT_PARAM)
+        if (type == null) {
+            type = EMPTY_PARAM;
+        }
         type = type.toLowerCase()
         redirect(action:type, params: [name : name, port : port])
     }
