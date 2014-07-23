@@ -30,11 +30,6 @@ class AdminController {
                 } else {
                     flash.error = parser.result
                 }
-//                  Modules
-//                for (String module in parser.modules) {
-//                    println("Module :" + module)
-//                }
-                //parser.parseLocationFromApacheConf(file.inputStream)
 
             } else {
                 log.debug("init() machineName:" + machineName)

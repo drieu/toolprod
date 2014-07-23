@@ -129,7 +129,12 @@ class XmlParser {
                 log.debug("param :" + weblo)
                 weblo = weblo.trim()
                 if (weblo.contains(weblogicClusterLine)) {
-                    weblo = weblo.substring(weblogicClusterLine.size(), weblo.size())
+                    int pos = 0;
+                    int startOfWeblogicClusterLine = weblo.indexOf(weblogicClusterLine);
+                    if (startOfWeblogicClusterLine > -1) {
+                        pos = startOfWeblogicClusterLine + weblogicClusterLine.size();
+                    }
+                    weblo = weblo.substring(pos, weblo.size())
                 }
                 if (!weblo.isEmpty()) {
                     weblos.add(weblo)

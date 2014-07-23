@@ -143,8 +143,10 @@ class HttpdParser {
                     log.debug("name:" + name + " weblo:" + weblos.toString())
                     AppBean appBean = new AppBean(name:name, serverUrl:"http://test.com", serverPort:80);
                     appBeans.add(appBean);
+                    log.info("weblos :" + weblos.toString())
                     saveWeblo(weblos, appBean)
 
+                    weblos = new ArrayList<>()
                     bLocationTag = false
                 }
             }

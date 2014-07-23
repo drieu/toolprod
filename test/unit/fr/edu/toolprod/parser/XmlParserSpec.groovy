@@ -77,6 +77,10 @@ class XmlParserSpec extends GrailsUnitTestCase {
 
         weblos = XmlParser.parseWebLogicCluster("web1.ac-limoges.fr:77777, web2.ac-limoges.fr:77347")
         assertEquals(0, weblos.size())
+
+        weblos = XmlParser.parseWebLogicCluster("   WebLogicCluster web1.ac-limoges.fr:77777, web2.ac-limoges.fr:77347")
+        assertTrue(!weblos.contains("WebLogicCluster web1.ac-limoges.fr:77777"))
+        assertTrue(!weblos.contains("WebLogicCluster web2.ac-limoges.fr:77347"))
     }
 
 
