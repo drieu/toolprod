@@ -59,6 +59,51 @@ class XmlParserSpec extends GrailsUnitTestCase {
     }
 
     /**
+     * Test extract weblogic port from WebLogicPort line.
+     */
+    void testParseWebLogicPort() {
+        def weblogicPort
+
+        weblogicPort = XmlParser.parseWebLogicPort(null)
+        assertEquals(weblogicPort, "")
+
+        weblogicPort = XmlParser.parseWebLogicPort("")
+        assertEquals(weblogicPort, "")
+
+        weblogicPort = XmlParser.parseWebLogicPort("WebLogicPort 10507")
+        assertEquals(weblogicPort, "10507")
+
+        weblogicPort = XmlParser.parseWebLogicPort("#WebLogicPort 10507")
+        assertEquals(weblogicPort, "")
+
+        weblogicPort = XmlParser.parseWebLogicPort("#   WebLogicPort 10507")
+        assertEquals(weblogicPort, "")
+
+    }
+
+    /**
+     * Test extract weblogic port from WebLogicHost line
+     */
+    void testParseWebLogicHost() {
+        def weblogicHost
+
+        weblogicHost = XmlParser.parseWebLogicHost(null)
+        assertEquals(weblogicHost, "")
+
+        weblogicHost = XmlParser.parseWebLogicHost("")
+        assertEquals(weblogicHost, "")
+
+        weblogicHost = XmlParser.parseWebLogicHost("WebLogicHost webapp5.ac-limoges.fr")
+        assertEquals(weblogicHost, "webapp5.ac-limoges.fr")
+
+        weblogicHost = XmlParser.parseWebLogicHost("#  WebLogicHost webapp5.ac-limoges.fr")
+        assertEquals(weblogicHost, "")
+
+        weblogicHost = XmlParser.parseWebLogicHost("#WebLogicHost webapp5.ac-limoges.fr")
+        assertEquals(weblogicHost, "")
+    }
+
+        /**
      * Test Extract server:port from WebLogicCluster line
      * e.g : WebLogicCluster web1.ac-limoges.fr:77777, web2.ac-limoges.fr:77347
      */
@@ -81,6 +126,10 @@ class XmlParserSpec extends GrailsUnitTestCase {
         weblos = XmlParser.parseWebLogicCluster("   WebLogicCluster web1.ac-limoges.fr:77777, web2.ac-limoges.fr:77347")
         assertTrue(!weblos.contains("WebLogicCluster web1.ac-limoges.fr:77777"))
         assertTrue(!weblos.contains("WebLogicCluster web2.ac-limoges.fr:77347"))
+
+        weblos = XmlParser.parseWebLogicCluster("#   WebLogicCluster web1.ac-limoges.fr:77777, web2.ac-limoges.fr:77347")
+        assertEquals(0, weblos.size())
+
     }
 
 

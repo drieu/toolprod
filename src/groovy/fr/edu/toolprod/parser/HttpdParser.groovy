@@ -84,6 +84,7 @@ class HttpdParser {
             boolean bLocationTag = false; // identify begin and end of xml tag Location
 
             String name
+            def weblogicHost
             List<String> weblos = new ArrayList<>() //TODO put a list
 
             br = new BufferedReader(new InputStreamReader(inputStream))
@@ -135,6 +136,20 @@ class HttpdParser {
                     List<String> lst = XmlParser.parseWebLogicCluster(strLine)
                     for(String str : lst) {
                         weblos.add(str);
+                    }
+
+                    // If WebLogicHost
+                    def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)
+                    if (!tmpWeblogicHost.isEmpty()) {
+                        weblogicHost = tmpWeblogicHost
+                    }
+
+                    // If WebLogicPort
+                    def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
+                    if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
+                        def str = weblogicHost + ":" + tmpWeblogicPort;
+                        weblos.add(str);
+                        weblogicHost = EMPTY
                     }
                     log.info(weblos.toString())
                 }

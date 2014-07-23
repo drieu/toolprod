@@ -27,7 +27,7 @@ environments {
             dbCreate = "create-drop"
             url = "jdbc:mysql://localhost/toolprod"
             username = "root"
-            password = "root"
+            password = ""
         }
 
     }

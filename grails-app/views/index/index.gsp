@@ -116,9 +116,12 @@
             </g:if>
             <g:if test="${machine != null}">
                 <div class="row">
+                    <h1>${machine?.name}</h1>
+                    <br/>
+                    <br/>
                     <p class="text-left">
                         <dl class="dl-horizontal">
-                            <dt>Machine </dt>
+                            <dt>Détails </dt>
                             <dd>Nom : ${machine?.name}</dd>
                             <dd>IP : ${machine?.ipAddress}</dd>
                         </dl>

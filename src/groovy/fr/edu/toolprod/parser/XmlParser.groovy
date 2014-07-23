@@ -111,7 +111,47 @@ class XmlParser {
         return result
     }
 
+    /**
+     * Extract weblogic port from WebLogicPort line.
+     * e.g : WebLogicPort 10507
+     * @param line of httpd.conf
+     * @return String port number
+     */
+    def static parseWebLogicPort(String line) {
+        def result = EMPTY
+        if ( (line!= null) && (line.contains("WebLogicPort")) && (!line.startsWith("#"))) {
+            int pos = 0;
+            int startOfWebLogicPort = line.indexOf("WebLogicPort");
+            if (startOfWebLogicPort > -1) {
+                pos = startOfWebLogicPort + "WebLogicPort".size();
+                result = line.substring(pos, line.size())
+                result = result.trim()
+            }
+        }
+        log.debug("XmlParser:parseWebLogicPort() line:" + line + " result after parsing:" + result)
+        result
+    }
 
+    /**
+     * Extract weblogic host from WebLogicHost line.
+     * e.g : WebLogicHost webapp5.ac-limoges.fr
+     * @param line of httpd.conf
+     * @return String Host
+     */
+    def static parseWebLogicHost(String line) {
+        def result = EMPTY
+        if ( (line!= null) && (line.contains("WebLogicHost")) && (!line.startsWith("#"))) {
+            int pos = 0;
+            int startOfWebLogicHost = line.indexOf("WebLogicHost");
+            if (startOfWebLogicHost > -1) {
+                pos = startOfWebLogicHost + "WebLogicHost".size();
+                result = line.substring(pos, line.size())
+                result = result.trim()
+            }
+        }
+        log.debug("XmlParser:parseWebLogicHost() line:" + line + " result after parsing:" + result)
+        result
+    }
     /**
      * Extract a line with server and port in WebLogicCluster
      * @param line (e.g: WebLogicCluster webgrh1.ac-limoges.fr:14012, webgrh2.ac-limoges.fr:14012)
@@ -120,7 +160,7 @@ class XmlParser {
     def static parseWebLogicCluster(String line) {
         List<String> weblos = new ArrayList<>()
         log.debug("parseWebLogicCluster() line:" + line)
-        if ( (line!= null) && (line.contains("WebLogicCluster"))) {
+        if ( (line!= null) && (line.contains("WebLogicCluster")) && (!line.startsWith("#"))) {
             def params = line.tokenize(SEMICOLON)
             final String weblogicClusterLine = "WebLogicCluster" + SPACE
 
