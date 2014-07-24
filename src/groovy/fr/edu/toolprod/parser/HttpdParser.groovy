@@ -17,25 +17,17 @@ import toolprod.Server
 class HttpdParser {
 
 
-    private static final String HTTP = "http://";
-    private static final String HTTPS = "https://";
-    private static final Character COLON = ':';
-    private static final String SLASH = '/'
     private static final String EMPTY = ""
-
 
     private static final String PROXY_PASS = "ProxyPass"
     private static final String SPACE = ' '
     private static final String SERVER_MODULE = "LoadModule"
     private static final String SERVER_NAME = "ServerName"
     private static final String SERVER_PORT = "Listen"
-    private static final String MACHINE_DEFAULT_IP = "127.0.0.1"
 
     private static final log = LogFactory.getLog(this)
 
     private Machine machine
-
-    private Server server
 
     private InputStream inputStream
 
@@ -43,10 +35,18 @@ class HttpdParser {
 
     private String result = ""
 
+    private String closeResult = EMPTY
+
+
     String getResult() {
         return result
     }
 
+    /**
+     * Constrcutor.
+     * @param input
+     * @param machineName
+     */
     HttpdParser(InputStream input, String machineName) {
         inputStream = input;
         defineMachine(machineName);
@@ -73,7 +73,7 @@ class HttpdParser {
      */
     def parse() {
         boolean bResult = true;
-        result = "";
+        result = EMPTY;
 
         String strLine
         ServerBean serverBean = new ServerBean();
@@ -91,7 +91,6 @@ class HttpdParser {
 
             while ((strLine = br.readLine()) != null) {
 
-                log.debug("strLine:" + strLine)
                 // If ServerName
                 if (strLine.startsWith(SERVER_NAME)) {
                     serverBean.name = XmlParser.parseServerName(strLine)
@@ -146,17 +145,19 @@ class HttpdParser {
 
                     // If WebLogicPort
                     def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
-                    if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
-                        def str = weblogicHost + ":" + tmpWeblogicPort;
-                        weblos.add(str);
-                        weblogicHost = EMPTY
+                    if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
+                        if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
+                            def str = weblogicHost + ":" + tmpWeblogicPort;
+                            weblos.add(str);
+                            weblogicHost = EMPTY
+                        }
                     }
                     log.info(weblos.toString())
                 }
 
                 if (strLine.startsWith("</Location>")) {
                     log.debug("name:" + name + " weblo:" + weblos.toString())
-                    AppBean appBean = new AppBean(name:name, serverUrl:"http://test.com", serverPort:80);
+                    AppBean appBean = new AppBean(name:name);
                     appBeans.add(appBean);
                     log.info("weblos :" + weblos.toString())
                     saveWeblo(weblos, appBean)
@@ -171,7 +172,7 @@ class HttpdParser {
             result += "Impossible de parser le fichier !<br/>"
             log.error("Failed to parse file : " + e.printStackTrace())
         } finally {
-            String closeResult = close()
+            closeResult = close()
             if (!closeResult.isEmpty()) {
                 result = closeResult
                 bResult = false
@@ -181,13 +182,7 @@ class HttpdParser {
             bResult = false;
         }
 
-
-        if (bResult) {
-            result += " Import SUCCESS"
-        } else {
-            result += " Import FAILED"
-        }
-
+        return bResult
     }
 
     /**
@@ -201,7 +196,7 @@ class HttpdParser {
         }
         log.info("saveWeblo() weblos:" + weblos.toString() + " appBean:" + appBean.toString())
 
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,"EMPTY","http://test.com");
+        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl);
         app.save(failOnError: true)
 
         log.info("saveWeblo() App find or create:" + app)
@@ -214,7 +209,9 @@ class HttpdParser {
                 String portTest = params.get(1)
 
                 Server server = Server.findOrCreateByNameAndPortNumberAndServerType(machinName,portTest,Server.TYPE.WEBLOGIC)
-                server.addToLinkApps(appBean.name)
+                if (!server.linkToApps.contains(appBean.name)) {
+                    server.addToLinkApps(appBean.name)
+                }
                 server.save(failOnError: true)
                 log.info("saveWeblo() Server find or create:" + server)
 
@@ -284,14 +281,10 @@ class HttpdParser {
             throw new IllegalArgumentException("saveAppBean() server must not be null ! ")
         }
 
-
         for (AppBean appBean : appBeans) {
 
-            if (appBean.description == null) {
-                log.info("Initialize description to EMPTY")
-                appBean.description = "EMPTY";
-            }
             App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,appBean.description,appBean.serverUrl)
+            myApp.addServer(server)
             myApp.save(failOnError: true)
             log.debug("appBean:" + myApp)
             result = result + appBean.name + "\n"
@@ -344,6 +337,5 @@ class HttpdParser {
         }
         return result
     }
-
 
 }

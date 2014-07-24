@@ -103,7 +103,7 @@
                             <tbody>
                             <g:each in="${searchResults}" var="app">
                                 <tr>
-                                    <td></td>
+                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                     <td>${app?.name}</td>
                                     <td>${app?.description}</td>
                                     <td><a href="${app?.url}">${app?.url}</a></td>
@@ -182,38 +182,35 @@
                                 </g:each>
                             </table>
                         </div>
+                        <br/>
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Liste des applications référencées</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-hover table-striped">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nom</th>
+                                </tr>
+                                </thead>
+                                <g:each in="${machineServers}" var="server">
+                                    <g:each in="${server.linkToApps}" var="str">
+                                        <tr>
+                                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:str]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                            <td>${str}</td>
+                                        </tr>
+                                    </g:each>
+
+                                </g:each>
+                            </table>
+                        </div>
                 </div>
-                %{--<div class="row">--}%
-                        %{--<div class="panel panel-success">--}%
-                            %{--<div class="panel-heading">--}%
-                                %{--<h3 class="panel-title">Liste des applications référencées</h3>--}%
-                            %{--</div>--}%
-                            %{--<div class="panel-body">--}%
-                                %{--<table class="table table-hover table-striped">--}%
-                                    %{--<thead>--}%
-                                    %{--<tr>--}%
-                                        %{--<th>#</th>--}%
-                                        %{--<th>Nom</th>--}%
-                                        %{--<th>Description</th>--}%
-                                        %{--<th>url</th>--}%
-                                    %{--</tr>--}%
-                                    %{--</thead>--}%
-                    %{--<g:each in="${apps}" var="app">--}%
-                        %{--<g:if test="${!app.url.contains(machine.name)}" >--}%
-                            %{--<tr>--}%
-                                %{--<td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>--}%
-                                %{--<td>${app?.name}</td>--}%
-                                %{--<td>${app?.description}</td>--}%
-                                %{--<td><a target="_blank" href="${app?.url}">${app?.url}</a></td>--}%
-                            %{--</tr>--}%
-                        %{--</g:if>--}%
-                    %{--</g:each>--}%
-                    %{--</table>--}%
-                %{--</div>--}%
-            %{--</div>--}%
             </g:if>
             <g:else>
-                <div class="well well-lg">Merci de choisir une machine dans la liste !</div>
+                <g:if test="${searchResults == null}">
+                    <div class="well well-lg">Merci de choisir une machine dans la liste !</div>
+                </g:if>
             </g:else>
             </div>
         </div>

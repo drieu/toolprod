@@ -52,7 +52,7 @@
             %{--<form class="navbar-form navbar-left" role="search" controller="IndexController" action="search" method="GET">--}%
                 <g:form class="navbar-form navbar-left" role="search" controller="index" action="search" method="GET">
                     <div class="form-group">
-                        <g:textField class="form-control" name="query" value="${params.query}" placeholder="serveur, application ..."/>
+                        <g:textField class="form-control" name="query" value="${params.query}" placeholder="application ..."/>
                     </div>
                 </g:form>
             %{--</form>--}%

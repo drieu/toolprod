@@ -12,23 +12,59 @@ class AppBean {
     /**
      * Application name.
      */
-    String name
+    String name = ""
 
     /**
      * Application description.
      */
-    String description
+    String description = ""
 
     /**
      * url of Server which launch the application.
      */
-    String serverUrl
+    String serverUrl = ""
 
     /**
      * port of Server which launch the application.
      */
-    String serverPort
+    String serverPort = ""
 
+    private static final String DEFAUL_APPNAME = "UNEUSED_APP"
+
+    private static final String DEFAUL_DESCRIPTION = "EMPTY"
+
+    private static final String DEFAUL_SERVER_URL = "http://notdefined.com"
+
+    private static final String DEFAUL_SERVER_PORT = "http://notdefined.com"
+
+
+    AppBean(String name, String description, String serverUrl, String serverPort) {
+        this.name = name
+        this.description = description
+        this.serverUrl = serverUrl
+        this.serverPort = serverPort
+    }
+
+    AppBean(String name) {
+        this.name = name
+        this.description = DEFAUL_DESCRIPTION
+        this.serverUrl = DEFAUL_SERVER_URL
+        this.serverPort = DEFAUL_SERVER_PORT
+    }
+
+    AppBean() {
+        this.name = DEFAUL_APPNAME
+        this.description = DEFAUL_DESCRIPTION
+        this.serverUrl = DEFAUL_SERVER_URL
+        this.serverPort = DEFAUL_SERVER_PORT
+    }
+
+    public boolean isDefaulApp() {
+        if (description.equals(DEFAUL_DESCRIPTION) && serverUrl.equals(DEFAUL_SERVER_URL) &&  description.equals(DEFAUL_DESCRIPTION)) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public java.lang.String toString() {

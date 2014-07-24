@@ -29,10 +29,20 @@
         <dl class="dl-horizontal">
             <dt>URL</dt>
             <dd><a href="${app.url}">${app.url}</a></dd>
-            <dt>Serveur web</dt>
+            <dt>Serveur APACHE</dt>
             <dd>
                 <g:each in="${app?.servers}" var="server">
-                    ${server?.name} ( ${server?.serverType?.toString()} )
+                    <g:if test="${server?.serverType.toString() == "APACHE"}">
+                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
+                    </g:if>
+                </g:each>
+            </dd>
+            <dt>Serveur WEBLOGIC</dt>
+            <dd>
+                <g:each in="${app?.servers}" var="server">
+                    <g:if test="${server?.serverType.toString() == "WEBLOGIC"}">
+                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
+                    </g:if>
                 </g:each>
             </dd>
         </dl>

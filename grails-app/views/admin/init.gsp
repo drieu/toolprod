@@ -32,8 +32,8 @@
 
                 <form role="form">
                     <div class="form-group">
-                        <label for="appLst">Choix du fichier à parser</label>
-                        <input type="file" id="appLst" name="appLst">
+                        <label for="files">Choix du fichier à parser</label>
+                        <input type="file" id="files" name="files[]" multiple>
                         <p class="help-block">Vous devez choisir un fichier httpd.conf</p>
                     </div>
                     <div class="form-group">
