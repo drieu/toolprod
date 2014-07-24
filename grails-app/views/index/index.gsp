@@ -18,72 +18,11 @@
 
     <div class="row">
         <div class="col-md-3">
-            <div class="list-group">
-                <a href="#" class="list-group-item active">
-                    Machines Identité
-                </a>
-                <g:each in="${machines}" var="machine">
-                    <g:if test="${machine.name.contains('serid')}">
-                        <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
-                            ${machine.name}
-                        </a>
-                    </g:if>
-                </g:each>
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item active">
-                    Frontaux WEB
-                </a>
-                <g:each in="${machines}" var="machine">
-                    <g:if test="${machine.name.contains('web')}">
-                        <g:if test="${!machine.name.contains('webexaco') && !machine.name.contains('webgrh')}">
-                            <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
-                            ${machine.name}
-                            </a>
-                        </g:if>
-                    </g:if>
-                </g:each>
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item active">
-                    Machines WEBGRH
-                </a>
-                <g:each in="${machines}" var="machine">
-                    <g:if test="${machine.name.contains('webgrh')}">
-                            <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
-                                ${machine.name}
-                            </a>
-
-                    </g:if>
-                </g:each>
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item active">
-                    Machines Scolarité
-                </a>
-                <g:each in="${machines}" var="machine">
-                    <g:if test="${machine.name.contains('wappsco')}">
-                        <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
-                            ${machine.name}
-                        </a>
-                    </g:if>
-                </g:each>
-            </div>
-            <div class="list-group">
-                <a href="#" class="list-group-item active">
-                    Machines
-                </a>
-                <g:each in="${machines}" var="machine">
-                    <g:if test="${!machine.name.startsWith('web') && !machine.name.startsWith('serid') && !machine.name.startsWith('wappsco')}">
-
-                        <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
-                        ${machine.name}
-                        </a>
-                    </g:if>
-
-                </g:each>
-            </div>
-
+            <g:render template="/shared/identity" var="${machines}" />
+            <g:render template="/shared/frontaux" var="${machines}" />
+            <g:render template="/shared/webgrh" var="${machines}" />
+            <g:render template="/shared/sco" var="${machines}" />
+            <g:render template="/shared/other" var="${machines}" />
         </div>
 
         <div class="col-md-9">
@@ -123,7 +62,25 @@
                         <dl class="dl-horizontal">
                             <dt>Détails </dt>
                             <dd>Nom : ${machine?.name}</dd>
-                            <dd>IP : ${machine?.ipAddress}</dd>
+                            %{--<dd>Ping machine :<%--}%
+                                %{--boolean status = false--}%
+                                %{--try {--}%
+                                    %{--def address = InetAddress.getByName(machine?.name);--}%
+                                    %{--def timeoutMillis = 3000 ;--}%
+                                    %{--if (address.isReachable(timeoutMillis)) {--}%
+                                        %{--status = true--}%
+                                    %{--}--}%
+                                %{--} catch( Exception e) {--}%
+                                    %{--status = false--}%
+                                %{--}--}%
+                                %{--%>--}%
+                                %{--<g:if test="${status}">--}%
+                                    %{--<span class="label label-success">OK</span>--}%
+                                %{--</g:if>--}%
+                                %{--<g:else>--}%
+                                    %{--<span class="label label-danger">KO</span>--}%
+                                %{--</g:else>--}%
+                                %{--${machine?.ipAddress}</dd>--}%
                         </dl>
                     </p>
                 </div>
