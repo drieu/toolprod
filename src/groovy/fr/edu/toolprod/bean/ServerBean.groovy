@@ -19,6 +19,11 @@ class ServerBean {
     String portNumber
 
     /**
+     * Hostname.
+     */
+    String machineHostName
+
+    /**
      * Modules Apache list.
      */
     List<String> modules = []

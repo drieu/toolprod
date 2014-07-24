@@ -9,14 +9,19 @@ import org.apache.commons.logging.LogFactory
 class Server {
 
     /**
-     * Server name.
+     * ServerName in apache conf.
      */
     String name
 
     /**
-     * Port Number.
+     * Listen in apache conf.
      */
     Integer portNumber
+
+    /**
+     * Hostname.
+     */
+    String machineHostName
 
 
     Server parent
@@ -45,6 +50,7 @@ class Server {
     static constraints = {
         name()
         portNumber(defaultValue:80)
+        machineHostName(defaultValue:"127.0.0.1")
     }
 
     @Override
@@ -79,7 +85,7 @@ class Server {
         log.info("Save serverBean:" + serverBean)
         Server server = Server.find{name==serverBean.name; portNumber==serverBean.portNumber}
         if (server == null) {
-            server = new Server(name: serverBean.name,portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
+            server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
             server.modules = serverBean.modules;
             server.save();
 

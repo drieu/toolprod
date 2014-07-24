@@ -79,6 +79,7 @@ class HttpdParser {
         ServerBean serverBean = new ServerBean();
         List<AppBean> appBeans = new ArrayList<>();
 
+        serverBean.machineHostName = machine.name
         try {
 
             boolean bLocationTag = false; // identify begin and end of xml tag Location
@@ -208,7 +209,7 @@ class HttpdParser {
                 String machinName = params.get(0)
                 String portTest = params.get(1)
 
-                Server server = Server.findOrCreateByNameAndPortNumberAndServerType(machinName,portTest,Server.TYPE.WEBLOGIC)
+                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName,portTest,Server.TYPE.WEBLOGIC, machinName)
                 if (!server.linkToApps.contains(appBean.name)) {
                     server.addToLinkApps(appBean.name)
                 }
@@ -243,8 +244,8 @@ class HttpdParser {
         Server server;
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
-            server = new Server(name:machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
-            // TODO ?
+            server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
+            server.save(failOnError: true)
         } else {
             server = Server.saveServer(serverBean)
         }
