@@ -140,13 +140,16 @@ class XmlParser {
      */
     def static parseWebLogicHost(String line) {
         def result = EMPTY
-        if ( (line!= null) && (line.contains("WebLogicHost")) && (!line.startsWith("#"))) {
-            int pos = 0;
-            int startOfWebLogicHost = line.indexOf("WebLogicHost");
-            if (startOfWebLogicHost > -1) {
-                pos = startOfWebLogicHost + "WebLogicHost".size();
-                result = line.substring(pos, line.size())
-                result = result.trim()
+        if ( (line!= null) && (line.contains("WebLogicHost"))) {
+            line = line.trim()
+            if (!line.startsWith("#")) {
+                int pos = 0;
+                int startOfWebLogicHost = line.indexOf("WebLogicHost");
+                if (startOfWebLogicHost > -1) {
+                    pos = startOfWebLogicHost + "WebLogicHost".size();
+                    result = line.substring(pos, line.size())
+                    result = result.trim()
+                }
             }
         }
         log.debug("XmlParser:parseWebLogicHost() line:" + line + " result after parsing:" + result)
@@ -160,24 +163,27 @@ class XmlParser {
     def static parseWebLogicCluster(String line) {
         List<String> weblos = new ArrayList<>()
         log.debug("parseWebLogicCluster() line:" + line)
-        if ( (line!= null) && (line.contains("WebLogicCluster")) && (!line.startsWith("#"))) {
-            def params = line.tokenize(SEMICOLON)
-            final String weblogicClusterLine = "WebLogicCluster" + SPACE
+        if ( (line!= null) && (line.contains("WebLogicCluster"))) {
+            line = line.trim()
+            if (!line.startsWith("#")) {
+                def params = line.tokenize(SEMICOLON)
+                final String weblogicClusterLine = "WebLogicCluster" + SPACE
 
-            log.debug("parseWebLogicCluster() params wbelo:" + params.toString())
-            for(String weblo :params) {
-                log.debug("param :" + weblo)
-                weblo = weblo.trim()
-                if (weblo.contains(weblogicClusterLine)) {
-                    int pos = 0;
-                    int startOfWeblogicClusterLine = weblo.indexOf(weblogicClusterLine);
-                    if (startOfWeblogicClusterLine > -1) {
-                        pos = startOfWeblogicClusterLine + weblogicClusterLine.size();
+                log.debug("parseWebLogicCluster() params wbelo:" + params.toString())
+                for(String weblo :params) {
+                    log.debug("param :" + weblo)
+                    weblo = weblo.trim()
+                    if (weblo.contains(weblogicClusterLine)) {
+                        int pos = 0;
+                        int startOfWeblogicClusterLine = weblo.indexOf(weblogicClusterLine);
+                        if (startOfWeblogicClusterLine > -1) {
+                            pos = startOfWeblogicClusterLine + weblogicClusterLine.size();
+                        }
+                        weblo = weblo.substring(pos, weblo.size())
                     }
-                    weblo = weblo.substring(pos, weblo.size())
-                }
-                if (!weblo.isEmpty()) {
-                    weblos.add(weblo)
+                    if (!weblo.isEmpty()) {
+                        weblos.add(weblo)
+                    }
                 }
             }
         }

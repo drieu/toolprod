@@ -201,7 +201,7 @@ class HttpdParser {
         }
         log.info("saveWeblo() weblos:" + weblos.toString() + " appBean:" + appBean.toString())
 
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,"TODO","http://test.com");
+        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,"EMPTY","http://test.com");
         app.save(failOnError: true)
 
         log.info("saveWeblo() App find or create:" + app)
@@ -292,6 +292,7 @@ class HttpdParser {
                 appBean.description = "EMPTY";
             }
             App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,appBean.description,appBean.serverUrl)
+            myApp.save(failOnError: true)
             log.debug("appBean:" + myApp)
             result = result + appBean.name + "\n"
 
@@ -309,7 +310,7 @@ class HttpdParser {
                     machine.addApplication(myApp)
                 }
                 machine.addServer(server)
-                if (!machine.save()) {
+                if (!machine.save(failOnError: true)) {
                     log.error("Can't Save machine " + machine)
                 } else {
                     log.info("Save machine OK:" + machine)

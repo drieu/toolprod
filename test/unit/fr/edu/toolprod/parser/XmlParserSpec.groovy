@@ -79,6 +79,9 @@ class XmlParserSpec extends GrailsUnitTestCase {
         weblogicPort = XmlParser.parseWebLogicPort("#   WebLogicPort 10507")
         assertEquals(weblogicPort, "")
 
+
+
+
     }
 
     /**
@@ -100,6 +103,9 @@ class XmlParserSpec extends GrailsUnitTestCase {
         assertEquals(weblogicHost, "")
 
         weblogicHost = XmlParser.parseWebLogicHost("#WebLogicHost webapp5.ac-limoges.fr")
+        assertEquals(weblogicHost, "")
+
+        weblogicHost = XmlParser.parseWebLogicHost("# ############WebLogicHost wappsco2.ac-limoges.fr")
         assertEquals(weblogicHost, "")
     }
 

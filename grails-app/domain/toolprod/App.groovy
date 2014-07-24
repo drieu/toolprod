@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory
 
 /**
  * Application class.
- * TODO : CT
  */
 class App {
 
