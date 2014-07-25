@@ -284,11 +284,10 @@ class HttpdParser {
         }
 
         for (AppBean appBean : appBeans) {
-
+            log.debug("saveAppBean() appBean:" + appBean)
             App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,appBean.description,appBean.serverUrl)
             myApp.addServer(server)
             myApp.save(failOnError: true)
-            log.debug("appBean:" + myApp)
             result = result + appBean.name + "\n"
 
             if (myApp != null) {

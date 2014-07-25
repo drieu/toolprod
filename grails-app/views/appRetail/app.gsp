@@ -28,7 +28,7 @@
         <br/>
         <dl class="dl-horizontal">
             <dt>URL</dt>
-            <dd><a href="${app.url}">${app.url}</a></dd>
+            <dd><a href="${app.url}" target="_blank">${app.url}</a></dd>
             <dt>Serveur APACHE</dt>
             <dd>
                 <g:each in="${app?.servers}" var="server">

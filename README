@@ -5,6 +5,7 @@ Bug de l'application :
 - Pb application dans include.frontal ==> appliloc5 (creation annuaire_web)
 - Pas de creation de la machine webexaco ( balise LocationMatch )
 - Nom en double dans la liste des serveurs web et la liste des applis
+- Bug with webclasseur / in conf engendre name=null ==> TODO : prendre  le nom du fichier ?
 
 
 Bug dans la conf Apache
