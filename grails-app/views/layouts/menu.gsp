@@ -27,6 +27,12 @@
                     </ul>
                 </li>
                 %{--<li class="dropdown">--}%
+                    %{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>--}%
+                    %{--<ul class="dropdown-menu">--}%
+                        %{--<li><a href="/toolprod/appRetail/status">Status</a></li>--}%
+                    %{--</ul>--}%
+                %{--</li>--}%
+                %{--<li class="dropdown">--}%
                     %{--<a href="#" class="dropdown-toggle" data-toggle="dropdown">Bases <b class="caret"></b></a>--}%
                     %{--<ul class="dropdown-menu">--}%
                         %{--<li class="disabled"><a href="#">Base DB2</a></li>--}%
