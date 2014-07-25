@@ -36,16 +36,16 @@
                 <div class="row">
 
                     <div class="alert alert-success alert-dismissable">
-                        <i>Résultats de la recherche</i>
+                        <i>Résultats de la recherche&nbsp;&nbsp;<span class="badge">${searchResults?.size()}</span></i>
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                         <table class="table table-hover table-striped">
                             <tbody>
                             <g:each in="${searchResults}" var="app">
                                 <tr>
-                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />""><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                     <td>${app?.name}</td>
                                     <td>${app?.description}</td>
-                                    <td><a href="${app?.url}">${app?.url}</a></td>
+                                    <td><a href="${app?.url}"  target="_blank">${app?.url}</a></td>
                                 </tr>
                             </g:each>
                             </tbody>
