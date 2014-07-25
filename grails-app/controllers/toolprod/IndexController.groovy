@@ -23,8 +23,10 @@ class IndexController {
 
         def machines = Machine.findAll("from Machine as m order by m.name");
         def apps = new HashSet()
+        def localApps = new HashSet()
         def machine
         def machineServers
+        List<String> refs = new ArrayList<>()
 
         log.debug("IndexController:index() Parameter machine passed in request:" + params.get("machine"))
         String param = params.get(MACHINE_PARAM)
@@ -32,9 +34,22 @@ class IndexController {
             machine = Machine.findByName(param);
             if ( machine != null) {
                 apps = machine.apps
+                for(App app : apps) {
+                    if( (app?.servers?.size() == 1) && (app?.url?.contains(machine?.name))) {
+                        localApps.add(app)
+                    }
+                }
                 apps = apps.sort{it.name}
                 machineServers = machine?.servers?.sort {it.portNumber }
                 log.info("IndexController:index() Machine:" + machine.toString())
+                for(Server server: machineServers) {
+                    for(String appRef:server?.linkToApps) {
+                        if (!refs.contains(appRef)) {
+                            refs.add(appRef)
+                        }
+                    }
+
+                }
             }
         }
 
@@ -51,7 +66,7 @@ class IndexController {
             }
         }
 
-        return [ apps: apps, machines: machines, machine:machine, machineServers:machineServers, searchResults: results]
+        return [ apps: localApps, machines: machines, machine:machine, machineServers:machineServers, searchResults: results, refs: refs]
 
     }
 

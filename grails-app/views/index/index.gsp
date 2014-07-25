@@ -90,7 +90,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                        Liste des serveurs web  &nbsp;&nbsp;<span class="badge">${machineServers?.size()}</span>
+                                        Liste des serveurs web&nbsp;&nbsp;<span class="badge">${machineServers?.size()}</span>
                                     </a>
                                 </h4>
                             </div>
@@ -130,7 +130,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                        Liste des applications locales&nbsp;&nbsp;<span class="badge">${apps?.size()}</span>
+                                        Liste des applications locales&nbsp;&nbsp;<span class="badge">${apps?.size()}
                                     </a>
                                 </h4>
                             </div>
@@ -146,14 +146,12 @@
                                         </tr>
                                         </thead>
                                         <g:each in="${apps}" var="app">
-                                            <g:if test="${(app?.servers?.size() == 1) && (app?.url?.contains(machine?.name))}" >
                                                 <tr>
                                                     <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                                     <td>${app?.name}</td>
                                                     <td>${app?.description}</td>
                                                     <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
                                                 </tr>
-                                            </g:if>
                                         </g:each>
                                     </table>
                                 </div>
@@ -163,7 +161,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                                        Liste des applications référencées
+                                        Liste des applications référencées&nbsp;&nbsp;<span class="badge">${refs?.size()}</span>
                                     </a>
                                 </h4>
                             </div>
@@ -176,13 +174,11 @@
                                             <th>Nom</th>
                                         </tr>
                                         </thead>
-                                        <g:each in="${machineServers}" var="server">
-                                            <g:each in="${server.linkToApps}" var="str">
+                                        <g:each in="${refs}" var="ref">
                                                 <tr>
-                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:str]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                                    <td>${str}</td>
+                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:ref]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                                    <td>${ref}</td>
                                                 </tr>
-                                            </g:each>
 
                                         </g:each>
                                     </table>
