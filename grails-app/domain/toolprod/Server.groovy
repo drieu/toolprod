@@ -67,11 +67,18 @@ class Server {
                 '}';
     }
 
+    /**
+     * Add an application to linkapps
+     * @param appName application name.
+     */
     def addToLinkApps(String appName) {
         if (linkToApps == null) {
             linkToApps = new ArrayList<String>();
         }
-        linkToApps.add(appName)
+        if (!linkToApps.contains(appName)) {
+            linkToApps.add(appName)
+        }
+        linkToApps.sort()
     }
 
     /**

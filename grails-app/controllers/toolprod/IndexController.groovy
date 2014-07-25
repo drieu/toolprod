@@ -33,7 +33,7 @@ class IndexController {
             if ( machine != null) {
                 apps = machine.apps
                 apps = apps.sort{it.name}
-                machineServers = machine.servers
+                machineServers = machine?.servers?.sort {it.portNumber }
                 log.info("IndexController:index() Machine:" + machine.toString())
             }
         }

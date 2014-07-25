@@ -1,5 +1,20 @@
 This file was created by IntelliJ IDEA 12.1.6 for binding GitHub repository
 
-Bug :
-- WebLogicHost and WebLogicPort for eid
+Bug de l'application :
+- WebLogicHost and WebLogicPort for eid OK
 - Pb application dans include.frontal ==> appliloc5 (creation annuaire_web)
+- Pas de creation de la machine webexaco ( balise LocationMatch )
+- Nom en double dans la liste des serveurs web et la liste des applis
+
+
+Bug dans la conf Apache
+- ServerName incorrect
+- Nom de machine sans ac-limoges.fr
+
+Feature :
+- Ajouter dans la page de la machine :
+
+Liste des serveurs web
+web1.ac-limoges.fr (app1,app2,app3)	8082 	APACHE
+
+- Ajouter un compteur
