@@ -66,6 +66,18 @@ class AppBean {
         return false;
     }
 
+    public def setUrl(String hostname, String port, String app) {
+        String url = DEFAUL_SERVER_URL
+        if ((hostname != null) && (!hostname.isEmpty()) && (app != null) && (!app.isEmpty())) {
+            if ((port != null)  && (!port.isEmpty())) {
+                url = "http://" + hostname + ":" + port + "/" + app
+            } else {
+                url = "http://" + hostname + "/" + app
+            }
+        }
+        this.serverUrl = url
+    }
+
     @Override
     public java.lang.String toString() {
         return "AppBean{" +

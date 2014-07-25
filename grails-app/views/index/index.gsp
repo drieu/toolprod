@@ -123,18 +123,18 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Nom</th>
-                                    <th>Description</th>
+                                    <th>Description </th>
                                     <th>url</th>
                                 </tr>
                                 </thead>
                                 <g:each in="${apps}" var="app">
-                                    <g:if test="${app.url.contains(machine.name)}" >
-                                    <tr>
-                                        <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                        <td>${app?.name}</td>
-                                        <td>${app?.description}</td>
-                                        <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
-                                    </tr>
+                                    <g:if test="${(app?.servers?.size() == 1) && (app?.url?.contains(machine?.name))}" >
+                                        <tr>
+                                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                            <td>${app?.name}</td>
+                                            <td>${app?.description}</td>
+                                            <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
+                                        </tr>
                                     </g:if>
                                 </g:each>
                             </table>

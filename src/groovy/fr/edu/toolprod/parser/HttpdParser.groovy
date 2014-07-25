@@ -159,6 +159,7 @@ class HttpdParser {
                 if (strLine.startsWith("</Location>")) {
                     log.debug("name:" + name + " weblo:" + weblos.toString())
                     AppBean appBean = new AppBean(name:name);
+                    appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, name);
                     appBeans.add(appBean);
                     log.info("weblos :" + weblos.toString())
                     saveWeblo(weblos, appBean)
