@@ -85,83 +85,111 @@
                     </p>
                 </div>
                 <div class="row">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Liste des serveurs web</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom</th>
-                                    <th>Port</th>
-                                    <th>type</th>
-                                </tr>
-                                </thead>
-                                <g:each in="${machineServers}" var="mServ">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                        Liste des serveurs web  &nbsp;&nbsp;<span class="badge">${machineServers?.size()}</span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
                                         <tr>
-                                            <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name, type:mServ?.serverType.toString(), port:mServ?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                            <td>${mServ?.name}</td>
-                                            <td>${mServ?.portNumber}</td>
-                                            <td>${mServ?.serverType}</td>
+                                            <th>#</th>
+                                            <th>Nom</th>
+                                            <th>Liste des applications</th>
+                                            <th>Port</th>
+                                            <th>type</th>
                                         </tr>
-                                </g:each>
-                            </table>
+                                        </thead>
+                                        <g:each in="${machineServers}" var="mServ">
+                                            <tr>
+                                                <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name, type:mServ?.serverType.toString(), port:mServ?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                                <td>${mServ?.name}</td>
+                                                <td><small>
+                                                    <%
+                                                        String result = "";
+                                                        for(String str : mServ?.linkToApps) {
+                                                            result += str;
+                                                            result += " ";
+                                                        }
+                                                    %>${result}</small></td>
+                                                <td>${mServ?.portNumber}</td>
+                                                <td>${mServ?.serverType}</td>
+                                            </tr>
+                                        </g:each>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                        Liste des applications locales&nbsp;&nbsp;<span class="badge">${apps?.size()}</span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseTwo" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nom</th>
+                                            <th>Description </th>
+                                            <th>url</th>
+                                        </tr>
+                                        </thead>
+                                        <g:each in="${apps}" var="app">
+                                            <g:if test="${(app?.servers?.size() == 1) && (app?.url?.contains(machine?.name))}" >
+                                                <tr>
+                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                                    <td>${app?.name}</td>
+                                                    <td>${app?.description}</td>
+                                                    <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
+                                                </tr>
+                                            </g:if>
+                                        </g:each>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                        Liste des applications référencées
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseThree" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nom</th>
+                                        </tr>
+                                        </thead>
+                                        <g:each in="${machineServers}" var="server">
+                                            <g:each in="${server.linkToApps}" var="str">
+                                                <tr>
+                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:str]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                                    <td>${str}</td>
+                                                </tr>
+                                            </g:each>
+
+                                        </g:each>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Liste des applications locales</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom</th>
-                                    <th>Description </th>
-                                    <th>url</th>
-                                </tr>
-                                </thead>
-                                <g:each in="${apps}" var="app">
-                                    <g:if test="${(app?.servers?.size() == 1) && (app?.url?.contains(machine?.name))}" >
-                                        <tr>
-                                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                            <td>${app?.name}</td>
-                                            <td>${app?.description}</td>
-                                            <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
-                                        </tr>
-                                    </g:if>
-                                </g:each>
-                            </table>
-                        </div>
-                        <br/>
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Liste des applications référencées</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom</th>
-                                </tr>
-                                </thead>
-                                <g:each in="${machineServers}" var="server">
-                                    <g:each in="${server.linkToApps}" var="str">
-                                        <tr>
-                                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:str]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                            <td>${str}</td>
-                                        </tr>
-                                    </g:each>
-
-                                </g:each>
-                            </table>
-                        </div>
                 </div>
             </g:if>
             <g:else>
