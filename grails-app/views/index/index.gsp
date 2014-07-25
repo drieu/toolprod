@@ -80,7 +80,7 @@
                                 %{--<g:else>--}%
                                     %{--<span class="label label-danger">KO</span>--}%
                                 %{--</g:else>--}%
-                                %{--${machine?.ipAddress}</dd>--}%
+                                ${machine?.ipAddress}</dd>
                         </dl>
                     </p>
                 </div>
