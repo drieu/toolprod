@@ -3,7 +3,7 @@
         Machines
     </a>
     <g:each in="${machines}" var="machine">
-        <g:if test="${!machine.name.startsWith('web') && !machine.name.startsWith('serid') && !machine.name.startsWith('wappsco')}">
+        <g:if test="${!machine.name.startsWith('webgrh') && !machine.name.startsWith('serid') && !machine.name.startsWith('wappsco')}">
 
             <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
                 ${machine.name}

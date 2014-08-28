@@ -83,6 +83,7 @@ class HttpdParser {
         try {
 
             boolean bLocationTag = false; // identify begin and end of xml tag Location
+            boolean bLocationMatchTag = false; // identify begin and end of xml Match tag Location
 
             String name
             def weblogicHost
@@ -118,7 +119,58 @@ class HttpdParser {
                     }
                 }
 
+                // If LocationMatch
+                if ( (strLine.startsWith("<LocationMatch" + SPACE))) {
+                    def params = strLine.tokenize()
+                    String xmlStart = params.get(0)
 
+                    //extract name for Location
+                    name = XmlParser.parseLocationName(strLine)
+                    if (xmlStart != null) {
+                        String str = xmlStart.substring(1) //e.g:<Location
+                        bLocationMatchTag = true
+                    }
+                }
+
+                if (bLocationMatchTag) {
+                    // If WebLogicCluster
+                    List<String> lst = XmlParser.parseWebLogicCluster(strLine)
+                    for(String str : lst) {
+                        weblos.add(str);
+                    }
+
+                    // If WebLogicHost
+                    def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)
+                    if (!tmpWeblogicHost.isEmpty()) {
+                        weblogicHost = tmpWeblogicHost
+                    }
+
+                    // If WebLogicPort
+                    def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
+                    if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
+                        if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
+                            def str = weblogicHost + ":" + tmpWeblogicPort;
+                            weblos.add(str);
+                            weblogicHost = EMPTY
+                        }
+                    }
+                    log.info(weblos.toString())
+                }
+
+                if (strLine.startsWith("</LocationMatch>")) {
+                    log.debug("name:" + name + " weblo:" + weblos.toString())
+                    AppBean appBean = new AppBean(name:name);
+                    appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, name);
+                    appBeans.add(appBean);
+                    log.info("weblos :" + weblos.toString())
+                    saveWeblo(weblos, appBean)
+
+                    weblos = new ArrayList<>()
+                    bLocationTag = false
+                }
+
+
+                // If Location
                 if ( (strLine.startsWith("<Location" + SPACE))) {
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)

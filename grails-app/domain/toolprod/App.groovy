@@ -41,7 +41,8 @@ class App {
     static constraints = {
         name(blank:false)
         description(size:0..400)
-        url(size:0..350, url:true)
+        // URL set to false because of special URL in Apache configuration e.g: http://web3.ac-limoges.fr/inscrinetcl/([Ee]tab|[Ii]nscription
+        url(size:0..350, url:false)
     }
 
 
