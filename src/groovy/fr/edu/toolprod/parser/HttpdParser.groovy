@@ -127,7 +127,6 @@ class HttpdParser {
                     //extract name for Location
                     name = XmlParser.parseLocationName(strLine)
                     if (xmlStart != null) {
-                        String str = xmlStart.substring(1) //e.g:<Location
                         bLocationMatchTag = true
                     }
                 }
@@ -178,7 +177,6 @@ class HttpdParser {
                     //extract name for Location
                     name = XmlParser.parseLocationName(strLine)
                     if (xmlStart != null) {
-                        String str = xmlStart.substring(1) //e.g:<Location
                         bLocationTag = true
                     }
                 }

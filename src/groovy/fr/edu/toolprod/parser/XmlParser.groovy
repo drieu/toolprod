@@ -307,16 +307,18 @@ class XmlParser {
      */
     def static parseLocationName(String line) {
         String name = EMPTY
-        final int PARAM_SIZE = 2
+        final int MIN_NB_PARAM = 2
         log.debug("ParseLocationName() line:" + line)
         if (line != null) {
             def params = line.tokenize()
             log.debug("ParseLocationName() number of param  :" + params.size())
             // PARAM_SIZE >= 2 in the following case <Location test >
-            if ((params != null) && (params.size() >= PARAM_SIZE) ) {
+            if ((params != null) && (params.size() >= MIN_NB_PARAM) ) {
                 String location = params.get(0)
                 String locationName = params.get(1)
-                log.debug("ParseLocationName() location:" + location + " locationName:" + locationName)
+                String lastParam = params.get(params.size() - 1)
+                lastParam = lastParam?.trim()
+                log.debug("ParseLocationName() location:" + location + " locationName:" + locationName + " lastparam : " + lastParam)
                 if ((location != null) && (location.contains("<Location")) && (locationName != null)) {
                     name = locationName;
                     int begin = 0;
@@ -324,7 +326,10 @@ class XmlParser {
                         begin = 1
                     }
                     if (locationName.endsWith(">")) {
-                        name= locationName.substring(begin, (name.length() - 1))
+                        name = locationName.substring(begin, (name.length() - 1))
+                    }
+                    if (lastParam.equals(">")) {
+                        name = locationName.substring(begin, name.length())
                     }
                 }
             }

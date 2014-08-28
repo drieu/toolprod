@@ -208,6 +208,7 @@ class XmlParserSpec extends GrailsUnitTestCase {
         assertEquals("Parse Bad tag for Location (not finished with >) should return an EMPTY value", "test", XmlParser.parseLocationName("<Location test"))
         assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location test>"))
         assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location test >"))
+        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location /test >"))
 
         assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<LocationMatch test >"))
 
