@@ -1,16 +1,47 @@
 package fr.edu.admin
 
+import fr.edu.toolprod.parser.ConfigParser
 import fr.edu.toolprod.parser.HttpdParser
 import org.apache.commons.logging.LogFactory
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import toolprod.Portal
 import toolprod.Server
 
 class AdminController {
 
-
     def index() {
         println("Index action from AdminController !")
         redirect(action:'upload')
+    }
+
+    /**
+     * Initialize datas.
+     */
+    def initData() {
+        log.info("AdminController:initData() action from AdminController : initData()")
+        if (request instanceof MultipartHttpServletRequest) {
+            def message = ""
+            boolean bResult = true
+            request.getFiles("files[]").each { file ->
+                log.debug("AdminController:initData() file to parse:" + file.originalFilename)
+                ConfigParser configParser = new ConfigParser(file.inputStream)
+                bResult = configParser.parse()
+                if (bResult) {
+                    for(String p : configParser.sportals) {
+                        Portal portal = Portal.findOrCreateByName(p)
+                        portal.save(failOnError: true)
+                    }
+                    flash.message = "SUCCESS : " + message
+                } else {
+                    flash.error = "FAILED : " + message
+                }
+            }
+            if (bResult) {
+                flash.message = "SUCCESS : " + message
+            } else {
+                flash.error = "FAILED : " + message
+            }
+        }
     }
 
     def init() {
@@ -42,6 +73,9 @@ class AdminController {
                 flash.error = "FAILED : " + message
             }
         }
+
+        def portals = Portal.findAll()
+        return [ portals:portals ]
     }
 
     /**

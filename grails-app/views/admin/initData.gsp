@@ -17,7 +17,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">Import de fichier de configuration Apache</h3>
+            <h3 class="panel-title">Import de fichier de configuration des données</h3>
         </div>
         <div class="panel-body">
             <g:if test="${flash.error}">
@@ -27,27 +27,18 @@
                 <div class="alert alert-success alert-dismissable">${flash.message}</div>
             </g:if>
 
-            <g:uploadForm action="init" controller="admin">
+
+            <g:uploadForm action="initData" controller="admin">
+
                 <form role="form">
                     <div class="form-group">
                         <label for="files">Choix du fichier à parser</label>
                         <input type="file" id="files" name="files[]" multiple>
-                        <p class="help-block">Vous devez choisir un fichier httpd.conf</p>
-                    </div>
-                    <div class="form-group">
-                        <label for="machinename">Nom de la machine</label>
-                        <input type="text" class="form-control" id="machinename" name="machinename" placeholder="....ac-limoges.fr" value="">
-                    </div>
-                    <div class="form-group">
-                        <label for="machinename">Portails</label>
-                        <select multiple class="form-control">
-                            <g:each in="${portals}" var="portal">
-                                <option>${portal.name}</option>
-                            </g:each>
-                        </select>
+                        <p class="help-block">Vous devez choisir un fichier de config</p>
                     </div>
                     <button type="submit" class="btn btn-info">Submit</button>
                 </form>
+
             </g:uploadForm>
         </div>
     </div>

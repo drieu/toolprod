@@ -22,13 +22,20 @@ class App {
 
     /**
      * url.
-     * TODO : list of urls ?
      */
     String url
 
-    List<Server> servers = []
+    /**
+     * Portail in which app will be shown.
+     */
+    List<Portal> portals = []
 
-    static hasMany = [servers : Server]
+
+    /**
+     * Server list.
+     */
+    List<Server> servers = []
+    static hasMany = [servers : Server, portals : Portal]
 
     private static final log = LogFactory.getLog(this)
 

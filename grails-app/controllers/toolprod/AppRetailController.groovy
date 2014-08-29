@@ -20,4 +20,12 @@ class AppRetailController {
         def apps=App.findAll()
         return [apps:apps]
     }
+
+    /**
+     * Get a listing of all application.
+     */
+    def listing() {
+        def apps = App.findAll()
+        return [apps:apps]
+    }
 }
