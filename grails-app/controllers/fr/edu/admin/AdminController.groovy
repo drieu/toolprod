@@ -44,8 +44,14 @@ class AdminController {
         }
     }
 
+    /**
+     * method which call httpd parser.
+     * @return
+     */
     def init() {
         log.info("AdminController:init() action from AdminController : init()")
+
+        def portals = Portal.findAll()
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
             boolean bResult = true
@@ -55,8 +61,8 @@ class AdminController {
                 def machineName = request.getParameterValues("machinename")
                 log.info("Name of machine : " + machineName[0])
                 if((machineName != null) && (file != null) && (!file.isEmpty())) {
-
-                    HttpdParser parser = new HttpdParser(file.inputStream, machineName[0]);
+                    List<String> lst = new ArrayList<>() //TODO add parameter from gsp web page
+                    HttpdParser parser = new HttpdParser(file.inputStream, machineName[0], lst);
                     if (!parser.parse()) {
                         bResult = false
                     }
@@ -74,7 +80,7 @@ class AdminController {
             }
         }
 
-        def portals = Portal.findAll()
+
         return [ portals:portals ]
     }
 

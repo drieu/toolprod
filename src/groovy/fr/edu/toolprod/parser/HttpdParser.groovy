@@ -6,6 +6,7 @@ import fr.edu.toolprod.parser.XmlParser
 import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Machine
+import toolprod.Portal
 import toolprod.Server
 
 /**
@@ -37,7 +38,6 @@ class HttpdParser {
 
     private String closeResult = EMPTY
 
-
     String getResult() {
         return result
     }
@@ -47,7 +47,7 @@ class HttpdParser {
      * @param input
      * @param machineName
      */
-    HttpdParser(InputStream input, String machineName) {
+    HttpdParser(InputStream input, String machineName, List<Portal> portals) {
         inputStream = input;
         defineMachine(machineName);
         if (machine == null) {
