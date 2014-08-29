@@ -127,3 +127,10 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+plugin.crash.config = [
+        'crash.ssh.port': 2001,
+        'crash.auth':'simple',
+        'crash.auth.simple.username':'admin',
+        'crash.auth.simple.password':'admin'
+]
