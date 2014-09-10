@@ -40,7 +40,7 @@
                     </div>
                     <div class="form-group">
                         <label for="machinename">Portails</label>
-                        <select multiple class="form-control">
+                        <select name='portalsChoice' multiple class="form-control">
                             <g:each in="${portals}" var="portal">
                                 <option>${portal.name}</option>
                             </g:each>

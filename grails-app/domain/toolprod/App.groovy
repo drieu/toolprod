@@ -83,7 +83,6 @@ class App {
 
     }
 
-
     @Override
     public java.lang.String toString() {
         return "App{" +
@@ -91,11 +90,9 @@ class App {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", url='" + url + '\'' +
+                ", portals=" + portals +
                 ", servers=" + servers +
                 ", version=" + version +
                 '}';
     }
-
-
-
 }

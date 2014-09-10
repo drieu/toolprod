@@ -38,6 +38,8 @@ class HttpdParser {
 
     private String closeResult = EMPTY
 
+    private List<String> selectedPortals
+
     String getResult() {
         return result
     }
@@ -47,11 +49,15 @@ class HttpdParser {
      * @param input
      * @param machineName
      */
-    HttpdParser(InputStream input, String machineName, List<Portal> portals) {
+    HttpdParser(InputStream input, String machineName, List<String> portalsChoice) {
         inputStream = input;
         defineMachine(machineName);
         if (machine == null) {
             throw new IllegalArgumentException("Machine must exist !")
+        }
+        selectedPortals = new ArrayList<>()
+        if (portalsChoice != null ) {
+            selectedPortals = portalsChoice
         }
     }
 
@@ -249,6 +255,15 @@ class HttpdParser {
         log.info("saveWeblo() weblos:" + weblos.toString() + " appBean:" + appBean.toString())
 
         App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl);
+        //Save portals in application
+        for(String str : selectedPortals) {
+            log.debug("=======>Portail:" + str)
+            if (!app.portals.contains(str)) {
+                Portal portal = new Portal(str)
+                portal.save()
+                app.portals.add(portal)
+            }
+        }
         app.save(failOnError: true)
 
         log.info("saveWeblo() App find or create:" + app)

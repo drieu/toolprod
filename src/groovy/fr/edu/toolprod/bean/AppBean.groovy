@@ -29,6 +29,8 @@ class AppBean {
      */
     String serverPort = ""
 
+    List<String> portals = new ArrayList<>()
+
     private static final String DEFAUL_APPNAME = "UNEUSED_APP"
 
     private static final String DEFAUL_DESCRIPTION = "EMPTY"
@@ -78,6 +80,7 @@ class AppBean {
         this.serverUrl = url
     }
 
+
     @Override
     public java.lang.String toString() {
         return "AppBean{" +
@@ -85,6 +88,7 @@ class AppBean {
                 ", description='" + description + '\'' +
                 ", serverUrl='" + serverUrl + '\'' +
                 ", serverPort='" + serverPort + '\'' +
+                ", portals=" + portals +
                 '}';
     }
 }

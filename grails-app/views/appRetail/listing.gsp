@@ -1,4 +1,4 @@
-<%@ page import="toolprod.IndexController" %>
+<%@ page import="toolprod.Portal; toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,11 +33,16 @@
                         <th>Portail </th>
                     </tr>
                     </thead>
-                    <g:each in="${apps}" var="app">
+                    <g:each in="${appBeans}" var="app">
                         <tr>
                             <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                             <td>${app?.name}</td>
-                            <td>${app?.url}</td>
+                            <td>${app?.serverUrl}</td>
+                            <th>
+                                <g:each in="${app?.portals?.findAll()}">
+                                    <span class="label label-info">${it}</span>
+                                </g:each>
+                            </th>
                         </tr>
                     </g:each>
                 </table>

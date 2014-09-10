@@ -28,6 +28,7 @@ class AdminController {
                 bResult = configParser.parse()
                 if (bResult) {
                     for(String p : configParser.sportals) {
+                        log.info("===============>Portail p :" + p)
                         Portal portal = Portal.findOrCreateByName(p)
                         portal.save(failOnError: true)
                     }
@@ -50,7 +51,8 @@ class AdminController {
      */
     def init() {
         log.info("AdminController:init() action from AdminController : init()")
-
+        List<String> portalsChoice = params.portalsChoice
+        log.info("Choix :" + portalsChoice.toString())
         def portals = Portal.findAll()
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
@@ -61,8 +63,7 @@ class AdminController {
                 def machineName = request.getParameterValues("machinename")
                 log.info("Name of machine : " + machineName[0])
                 if((machineName != null) && (file != null) && (!file.isEmpty())) {
-                    List<String> lst = new ArrayList<>() //TODO add parameter from gsp web page
-                    HttpdParser parser = new HttpdParser(file.inputStream, machineName[0], lst);
+                    HttpdParser parser = new HttpdParser(file.inputStream, machineName[0], portalsChoice);
                     if (!parser.parse()) {
                         bResult = false
                     }
