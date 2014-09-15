@@ -27,6 +27,10 @@ class AppRetailController {
      * Get a listing of all application.
      */
     def listing() {
+
+        def portalChoice = params.choice
+
+
         List<AppBean> appBeans = new ArrayList<>()
         def apps = App.findAll()
         for(App app : apps) {
@@ -40,13 +44,22 @@ class AppRetailController {
             for(Portal portal : app.portals) {
                if (portal != null) {
                    if (portal.name != null) {
-                    appBean.portals.add(portal.name)
+                       if (portalChoice != null) {
+                           if (portal.name.equals(portalChoice)) {
+                               log.info("Add : name:" + appBean.name + " portail:" + portalChoice)
+                                appBean.portals.add(portal.name)
+                           }
+                       } else {
+                           appBean.portals.add(portal.name)
+                       }
                    }
                }
            }
            log.info(appBean.toString())
            appBeans.add(appBean)
         }
-        return [appBeans:appBeans]
+
+        def portals = Portal.findAll().unique{ it.name}
+        return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
     }
 }

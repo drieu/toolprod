@@ -10,4 +10,5 @@ class Portal {
 
     static constraints = {
     }
+
 }

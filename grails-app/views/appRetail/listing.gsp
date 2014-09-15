@@ -24,8 +24,26 @@
                 </h4>
             </div>
             <div class="panel-body">
+
+
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Choix du portail
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                        <g:each in="${portals}" var="portal">
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/listing?choice=${portal.name}">${portal.name}</a></li>
+                        </g:each>
+                    </ul>
+                </div>
+                <br/>
+
                 <table class="table table-hover table-striped">
                     <thead>
+                    <caption>
+                        ${portalChoice}
+                    </caption>
                     <tr>
                         <th>#</th>
                         <th>Nom</th>
@@ -34,16 +52,33 @@
                     </tr>
                     </thead>
                     <g:each in="${appBeans}" var="app">
-                        <tr>
-                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                            <td>${app?.name}</td>
-                            <td>${app?.serverUrl}</td>
-                            <th>
-                                <g:each in="${app?.portals?.findAll()}">
-                                    <span class="label label-info">${it}</span>
-                                </g:each>
-                            </th>
-                        </tr>
+                        <g:if test="${portalChoice != null}" >
+
+                            <g:if test="${app.portals.contains(portalChoice)}" >
+                                <tr>
+                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                    <td>${app?.name}</td>
+                                    <td>${app?.serverUrl}</td>
+                                    <th>
+                                        <g:each in="${app?.portals?.findAll()}">
+                                            <span class="label label-info">${it}</span>
+                                        </g:each>
+                                    </th>
+                                </tr>
+                            </g:if>
+                        </g:if>
+                        <g:else>
+                            <tr>
+                                <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                <td>${app?.name}</td>
+                                <td>${app?.serverUrl}</td>
+                                <th>
+                                    <g:each in="${app?.portals?.findAll()}">
+                                        <span class="label label-info">${it}</span>
+                                    </g:each>
+                                </th>
+                            </tr>
+                        </g:else>
                     </g:each>
                 </table>
             </div>
