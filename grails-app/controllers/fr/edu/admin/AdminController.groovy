@@ -51,7 +51,7 @@ class AdminController {
      */
     def init() {
         log.info("AdminController:init() action from AdminController : init()")
-        List<String> portalsChoice = params.portalsChoice
+        List<String> portalsChoice = params.list('portalsChoice')
         log.info("Choix :" + portalsChoice.toString())
         def portals = Portal.findAll()
         if (request instanceof MultipartHttpServletRequest) {
