@@ -16,7 +16,8 @@ class ConfigParser {
     private InputStream inputStream
 
     private static final String EMPTY = ""
-    private String result = ""
+
+    String result = ""
 
     private String closeResult = EMPTY
 
@@ -49,7 +50,7 @@ class ConfigParser {
         } finally {
             closeResult = close()
             if (!closeResult.isEmpty()) {
-                result = closeResult
+                result += closeResult
                 bResult = false
             }
         }

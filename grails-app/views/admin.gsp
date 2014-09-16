@@ -43,8 +43,8 @@
             <h1>Bienvenue sur la page d'admin</h1>
 
             <ul class="nav nav-pills nav-stacked">
-                <li><g:link controller="admin" action="initData">Initialisation des données (portails )</g:link></li>
-                <li><g:link controller="admin" action="init">Import de fichiers Httpd.conf</g:link></li>
+                <li><g:link controller="admin" action="initData">Etape 1 : Initialisation des données (portails )</g:link></li>
+                <li><g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link></li>
                 <li></li>
             </ul>
 

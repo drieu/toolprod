@@ -114,6 +114,11 @@ class HttpdParser {
                 } else if (strLine.startsWith(PROXY_PASS + SPACE)) { // If ProxyPass
                     AppBean appBean = XmlParser.parseProxyPass(strLine)
                     if (appBean != null) {
+                        for (String choice : selectedPortals) {
+                            if (!appBean.portals.contains(choice))  {
+                                appBean.portals.add(choice)
+                            }
+                        }
                         appBeans.add(appBean);
                     }
 

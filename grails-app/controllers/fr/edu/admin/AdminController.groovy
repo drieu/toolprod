@@ -26,9 +26,9 @@ class AdminController {
                 log.debug("AdminController:initData() file to parse:" + file.originalFilename)
                 ConfigParser configParser = new ConfigParser(file.inputStream)
                 bResult = configParser.parse()
+                message = configParser.result
                 if (bResult) {
                     for(String p : configParser.sportals) {
-                        log.info("===============>Portail p :" + p)
                         Portal portal = Portal.findOrCreateByName(p)
                         portal.save(failOnError: true)
                     }
