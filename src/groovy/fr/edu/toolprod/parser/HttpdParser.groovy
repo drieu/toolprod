@@ -45,7 +45,7 @@ class HttpdParser {
     }
 
     /**
-     * Constrcutor.
+     * Constructor.
      * @param input
      * @param machineName
      */
@@ -84,6 +84,7 @@ class HttpdParser {
         String strLine
         ServerBean serverBean = new ServerBean();
         List<AppBean> appBeans = new ArrayList<>();
+        Data data = new Data(machine, selectedPortals);
 
         serverBean.machineHostName = machine.name
         try {
@@ -92,41 +93,31 @@ class HttpdParser {
             boolean bLocationMatchTag = false; // identify begin and end of xml Match tag Location
 
             String name
-            def weblogicHost
             List<String> weblos = new ArrayList<>() //TODO put a list
 
-            br = new BufferedReader(new InputStreamReader(inputStream))
 
+            br = new BufferedReader(new InputStreamReader(inputStream))
             while ((strLine = br.readLine()) != null) {
 
-                // If ServerName
-                if (strLine.startsWith(SERVER_NAME)) {
+                if (strLine.startsWith(SERVER_NAME)) { // If ServerName
                     serverBean.name = XmlParser.parseServerName(strLine)
-                }
 
-                // If port
-                if (strLine.startsWith(SERVER_PORT)) {
+                } else if (strLine.startsWith(SERVER_PORT)) {// If port
                     serverBean.portNumber = XmlParser.parseListen(strLine)
-                }
 
-                // If LoadModule
-                if (strLine.startsWith(SERVER_MODULE + SPACE)) {
+                } else if (strLine.startsWith(SERVER_MODULE + SPACE)) { // If LoadModule
                     def tmp = XmlParser.parseLoadModule(strLine);
                     if (tmp != null && !tmp.isEmpty()) {
                         serverBean.addToModules(tmp);
                     }
-                }
 
-                // If ProxyPass
-                if (strLine.startsWith(PROXY_PASS + SPACE)) {
+                } else if (strLine.startsWith(PROXY_PASS + SPACE)) { // If ProxyPass
                     AppBean appBean = XmlParser.parseProxyPass(strLine)
                     if (appBean != null) {
                         appBeans.add(appBean);
                     }
-                }
 
-                // If LocationMatch
-                if ( (strLine.startsWith("<LocationMatch" + SPACE))) {
+                } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)
 
@@ -135,53 +126,16 @@ class HttpdParser {
                     if (xmlStart != null) {
                         bLocationMatchTag = true
                     }
-                }
 
-                if (bLocationMatchTag) {
-                    // If WebLogicCluster
-                    List<String> lst = XmlParser.parseWebLogicCluster(strLine)
-                    for(String str : lst) {
-                        weblos.add(str);
-                    }
-
-                    // If WebLogicHost
-                    def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)
-                    if (!tmpWeblogicHost.isEmpty()) {
-                        weblogicHost = tmpWeblogicHost
-                    }
-
-                    // If WebLogicPort
-                    def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
-                    if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
-                        if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
-                            def str = weblogicHost + ":" + tmpWeblogicPort;
-                            weblos.add(str);
-                            weblogicHost = EMPTY
-                        }
-                    }
-                    log.info(weblos.toString())
-                }
-
-                if (strLine.startsWith("</LocationMatch>")) {
-                    log.debug("name:" + name + " weblo:" + weblos.toString())
-                    AppBean appBean = new AppBean(name:name);
-                    appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, name);
-                    for (String choice : selectedPortals) {
-                        if (!appBean.portals.contains(choice))  {
-                            appBean.portals.add(choice)
-                        }
-                    }
+                } else if (strLine.startsWith("</LocationMatch>")) {
+                    AppBean appBean = getAppBean(name, serverBean)
                     appBeans.add(appBean);
-                    log.info("weblos :" + weblos.toString())
-                    saveWeblo(weblos, appBean)
+                    data.saveWeblo(weblos, appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
-                }
 
-
-                // If Location
-                if ( (strLine.startsWith("<Location" + SPACE))) {
+                } else if ( (strLine.startsWith("<Location" + SPACE))) { // If Location
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)
 
@@ -190,49 +144,40 @@ class HttpdParser {
                     if (xmlStart != null) {
                         bLocationTag = true
                     }
-                }
 
-                if (bLocationTag) {
-                    // If WebLogicCluster
-                    List<String> lst = XmlParser.parseWebLogicCluster(strLine)
-                    for(String str : lst) {
-                        weblos.add(str);
-                    }
-
-                    // If WebLogicHost
-                    def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)
-                    if (!tmpWeblogicHost.isEmpty()) {
-                        weblogicHost = tmpWeblogicHost
-                    }
-
-                    // If WebLogicPort
-                    def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
-                    if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
-                        if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
-                            def str = weblogicHost + ":" + tmpWeblogicPort;
-                            weblos.add(str);
-                            weblogicHost = EMPTY
-                        }
-                    }
-                    log.info(weblos.toString())
-                }
-
-                if (strLine.startsWith("</Location>")) {
-                    log.debug("name:" + name + " weblo:" + weblos.toString())
-                    AppBean appBean = new AppBean(name:name);
-                    appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, name);
-                    for (String choice : selectedPortals) {
-                        if (!appBean.portals.contains(choice))  {
-                            appBean.portals.add(choice)
-                        }
-                    }
+                } else if (strLine.startsWith("</Location>")) {
+                    AppBean appBean = getAppBean(name, serverBean)
                     appBeans.add(appBean);
-                    log.info("weblos :" + weblos.toString())
-                    saveWeblo(weblos, appBean)
+                    data.saveWeblo(weblos, appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
                 }
+
+                if (bLocationMatchTag) {
+
+                    for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
+                        weblos.add(str);
+                    }
+                    for(String str : parseLocationHostAndPort(strLine)) { // If WebLogicHost and WebLogicPort
+                        weblos.add(str)
+                    }
+                    log.info(weblos.toString())
+                }
+
+
+                if (bLocationTag) {
+
+                    for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
+                        weblos.add(str);
+                    }
+                    for(String str : parseLocationHostAndPort(strLine)) { // If WebLogicHost and WebLogicPort
+                        weblos.add(str)
+                    }
+                    log.info(weblos.toString())
+                }
+
+
             }
 
         } catch (IOException e) {
@@ -246,147 +191,46 @@ class HttpdParser {
                 bResult = false
             }
         }
-        if (!saveParsingData(serverBean, appBeans)) {
+        if (!data.saveParsingData(serverBean, appBeans)) {
             bResult = false;
         }
+        result += data.result
 
         return bResult
     }
 
-    /**
-     * Save weblogic server and weblogic application in database.
-     * @param weblos List<String>
-     * @param appBean AppBean
-     */
-    def saveWeblo(List<String> weblos, AppBean appBean) {
-        if ((weblos == null) || (appBean == null)) {
-            throw new IllegalArgumentException("Bad parameter fot saveWeblo() method !")
-        }
-        log.info("saveWeblo() weblos:" + weblos.toString() + " appBean:" + appBean.toString())
-
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl);
-        //Save portals in application
-        for(String str : selectedPortals) {
-            log.debug("=======>Portail:" + str)
-            if (!app.portals.contains(str)) {
-                Portal portal = new Portal(str)
-                portal.save()
-                app.portals.add(portal)
+    def getAppBean(String appName, ServerBean serverBean) {
+        AppBean appBean = new AppBean(name:appName);
+        appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, appName);
+        for (String choice : selectedPortals) {
+            if (!appBean.portals.contains(choice))  {
+                appBean.portals.add(choice)
             }
         }
-        app.save(failOnError: true)
-
-        log.info("saveWeblo() App find or create:" + app)
-        for(String str : weblos) {
-
-            def params = str.tokenize(":")
-            log.info(params.toString())
-            if (params.size() == 2) {
-                String machinName = params.get(0)
-                String portTest = params.get(1)
-
-                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName,portTest,Server.TYPE.WEBLOGIC, machinName)
-                if (!server.linkToApps.contains(appBean.name)) {
-                    server.addToLinkApps(appBean.name)
-                }
-                server.save(failOnError: true)
-                log.info("saveWeblo() Server find or create:" + server)
-
-
-                Machine machine = Machine.findOrCreateByName(machinName)
-                machine.addApplication(app)
-                machine.addServer(server)
-                machine.save(failOnError: true)
-                log.info("saveWeblo() Machine find or create:" + machine)
-
-                app.addServer(server)
-                app.save(failOnError: true)
-            }
-        }
+        return appBean
     }
 
-    /**
-     * Save parsing data
-     * @param serverBean
-     * @param appBeans
-     * @return
-     */
-    def saveParsingData(ServerBean serverBean, List<AppBean> appBeans) {
-        log.info("ServerBean info:" + serverBean.toString());
-        String port = 80
-        boolean bResult = true
+    def parseLocationHostAndPort(String strLine) {
 
-        // Create Server
-        Server server;
-        if ( (serverBean.name == null)) {
-            log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
-            server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
-            server.save(failOnError: true)
-        } else {
-            server = Server.saveServer(serverBean)
+        List<String> results = new ArrayList<>()
+        def weblogicHost
+        // If WebLogicHost
+        def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)
+        if (!tmpWeblogicHost.isEmpty()) {
+            weblogicHost = tmpWeblogicHost
         }
 
-        if (server == null) {
-            result += "Import du fichier impossible: Pas de serveur web Apache associé au fichier."
-            bResult = false;
-        } else {
-            if (!machine.getServers()?.contains(server)) {
-                machine.addServer(server);
-                machine.save();
-                log.info("Save OK server " + server.name + " in machine " + machine.name);
-            }
-
-            log.info("Number of application found in this file :" + appBeans.size())
-
-            saveAppBean(appBeans, server)
-        }
-        return bResult;
-    }
-
-    /**
-     * Save a List of AppBean found in parse file.
-     * @param appBeans List<AppBean>
-     * @param server Server
-     */
-    def saveAppBean(List<AppBean> appBeans, Server server) {
-
-        if (appBeans == null) {
-            throw new IllegalArgumentException("saveAppBean() appBeans must not be null ! ")
-        }
-
-        if (server == null) {
-            throw new IllegalArgumentException("saveAppBean() server must not be null ! ")
-        }
-
-        for (AppBean appBean : appBeans) {
-            log.debug("saveAppBean() appBean:" + appBean)
-            App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,appBean.description,appBean.serverUrl)
-            myApp.addServer(server)
-            log.debug("saveAppBean() app:" + appBean)
-            myApp.save(failOnError: true)
-            result = result + appBean.name + "\n"
-
-            if (myApp != null) {
-                if (!server.linkToApps.contains(appBean.name)) {
-                    log.debug("Save application:" + appBean.name + " in the app list of web server:" + server.name )
-                    server.addToLinkApps(appBean.name);
-                    server.save(failOnError: true);
-                } else {
-                    log.debug("Nothing to save application:" + appBean.name + " still exist in the app list of web server:" + server.name )
-                }
-
-                // Add to the machine app list only if it's a local application ( same name of machine in URL )
-                if (myApp.url.contains(machine.name)) {
-                    machine.addApplication(myApp)
-                }
-                machine.addServer(server)
-                if (!machine.save(failOnError: true)) {
-                    log.error("Can't Save machine " + machine)
-                } else {
-                    log.info("Save machine OK:" + machine)
-                }
+        // If WebLogicPort
+        def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
+        if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
+            if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
+                def str = weblogicHost + ":" + tmpWeblogicPort;
+                results.add(str);
+                weblogicHost = EMPTY
             }
         }
+
+        return results
     }
 
     /**
