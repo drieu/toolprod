@@ -166,6 +166,11 @@ class HttpdParser {
                     log.debug("name:" + name + " weblo:" + weblos.toString())
                     AppBean appBean = new AppBean(name:name);
                     appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, name);
+                    for (String choice : selectedPortals) {
+                        if (!appBean.portals.contains(choice))  {
+                            appBean.portals.add(choice)
+                        }
+                    }
                     appBeans.add(appBean);
                     log.info("weblos :" + weblos.toString())
                     saveWeblo(weblos, appBean)
@@ -216,6 +221,11 @@ class HttpdParser {
                     log.debug("name:" + name + " weblo:" + weblos.toString())
                     AppBean appBean = new AppBean(name:name);
                     appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, name);
+                    for (String choice : selectedPortals) {
+                        if (!appBean.portals.contains(choice))  {
+                            appBean.portals.add(choice)
+                        }
+                    }
                     appBeans.add(appBean);
                     log.info("weblos :" + weblos.toString())
                     saveWeblo(weblos, appBean)
@@ -352,6 +362,7 @@ class HttpdParser {
             log.debug("saveAppBean() appBean:" + appBean)
             App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name,appBean.description,appBean.serverUrl)
             myApp.addServer(server)
+            log.debug("saveAppBean() app:" + appBean)
             myApp.save(failOnError: true)
             result = result + appBean.name + "\n"
 
