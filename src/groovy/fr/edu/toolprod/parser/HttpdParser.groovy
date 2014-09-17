@@ -215,7 +215,7 @@ class HttpdParser {
         return appBean
     }
 
-    def parseLocationHostAndPort(String strLine) {
+    def static parseLocationHostAndPort(String strLine) {
 
         List<String> results = new ArrayList<>()
         def weblogicHost

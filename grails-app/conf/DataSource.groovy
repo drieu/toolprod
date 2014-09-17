@@ -19,18 +19,18 @@ environments {
             password = ""
         }
     }
-    test {
-        dataSource {
-            pooled = true
-            driverClassName = "com.mysql.jdbc.Driver"
-            dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
-            dbCreate = "create-drop"
-            url = "jdbc:mysql://localhost/toolprod"
-            username = "root"
-            password = ""
-        }
-
-    }
+//    test {
+//        dataSource {
+//            pooled = true
+//            driverClassName = "com.mysql.jdbc.Driver"
+//            dialect = "org.hibernate.dialect.MySQL5InnoDBDialect"
+//            dbCreate = "create-drop"
+//            url = "jdbc:mysql://localhost/toolprod"
+//            username = "root"
+//            password = ""
+//        }
+//
+//    }
     production {
         grails.config.locations = ["file:/opt/apache-tomcat-7.0.47/conf/ConfigToolprod.groovy"]
     }
