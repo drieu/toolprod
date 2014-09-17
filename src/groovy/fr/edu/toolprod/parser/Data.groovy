@@ -121,7 +121,6 @@ class Data {
         return bResult;
     }
 
-
     /**
      * Save a List of AppBean found in parse file.
      * @param appBeans List<AppBean>
@@ -141,11 +140,11 @@ class Data {
             log.debug("saveAppBean() appBean:" + appBean)
             App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl)
             myApp.addServer(server)
-            log.info("LA :" + appBean.portals.toString())
             for (String portalName: appBean.portals) {
                 Portal portal = Portal.findByName(portalName)
-                log.debug("Portal :" + portal.name)
-                myApp.portals.add(portal)
+                if (!myApp.portals.contains(portal)) {
+                    myApp.portals.add(portal)
+                }
             }
             log.debug("saveAppBean() app:" + appBean)
             myApp.save(failOnError: true)
