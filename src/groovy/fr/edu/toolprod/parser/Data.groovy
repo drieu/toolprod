@@ -4,6 +4,7 @@ import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
 import org.apache.commons.logging.LogFactory
 import toolprod.App
+import toolprod.Check
 import toolprod.Machine
 import toolprod.Portal
 import toolprod.Server
@@ -24,7 +25,7 @@ class Data {
     def result
 
 
-    Data(Machine machine, List<String> portals) {
+    Data(Machine machine) {
         this.machine = machine
 
     }
@@ -171,6 +172,16 @@ class Data {
                 }
             }
         }
+    }
+
+    def saveCheck(String fileName, String confServerName) {
+
+        if (machine != null && machine.name != null && fileName != null && confServerName!= null) {
+            Check check = Check.findOrCreateByMachineNameAndFileNameAndConfServerName(machine.name, fileName, confServerName)
+            check.save(failOnError: true)
+        }
+
+
     }
 
 }

@@ -84,7 +84,7 @@ class HttpdParser {
         String strLine
         ServerBean serverBean = new ServerBean();
         List<AppBean> appBeans = new ArrayList<>();
-        Data data = new Data(machine, selectedPortals);
+        Data data = new Data(machine);
 
         serverBean.machineHostName = machine.name
         try {
@@ -237,6 +237,43 @@ class HttpdParser {
 
         return results
     }
+
+
+    def check(String fileName) {
+        boolean bResult = true;
+        result = EMPTY;
+
+        String strLine
+        String machineName = machine.name
+        try {
+
+            br = new BufferedReader(new InputStreamReader(inputStream))
+            while ((strLine = br.readLine()) != null) {
+
+                if (strLine.startsWith(SERVER_NAME)) { // If ServerName
+                    String confServerName = XmlParser.parseServerName(strLine)
+                    Data data = new Data(machine);
+                    data.saveCheck(fileName, confServerName)
+                }
+            }
+
+        } catch (IOException e) {
+            bResult = false
+            result += "Impossible de parser le fichier !<br/>"
+            log.error("Failed to parse file : " + e.printStackTrace())
+        } finally {
+            closeResult = close()
+            if (!closeResult.isEmpty()) {
+                result = closeResult
+                bResult = false
+            }
+        }
+
+        result += result
+
+        return bResult
+    }
+
 
     /**
      * Close inpustream fo file to parse.

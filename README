@@ -6,6 +6,7 @@ Bug de l'application :
 - Pas de creation de la machine webexaco ( balise LocationMatch )
 - Nom en double dans la liste des serveurs web et la liste des applis
 - Bug with webclasseur / in conf engendre name=null ==> TODO : prendre  le nom du fichier ?
+- Bug delete a portal dans l'admin AppController ==> delete constraint error
 
 
 Bug dans la conf Apache
