@@ -12,12 +12,12 @@ class XmlParserSpec extends GrailsUnitTestCase {
      * Test parse of ProxyPass line.
      */
     void testParseProxyPass() {
-        assertNull(XmlParser.parseProxyPass(null))
-        assertNull(XmlParser.parseProxyPass(""))
+        assertNull(XmlParser.parseProxyPass(null, null))
+        assertNull(XmlParser.parseProxyPass("", null))
 
         AppBean appBean
 
-        appBean = XmlParser.parseProxyPass("ProxyPass  /test http://web3.ac-limoges.fr:8123/test")
+        appBean = XmlParser.parseProxyPass("ProxyPass  /test http://web3.ac-limoges.fr:8123/test", null)
         assertNotNull(appBean)
         assertEquals("test",appBean.name)
         assertEquals("http://web3.ac-limoges.fr:8123/test",appBean.serverUrl)

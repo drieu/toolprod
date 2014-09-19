@@ -63,7 +63,7 @@ class AdminController {
                 def machineName = request.getParameterValues("machinename")
                 log.info("Name of machine : " + machineName[0])
                 if((machineName != null) && (file != null) && (!file.isEmpty())) {
-                    HttpdParser parser = new HttpdParser(file.inputStream, machineName[0], portalsChoice);
+                    HttpdParser parser = new HttpdParser(file, machineName[0], portalsChoice);
                     if (!parser.parse()) {
                         bResult = false
                     }

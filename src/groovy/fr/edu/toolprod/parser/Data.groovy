@@ -22,7 +22,7 @@ class Data {
 
     private Machine machine
 
-    def result
+    def result = ''
 
 
     Data(Machine machine) {

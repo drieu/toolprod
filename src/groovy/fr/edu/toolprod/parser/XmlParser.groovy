@@ -31,7 +31,7 @@ class XmlParser {
      * @param line (e.g : http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI )
      * @return AppBean or NULL if bad ProxyPass Line
      */
-    def static parseProxyPass(String line) {
+    def static parseProxyPass(String line, String fileName) {
         log.info("Extract ProxyPass:" + line)
         AppBean appBean = null;
 
@@ -49,6 +49,14 @@ class XmlParser {
 
                 appBean = new AppBean();
                 appBean.name = appName;
+                if (appName.isEmpty()) {
+                    log.warn("Name not found => Get the name in filename:" + fileName)
+                    //Get the name in filename
+                    appBean.name = fileName
+                    if(appBean.name.contains("httpd.conf.")) {
+                        appBean.name = appBean.name.substring("httpd.conf.".length(),appBean.name.length())
+                    }
+                }
                 appBean.serverUrl = appUrl;
                 appBean.serverPort = appPort;
             }

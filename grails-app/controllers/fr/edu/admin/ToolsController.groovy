@@ -30,7 +30,7 @@ class ToolsController {
 
 
                     if((file != null) && (!file.isEmpty())) {
-                        HttpdParser parser = new HttpdParser(file.inputStream, machineName[0], null);
+                        HttpdParser parser = new HttpdParser(file, machineName[0], null);
                         if (!parser.check(machineName[0], file.originalFilename)) {
                             bResult = false
                         }

@@ -30,7 +30,7 @@ class HttpdParser {
 
     private Machine machine
 
-    private InputStream inputStream
+    private def file
 
     private BufferedReader br;
 
@@ -49,8 +49,8 @@ class HttpdParser {
      * @param input
      * @param machineName
      */
-    HttpdParser(InputStream input, String machineName, List<String> portalsChoice) {
-        inputStream = input;
+    HttpdParser(def f, String machineName, List<String> portalsChoice) {
+        file= f;
         defineMachine(machineName);
         if (machine == null) {
             throw new IllegalArgumentException("Machine must exist !")
@@ -96,7 +96,7 @@ class HttpdParser {
             List<String> weblos = new ArrayList<>() //TODO put a list
 
 
-            br = new BufferedReader(new InputStreamReader(inputStream))
+            br = new BufferedReader(new InputStreamReader(file.inputStream))
             while ((strLine = br.readLine()) != null) {
 
                 if (strLine.startsWith(SERVER_NAME)) { // If ServerName
@@ -112,7 +112,7 @@ class HttpdParser {
                     }
 
                 } else if (strLine.startsWith(PROXY_PASS + SPACE)) { // If ProxyPass
-                    AppBean appBean = XmlParser.parseProxyPass(strLine)
+                    AppBean appBean = XmlParser.parseProxyPass(strLine, file.originalFilename)
                     if (appBean != null) {
                         for (String choice : selectedPortals) {
                             if (!appBean.portals.contains(choice))  {
@@ -128,6 +128,14 @@ class HttpdParser {
 
                     //extract name for Location
                     name = XmlParser.parseLocationName(strLine)
+                    if (name.isEmpty()) {
+                        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
+                        //Get the name in filename
+                        name = file.originalFilename
+                        if(name.contains("httpd.conf.")) {
+                           name = name.substring("httpd.conf.".length(),name.length())
+                        }
+                    }
                     if (xmlStart != null) {
                         bLocationMatchTag = true
                     }
@@ -146,6 +154,14 @@ class HttpdParser {
 
                     //extract name for Location
                     name = XmlParser.parseLocationName(strLine)
+                    if (name.isEmpty()) {
+                        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
+                        //Get the name in filename
+                        name = file.originalFilename
+                        if(name.contains("httpd.conf.")) {
+                            name = name.substring("httpd.conf.".length(),name.length())
+                        }
+                    }
                     if (xmlStart != null) {
                         bLocationTag = true
                     }
@@ -248,7 +264,7 @@ class HttpdParser {
 
         String strLine
         try {
-            br = new BufferedReader(new InputStreamReader(inputStream))
+            br = new BufferedReader(new InputStreamReader(file.inputStream))
             while ((strLine = br.readLine()) != null) {
                 if (strLine.startsWith(SERVER_NAME)) { // If ServerName
                     String confServerName = XmlParser.parseServerName(strLine)
@@ -283,9 +299,9 @@ class HttpdParser {
      */
     def close() {
         String result = ""
-        if (inputStream != null) {
+        if (file != null) {
             try {
-                inputStream.close();
+                file.inputStream.close();
             } catch (IOException e) {
                 result += "Impossible de parser le fichier !<br/>"
                 log.error("Failed to parse file : " + e.printStackTrace())
