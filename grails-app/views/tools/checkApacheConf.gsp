@@ -14,19 +14,23 @@
 <body>
 <div class="container">
     <g:applyLayout name="menu" />
+    <g:if test="${flash.error}">
+        <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            ${flash.error}</div>
+    </g:if>
+    <g:if test="${flash.message}">
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            ${flash.message}
+        </div>
+    </g:if>
 
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Choix des fichiers de configuration Apache à vérifier</h3>
         </div>
         <div class="panel-body">
-            <g:if test="${flash.error}">
-                <div class="alert alert-warning alert-dismissable">${flash.error}</div>
-            </g:if>
-            <g:if test="${flash.message}">
-                <div class="alert alert-success alert-dismissable">${flash.message}</div>
-            </g:if>
-
             <g:uploadForm action="checkApacheConf" controller="tools">
                 <form role="form">
                     <div class="form-group">
@@ -42,12 +46,18 @@
                 </form>
             </g:uploadForm>
             <br/>
+            <g:uploadForm action="clearCheckTable" controller="tools">
+                <form role="form">
+                    <button type="submit" class="btn btn-info">Effacer les données</button>
+                </form>
+            </g:uploadForm>
+            <br/>
             <div class="alert alert-success" role="alert">Les données de la table de Check sont effacées à chaque clic !</div>
         </div>
     </div>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">Erreurs dans les fichiers Apache  <span class="badge">${checks?.size()}</span></h3>
+            <h3 class="panel-title">Erreurs dans les fichiers Apache  <span class="badge">${count}</span></h3>
         </div>
         <div class="panel-body">
 
@@ -65,16 +75,14 @@
                 </thead>
                 <tbody>
                     <g:each in="${checks}" var="check">
-                        <g:if test="${!check?.machineName.equals(check?.confServerName)}">
-                            <tr>
-                                <td>${check?.machineName}</td>
-                                <td>${check?.fileName}</td>
-                                <td>${check?.confServerName}</td>
-                                <td>
-                                    <span class="label label-danger">KO</span>
-                                </td>
-                            </tr>
-                        </g:if>
+                        <tr>
+                            <td>${check?.machineName}</td>
+                            <td>${check?.fileName}</td>
+                            <td>${check?.confServerName}</td>
+                            <td>
+                                <span class="label label-danger">KO</span>
+                            </td>
+                        </tr>
                     </g:each>
                 </tbody>
             </table>

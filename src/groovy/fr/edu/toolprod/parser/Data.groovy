@@ -174,10 +174,9 @@ class Data {
         }
     }
 
-    def saveCheck(String fileName, String confServerName) {
-
-        if (machine != null && machine.name != null && fileName != null && confServerName!= null) {
-            Check check = Check.findOrCreateByMachineNameAndFileNameAndConfServerName(machine.name, fileName, confServerName)
+    def saveCheck(String machineName, String fileName, String confServerName) {
+        if (machineName != null && fileName != null && confServerName!= null) {
+            Check check = Check.findOrCreateByMachineNameAndFileNameAndConfServerName(machineName, fileName, confServerName)
             check.save(failOnError: true)
         }
 

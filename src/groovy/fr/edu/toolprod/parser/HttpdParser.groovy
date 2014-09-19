@@ -219,14 +219,12 @@ class HttpdParser {
 
         List<String> results = new ArrayList<>()
         def weblogicHost
-        // If WebLogicHost
-        def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)
+        def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)      // If WebLogicHost
         if (!tmpWeblogicHost.isEmpty()) {
             weblogicHost = tmpWeblogicHost
         }
 
-        // If WebLogicPort
-        def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)
+        def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)   // If WebLogicPort
         if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
             if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
                 def str = weblogicHost + ":" + tmpWeblogicPort;
@@ -238,26 +236,32 @@ class HttpdParser {
         return results
     }
 
-
-    def check(String fileName) {
+    /**
+     * Check in apache configuration if ServerName is equals to machineName
+     * @param machineName
+     * @param fileName
+     * @return  true if no error during parsing
+     */
+    def check(String machineName, String fileName) {
         boolean bResult = true;
         result = EMPTY;
 
         String strLine
-        String machineName = machine.name
         try {
-
             br = new BufferedReader(new InputStreamReader(inputStream))
             while ((strLine = br.readLine()) != null) {
-
                 if (strLine.startsWith(SERVER_NAME)) { // If ServerName
                     String confServerName = XmlParser.parseServerName(strLine)
-                    Data data = new Data(machine);
-                    data.saveCheck(fileName, confServerName)
+                    Data data = new Data(null);
+                    if (!machineName.equals(confServerName)) {
+                        data.saveCheck(machineName, fileName, confServerName)
+                    }
                 }
             }
+            result += ''
 
         } catch (IOException e) {
+
             bResult = false
             result += "Impossible de parser le fichier !<br/>"
             log.error("Failed to parse file : " + e.printStackTrace())
@@ -268,9 +272,7 @@ class HttpdParser {
                 bResult = false
             }
         }
-
         result += result
-
         return bResult
     }
 
