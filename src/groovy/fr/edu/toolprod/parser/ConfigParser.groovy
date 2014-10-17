@@ -25,6 +25,8 @@ class ConfigParser {
 
     public List<String> sportals;
 
+    Map<String, List<String>> machineByGroup = new HashMap<>()
+
     ConfigParser(InputStream input) {
         inputStream = input
     }
@@ -40,6 +42,9 @@ class ConfigParser {
                  if (line.startsWith("portals=")) {
                      result = line
                      sportals = parsePortal(line)
+                 }
+                 if (line.startsWith("group="))  {
+                     parseGroup(line)
                  }
             }
             bResult = true
@@ -57,6 +62,33 @@ class ConfigParser {
         log.info("result=" + result)
         return bResult
     }
+
+    public parseGroup(String line) {
+
+        int posEq = line.indexOf('=')
+        if ( posEq > 0 ) {
+            def strGrp = line.substring(0, posEq)
+
+            int underscorePos = strGrp.indexOf('_')
+            if ( underscorePos > 0 ) {
+                def GroupName = strGrp.substring(underscorePos + 1, strGrp.length())
+                log.info("Groupe name:" + GroupName)
+                def strMachine = line.substring(posEq + 1, line.length())
+
+                def lst = strMachine.tokenize(",")
+                def tmpLst = machineByGroup.get(GroupName)
+                if (tmpLst == null) {
+                    machineByGroup.put(GroupName, lst);
+                } else {
+                    for(String str : lst) {
+                        tmpLst.add(str)
+                        machineByGroup.put(GroupName, tmpLst);
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Parse portals string.

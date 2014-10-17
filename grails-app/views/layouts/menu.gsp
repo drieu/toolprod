@@ -16,14 +16,21 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Machines <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/toolprod/">Machines Identité</a></li>
+                        <li><a href="/toolprod/">Frontaux Web</a></li>
+                        <li><a href="/toolprod/">Machines Scolarité</a></li>
+                        <li class="divider"></li>
+                        <li><a href="/toolprod/">Autres</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Serveurs <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="/toolprod/webServer/apache">Serveurs apache</a></li>
                         <li class="divider"></li>
                         <li><a href="/toolprod/webServer/weblogic">Serveur weblogic</a></li>
-                        %{--<li class="divider"></li>--}%
-                        %{--<li class="disabled"><a href="#">Autres Serveurs</a></li>--}%
-                        %{--<li class="divider"></li>--}%
                     </ul>
                 </li>
                 <li class="dropdown">

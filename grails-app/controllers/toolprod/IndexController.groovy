@@ -11,6 +11,12 @@ class IndexController {
     public static final String MACHINE_PARAM = "machine";
 
     /**
+     * Type de machine
+     */
+    public static final String MACHINE_TYPE_PARAM = "type_machine";
+
+
+    /**
      * Parameter query in request.
      */
     public static final String QUERY_PARAM = "query";

@@ -15,8 +15,17 @@ class Machine {
      */
     String ipAddress
 
+    /**
+     * Application list.
+     */
     Set<App> apps = []
+
+    /**
+     * Servers list.
+     */
     Set<Server> servers = []
+
+
     static hasMany = [apps : App, servers : Server]
 
 
