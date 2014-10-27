@@ -72,7 +72,13 @@ class IndexController {
             }
         }
 
-        return [ apps: localApps, machines: machines, machine:machine, machineServers:machineServers, searchResults: results, refs: refs]
+        def machineGroups = MachineGroup.findAll()
+        def selectedMachineGroup = params.get("group")
+        if (selectedMachineGroup == null) {
+            selectedMachineGroup = ""
+        }
+
+        return [ apps: localApps, machines: machines, machine:machine, machineServers:machineServers, searchResults: results, refs: refs, machineGroups:machineGroups, selectedMachineGroup:selectedMachineGroup]
 
     }
 

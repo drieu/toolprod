@@ -4,6 +4,8 @@ import fr.edu.toolprod.parser.ConfigParser
 import fr.edu.toolprod.parser.HttpdParser
 import org.apache.commons.logging.LogFactory
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import toolprod.Machine
+import toolprod.MachineGroup
 import toolprod.Portal
 import toolprod.Server
 
@@ -32,6 +34,18 @@ class AdminController {
                         Portal portal = Portal.findOrCreateByName(p)
                         portal.save(failOnError: true)
                     }
+                    Map<String, List<String>> machineByGroup = configParser.machineByGroup
+                    for (String groupName : machineByGroup.keySet()) {
+                        MachineGroup machineGroup = new MachineGroup()
+                        machineGroup.groupName = groupName
+                        List<String> machines = machineByGroup.get(groupName)
+                        for (String name : machines) {
+                                machineGroup.regex.add(name)
+                                log.info("Add machine name:" + name + " in group:" + groupName)
+                        }
+                        log.info("Save group:" + groupName + " OK")
+                        machineGroup.save(failOnError: true)
+                    }
                     flash.message = "SUCCESS : " + message
                 } else {
                     flash.error = "FAILED : " + message
@@ -52,8 +66,9 @@ class AdminController {
     def init() {
         log.info("AdminController:init() action from AdminController : init()")
         List<String> portalsChoice = params.list('portalsChoice')
-        log.info("Choix :" + portalsChoice.toString())
+        log.debug("Choix :" + portalsChoice.toString())
         def portals = Portal.findAll()
+
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
             boolean bResult = true

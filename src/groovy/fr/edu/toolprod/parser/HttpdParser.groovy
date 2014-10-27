@@ -6,6 +6,7 @@ import fr.edu.toolprod.parser.XmlParser
 import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Machine
+import toolprod.MachineGroup
 import toolprod.Portal
 import toolprod.Server
 
@@ -46,8 +47,9 @@ class HttpdParser {
 
     /**
      * Constructor.
-     * @param input
-     * @param machineName
+     * @param f File
+     * @param machineName : Machine name
+     * @param portalsChoice : List of portail where application will be shown
      */
     HttpdParser(def f, String machineName, List<String> portalsChoice) {
         file= f;
@@ -71,6 +73,7 @@ class HttpdParser {
         }
         machine = Machine.findOrCreateByName(machineName)
         machine.save(failOnError: true)
+
     }
 
     /**

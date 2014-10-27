@@ -18,11 +18,25 @@
 
     <div class="row">
         <div class="col-md-3">
-            <g:render template="/shared/identity" var="${machines}" />
-            <g:render template="/shared/frontaux" var="${machines}" />
-            <g:render template="/shared/webgrh" var="${machines}" />
-            <g:render template="/shared/sco" var="${machines}" />
-            <g:render template="/shared/other" var="${machines}" />
+
+            <g:each in="${machineGroups}" var="machineGroup">
+                <g:if test="${machineGroup.groupName.equals(selectedMachineGroup)}">
+                    <a href="#" class="list-group-item active">
+                        Machines ${machineGroup.groupName}
+                    </a>
+                    <g:each in="${machines}" var="machine">
+                        <g:each in="${machineGroup.regex}" var="regex">
+
+                                <g:if test="${machine.name.contains(regex)}">
+                                    <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
+                                        ${machine.name}
+                                    </a>
+                                </g:if>
+                        </g:each>
+                    </g:each>
+                    <br/>
+                </g:if>
+            </g:each>
         </div>
 
         <div class="col-md-9">

@@ -9,10 +9,15 @@ class MachineGroup {
 
     String description
 
-    List<Machine> machines
+    /**
+     * List of regex to obtain machine name
+     * e.g : for example regex could be web for all machine which start with web.
+     */
+    List<String> regex = []
 
-    static hasMany = [machines : Machine ]
+    static hasMany = [regex: String]
 
     static constraints = {
+        description(nullable: true)
     }
 }

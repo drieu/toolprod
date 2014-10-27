@@ -1,3 +1,4 @@
+<%@ page import="toolprod.MachineGroup" %>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -16,13 +17,11 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Machines <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Groupe de machine <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="/toolprod/">Machines Identité</a></li>
-                        <li><a href="/toolprod/">Frontaux Web</a></li>
-                        <li><a href="/toolprod/">Machines Scolarité</a></li>
-                        <li class="divider"></li>
-                        <li><a href="/toolprod/">Autres</a></li>
+                        <g:each in="${MachineGroup.findAll()}" var="machineGroup">
+                            <li><a href="/toolprod/?group=${machineGroup.groupName}" class="list-group-item">Machine ${machineGroup.groupName}</a></li>
+                        </g:each>
                     </ul>
                 </li>
                 <li class="dropdown">

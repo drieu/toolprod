@@ -3,11 +3,7 @@ package fr.edu.toolprod.parser
 import org.apache.commons.logging.LogFactory
 
 /**
- * Created with IntelliJ IDEA.
- * User: drieu
- * Date: 29/08/14
- * Time: 12:38
- * To change this template use File | Settings | File Templates.
+ * Parse config file to init toolprod parameters ( portals, group ...)
  */
 class ConfigParser {
 
@@ -31,6 +27,9 @@ class ConfigParser {
         inputStream = input
     }
 
+    /**
+     * Parse file initialize in constructor
+     */
     def parse() {
         String line
         boolean bResult = false
@@ -43,7 +42,7 @@ class ConfigParser {
                      result = line
                      sportals = parsePortal(line)
                  }
-                 if (line.startsWith("group="))  {
+                 if (line.startsWith("group_"))  {
                      parseGroup(line)
                  }
             }
@@ -63,6 +62,11 @@ class ConfigParser {
         return bResult
     }
 
+    /**
+     * Parse line which contains group and regex for group.
+     * @param line e.g: group_frontaux=web1,web2,web3,web4,web5,web6
+     * @return
+     */
     public parseGroup(String line) {
 
         int posEq = line.indexOf('=')
