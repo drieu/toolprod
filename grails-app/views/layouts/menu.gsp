@@ -17,11 +17,13 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Groupe de machine <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Machines <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <g:each in="${MachineGroup.findAll()}" var="machineGroup">
-                            <li><a href="/toolprod/?group=${machineGroup.groupName}" class="list-group-item">Machine ${machineGroup.groupName}</a></li>
+                            <li><a href="/toolprod/?group=${machineGroup.groupName}"">Machine ${machineGroup.groupName}</a></li>
                         </g:each>
+                        <li class="divider"></li>
+                        <li><a href="/toolprod/machine/list">Toutes les machines</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

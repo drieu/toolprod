@@ -28,7 +28,7 @@
                         <g:each in="${machineGroup.regex}" var="regex">
 
                                 <g:if test="${machine.name.contains(regex)}">
-                                    <a href="<g:createLink action="getMachineApps" params="[machine:machine.name]" />" class="list-group-item">
+                                    <a href="<g:createLink action="getMachineApps" params="[machine:machine.name,group:machineGroup.groupName]" />" class="list-group-item">
                                         ${machine.name}
                                     </a>
                                 </g:if>
@@ -56,7 +56,7 @@
                             <tbody>
                             <g:each in="${searchResults}" var="app">
                                 <tr>
-                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />""><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                     <td>${app?.name}</td>
                                     <td>${app?.description}</td>
                                     <td><a href="${app?.url}"  target="_blank">${app?.url}</a></td>
@@ -204,7 +204,10 @@
             </g:if>
             <g:else>
                 <g:if test="${searchResults == null}">
-                    <div class="well well-lg">Merci de choisir une machine dans la liste !</div>
+                    <div class="alert alert-success alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <p class="alert-link">Bienvenue !</p>
+                    </div>
                 </g:if>
             </g:else>
             </div>

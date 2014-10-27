@@ -87,7 +87,8 @@ class IndexController {
      **/
     def getMachineApps() {
         def selectMachine = params.get(MACHINE_PARAM)
-        redirect(action:"index", params: [machine : selectMachine])
+        def selectedGroup = params.get('group')
+        redirect(action:"index", params: [machine : selectMachine, group : selectedGroup])
     }
 
     /**
