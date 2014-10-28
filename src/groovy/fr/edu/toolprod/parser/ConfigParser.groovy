@@ -40,7 +40,7 @@ class ConfigParser {
             while ((line = br.readLine()) != null) {
                  if (line.startsWith("portals=")) {
                      result = line
-                     sportals = parsePortal(line)
+                     parsePortal(line)
                  }
                  if (line.startsWith("group_"))  {
                      parseGroup(line)
@@ -48,7 +48,6 @@ class ConfigParser {
             }
             bResult = true
         } catch (IOException e) {
-            bResult = false
             result += "Impossible de parser le fichier !<br/>"
             log.error("Failed to parse file : " + e.printStackTrace())
         } finally {
@@ -69,6 +68,7 @@ class ConfigParser {
      */
     public parseGroup(String line) {
 
+        log.debug("parseGroup() line=" + line)
         int posEq = line.indexOf('=')
         if ( posEq > 0 ) {
             def strGrp = line.substring(0, posEq)
@@ -76,7 +76,7 @@ class ConfigParser {
             int underscorePos = strGrp.indexOf('_')
             if ( underscorePos > 0 ) {
                 def GroupName = strGrp.substring(underscorePos + 1, strGrp.length())
-                log.info("Groupe name:" + GroupName)
+                log.debug("parseGroup() Groupe name:" + GroupName)
                 def strMachine = line.substring(posEq + 1, line.length())
 
                 def lst = strMachine.tokenize(",")
@@ -90,6 +90,7 @@ class ConfigParser {
                     }
                 }
             }
+            result=line
         }
     }
 
@@ -99,19 +100,17 @@ class ConfigParser {
      * @param line e.g:portals=portal1,portal2
      * @return
      */
-    def parsePortal(String line) {
-        List<String> sportals = new ArrayList<>()
+    public parsePortal(String line) {
+        sportals = new ArrayList<>()
         if (line != null && !line.isEmpty()) {
             log.debug("parsePortal() line=" + line)
             String str = line.substring("portals=".size(), line.size())
-            log.debug("parsePortal() line without portals= :" + str)
             def lst = str.tokenize(",")
             for ( String p in lst) {
-                log.debug("Add portal:" + p)
+                log.debug("parsePortal() portal:" + p)
                 sportals.add(p)
             }
         }
-        return sportals
     }
 
     /**

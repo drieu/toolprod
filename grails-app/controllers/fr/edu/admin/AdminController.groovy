@@ -20,46 +20,55 @@ class AdminController {
     }
 
     /**
-     * Initialize datas.
+     * Initialize datas like portals, machine Group.
      */
     def initData() {
-        log.info("AdminController:initData() action from AdminController : initData()")
+        log.info("AdminController:initData()")
+        boolean bResult = false
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
-            boolean bResult = true
             request.getFiles("files[]").each { file ->
-                log.debug("AdminController:initData() file to parse:" + file.originalFilename)
-                ConfigParser configParser = new ConfigParser(file.inputStream)
-                bResult = configParser.parse()
-                message = configParser.result
-                if (bResult) {
-                    for(String p : configParser.sportals) {
-                        Portal portal = Portal.findOrCreateByName(p)
-                        portal.save(failOnError: true)
-                    }
-                    Map<String, List<String>> machineByGroup = configParser.machineByGroup
-                    for (String groupName : machineByGroup.keySet()) {
-                        MachineGroup machineGroup = new MachineGroup()
-                        machineGroup.groupName = groupName
-                        List<String> machines = machineByGroup.get(groupName)
-                        for (String name : machines) {
-                                machineGroup.regex.add(name)
-                                log.info("Add machine name:" + name + " in group:" + groupName)
+                log.info("AdminController:initData() file to parse:" + file.originalFilename)
+                if (!file.originalFilename.isEmpty()) {
+                    ConfigParser configParser = new ConfigParser(file.inputStream)
+                    bResult = configParser.parse()
+                    message = configParser.result
+                    if (bResult) {
+                        for(String p : configParser.sportals) {
+                            Portal.findOrSaveByName(p)
                         }
-                        log.info("Save group:" + groupName + " OK")
-                        machineGroup.save(failOnError: true)
+                        Map<String, List<String>> machineByGroup = configParser.machineByGroup
+                        for (String groupName : machineByGroup.keySet()) {
+
+                            MachineGroup machineGroup = MachineGroup.findByGroupName(groupName)
+                            if (machineGroup == null) {
+                                machineGroup = new MachineGroup()
+                                machineGroup.groupName = groupName
+                                List<String> machines = machineByGroup.get(groupName)
+                                for (String name : machines) {
+                                    machineGroup.regex.add(name)
+                                    log.info("AdminController:initData() Add machine name:" + name + " in group:" + groupName)
+                                }
+                                log.info("AdminController:initData() Save group:" + groupName + " OK")
+                                machineGroup.save(failOnError: true)
+                            }
+                        }
                     }
-                    flash.message = "SUCCESS : " + message
                 } else {
-                    flash.error = "FAILED : " + message
+                    message = "File is empty !"
                 }
             }
+            flash.clear()
             if (bResult) {
-                flash.message = "SUCCESS : " + message
+                flash.message = "SUCCESS"
             } else {
                 flash.error = "FAILED : " + message
             }
         }
+
+        def portals = Portal.findAll()
+        def machinesGroups = MachineGroup.findAll()
+        return [ portals: portals, machinesGroups: machinesGroups ]
     }
 
     /**

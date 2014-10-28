@@ -3,11 +3,7 @@ package fr.edu.toolprod.parser
 import grails.test.GrailsUnitTestCase
 
 /**
- * Created with IntelliJ IDEA.
- * User: drieu
- * Date: 17/10/14
- * Time: 11:54
- * To change this template use File | Settings | File Templates.
+ * ConfigParser Test.
  */
 class ConfigParserSpec extends GrailsUnitTestCase {
 
@@ -22,5 +18,13 @@ class ConfigParserSpec extends GrailsUnitTestCase {
         List<String> lst = map.get('name')
         assertTrue(lst.contains('machine1'))
         assertTrue(lst.contains('machine2'))
+    }
+
+    void testParsePortal() {
+        ConfigParser configParser = new ConfigParser(null)
+        configParser.parsePortal("portals=intranet,portail,portail-otp,web,blop")
+        assertNotNull(configParser.sportals)
+        assertSame(5, configParser.sportals.size())
+        assertTrue(configParser.sportals.contains("portail-otp"))
     }
 }
