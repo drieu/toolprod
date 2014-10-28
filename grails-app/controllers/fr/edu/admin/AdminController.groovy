@@ -9,11 +9,14 @@ import toolprod.MachineGroup
 import toolprod.Portal
 import toolprod.Server
 
+/**
+ * Admin Controller.
+ */
 class AdminController {
 
     def index() {
         println("Index action from AdminController !")
-        redirect(action:'upload')
+        redirect(action:'init')
     }
 
     /**
@@ -60,7 +63,7 @@ class AdminController {
     }
 
     /**
-     * method which call httpd parser.
+     * Method which call httpd parser.
      * @return
      */
     def init() {
@@ -101,33 +104,9 @@ class AdminController {
     }
 
     /**
-     * Upload a file and read content.
-     * @return flash.message for success and error.
+     * Redirect to info.gsp for having informations about plugins, versions ...
      */
-    def upload() {
-        log.info("upload()")
-        if (request instanceof MultipartHttpServletRequest) {
-            def file = request.getFile('appLst')
-            if((file != null) && (!file.isEmpty())) {
-                HttpdParser parser = new HttpdParser();
-                boolean bResult = parser.parse(file.inputStream);
-                if (bResult) {
-                    flash.message = 'Import successfull'
-                } else {
-                    flash.error = 'Error when parsing file.'
-                }
-//                  Modules
-//                for (String module in parser.modules) {
-//                    println("Module :" + module)
-//                }
-                //parser.parseXml(file.inputStream)
-
-            } else {
-                flash.error = 'Import failed because file is null or is empty'
-            }
-        }
-        redirect(action:'init')
+    def info() {
     }
-
 
 }

@@ -14,63 +14,32 @@
 <body>
 <div class="container">
     <g:applyLayout name="menu"/>
-    <div class="col-md-4">
-
-        <ul class="list-group">
-            <a href="#" class="list-group-item active">Application status</a>
-            <li class="list-group-item">App version: <g:meta name="app.version"/></li>
-            <li class="list-group-item">Grails version: <g:meta name="app.grails.version"/></li>
-            <li class="list-group-item">Groovy version: ${GroovySystem.getVersion()}</li>
-            <li class="list-group-item">JVM version: ${System.getProperty('java.version')}</li>
-            <li class="list-group-item">Reloading active: ${grails.util.Environment.reloadingAgentEnabled}</li>
-            <li class="list-group-item">Controllers: ${grailsApplication.controllerClasses.size()}</li>
-            <li class="list-group-item">Domains: ${grailsApplication.domainClasses.size()}</li>
-            <li class="list-group-item">Services: ${grailsApplication.serviceClasses.size()}</li>
-            <li class="list-group-item">Tag Libraries: ${grailsApplication.tagLibClasses.size()}</li>
-        </ul>
-
-        <ul class="list-group">
-            <a href="#" class="list-group-item active">Liste des controllers</a>
-            <g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName }}">
-                <li class="list-group-item"><g:link controller="${c.logicalPropertyName}">${c.fullName}</g:link></li>
-            </g:each>
-        </ul>
-    </div>
-
-    <div class="col-md-8">
-
-        <div id="page-body" role="main">
-            <h1>Bienvenue sur la page d'admin</h1>
-
+    <h1>Bienvenue sur la page d'admin</h1>
+    <br/>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">Initialisation des données de l'application</h3>
+        </div>
+        <div class="panel-body">
             <ul class="nav nav-pills nav-stacked">
                 <li><g:link controller="admin" action="initData">Etape 1 : Initialisation des données (portails )</g:link></li>
                 <li><g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link></li>
-                <li></li>
             </ul>
-
-
         </div>
-
-        <br/><br/>
-        <table class="table table-hover">
-            <caption>Plugins</caption>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Version</th>
-                </tr>
-            </thead>
-            <tbody>
-                <g:each var="plugin" in="${applicationContext.getBean('pluginManager').allPlugins}">
-                    <tr>
-                        <td>${plugin.name}</td>
-                        <td>${plugin.version}</td>
-                    </tr>
-                </g:each>
-            </tbody>
-        </table>
+    </div>
+    <br/>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Autres actions</h3>
+        </div>
+        <div class="panel-body">
+            <ul class="nav nav-pills nav-stacked">
+                <li><g:link controller="admin" action="info">Informations techniques</g:link></li>
+            </ul>
+        </div>
     </div>
 </div>
+
 <r:layoutResources/>
 </body>
 </html>
