@@ -1,8 +1,5 @@
-import grails.util.GrailsUtil
-import toolprod.App
-import toolprod.Machine
-import toolprod.Server
 import grails.util.Environment
+import org.codehaus.groovy.grails.commons.GrailsApplication
 
 class BootStrap {
 
