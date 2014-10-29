@@ -95,8 +95,8 @@ class HttpdParser {
             boolean bLocationTag = false; // identify begin and end of xml tag Location
             boolean bLocationMatchTag = false; // identify begin and end of xml Match tag Location
 
-            String name
-            List<String> weblos = new ArrayList<>() //TODO put a list
+            String name = EMPTY
+            List<String> weblos = new ArrayList<>()
 
 
             br = new BufferedReader(new InputStreamReader(file.inputStream))
@@ -248,7 +248,6 @@ class HttpdParser {
             if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
                 def str = weblogicHost + ":" + tmpWeblogicPort;
                 results.add(str);
-                weblogicHost = EMPTY
             }
         }
 

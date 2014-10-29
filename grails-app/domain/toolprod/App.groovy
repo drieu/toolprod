@@ -21,7 +21,8 @@ class App {
     String description
 
     /**
-     * url.
+     * url
+     * This parameter is construct ( see AppBean class for detail ).
      */
     String url
 
@@ -52,19 +53,6 @@ class App {
         url(size:0..350, url:false)
     }
 
-
-    def addServer(String serverName) {
-        Server server = Server.findByName(serverName)
-        if (server == null) {
-            server = new Server(serverName)
-        }
-        server.save()
-        if (servers == null) {
-            servers = new HashSet<>(Server)
-        }
-        servers.add(server)
-    }
-
     def addServer(Server server) {
 
         if (server == null) {
@@ -84,7 +72,7 @@ class App {
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "App{" +
                 "id=" + id +
                 ", name='" + name + '\'' +

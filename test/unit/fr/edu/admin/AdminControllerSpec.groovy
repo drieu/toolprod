@@ -4,7 +4,7 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 
 /**
- * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
+ * Test for AdminController
  */
 @TestFor(AdminController)
 class AdminControllerSpec extends Specification {
@@ -15,6 +15,12 @@ class AdminControllerSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
+    void "test initData"() {
+//        when :
+//        controller.initData()
+//
+//        then :
+//        view == 'admin/initData'
+//        model.title == 'Welcome to Production !'
     }
 }
