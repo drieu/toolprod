@@ -10,93 +10,89 @@ import toolprod.Portal
 import toolprod.Server
 
 /**
- * This class will contains data methods usefull after parsing files.
- * User: drieu
- * Date: 16/09/14
- * Time: 14:37
- * To change this template use File | Settings | File Templates.
+ * Data is used to save App parsed in httpd conf and the result of check method in database.
  */
 class Data {
 
     private static final log = LogFactory.getLog(this)
 
+    /**
+     *  Machine which contains httpd conf file.
+     */
     private Machine machine
 
-    def result = ''
+    /**
+     * Server for this httpd.conf.
+     */
+    private Server server;
 
+    /**
+     * Result string to show on html page when it finished.
+     */
+    def result = ''
 
     Data(Machine machine) {
         this.machine = machine
-
     }
-/**
-     * Save weblogic server and weblogic application in database.
-     * @param weblos List<String>
-     * @param appBean AppBean
+
+    /**
+     * Main method for saving data.
+     * @param serverBean
+     * @param appBeans
+     * @return false if an error occurs.
      */
-    def saveWeblo(List<String> weblos, AppBean appBean) {
-        if ((weblos == null) || (appBean == null)) {
-            throw new IllegalArgumentException("Bad parameter fot saveWeblo() method !")
-        }
-        log.info("saveWeblo() weblos:" + weblos.toString() + " appBean:" + appBean.toString())
-
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl);
-
-        //Save portals in application
-        for (String str: appBean.portals) {
-            if (!app.portals.contains(str)) {
-                Portal portal = Portal.findByName(str)
-                if (portal != null) {
-                    app.portals.add(portal)
+    def save(ServerBean serverBean, List<AppBean> appBeans) {
+        boolean bResult = saveServer(serverBean)
+        if (bResult) {
+            for (AppBean appBean : appBeans) {
+                if ((appBean.weblos != null) && (appBean.weblos.size()>0)) {
+                    saveWebloApp(appBean)
+                } else {
+                    saveApacheApp(appBean)
                 }
+                addAppToServer(appBean)
             }
         }
+        return bResult;
+    }
 
-        app.save(failOnError: true)
+    /**
+     * Add application into server ( local or referenced )
+     * @param appBean AppBean
+     * @return
+     */
+    def addAppToServer(AppBean appBean) {
+        if (!server.linkToApps.contains(appBean.name)) {
+            log.debug("addAppToServer() : Save application:" + appBean.name + " in the app list of web server:" + server.name )
+            server.addToLinkApps(appBean.name);
+            server.save(failOnError: true);
+        } else {
+            log.debug("addAppToServer() : Nothing to save application:" + appBean.name + " still exist in the app list of web server:" + server.name )
+        }
 
-        log.info("saveWeblo() App find or create:" + app)
-        for(String str : weblos) {
-
-            def params = str.tokenize(":")
-            log.info(params.toString())
-            if (params.size() == 2) {
-                String machinName = params.get(0)
-                String portTest = params.get(1)
-
-                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName,portTest,Server.TYPE.WEBLOGIC, machinName)
-                if (!server.linkToApps.contains(appBean.name)) {
-                    server.addToLinkApps(appBean.name)
-                }
-                server.save(failOnError: true)
-                log.info("saveWeblo() Server find or create:" + server)
-
-
-                Machine machine = Machine.findOrCreateByName(machinName)
-                machine.addApplication(app)
-                machine.addServer(server)
-                machine.save(failOnError: true)
-                log.info("saveWeblo() Machine find or create:" + machine)
-
-                app.addServer(server)
-                app.save(failOnError: true)
-            }
+        // Add to the machine app list only if it's a local application ( same name of machine in URL )
+        if (appBean.serverUrl.contains(machine.name)) {
+            machine.addAppBean(appBean)
+        }
+        machine.addServer(server)
+        if (!machine.save(failOnError: true)) {
+            log.error("addAppToServer() : Can't Save machine " + machine)
+        } else {
+            log.info("addAppToServer() : Save machine OK:" + machine)
         }
     }
 
 
     /**
-     * Save parsing data
+     * Save server.
      * @param serverBean
-     * @param appBeans
      * @return
      */
-    def saveParsingData(ServerBean serverBean, List<AppBean> appBeans) {
-        log.info("ServerBean info:" + serverBean.toString());
-        String port = 80
+    def saveServer(ServerBean serverBean) {
         boolean bResult = true
+        Integer port = 80
+        log.info("ServerBean info:" + serverBean.toString());
 
-        // Create Server
-        Server server;
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
             server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
@@ -114,73 +110,85 @@ class Data {
                 machine.save();
                 log.info("Save OK server " + server.name + " in machine " + machine.name);
             }
-
-            log.info("Number of application found in this file :" + appBeans.size())
-
-            saveAppBean(appBeans, server)
         }
-        return bResult;
+        return bResult
     }
 
     /**
-     * Save a List of AppBean found in parse file.
-     * @param appBeans List<AppBean>
-     * @param server Server
+     * Save apache application.
+     * @param appBean
+     * @return
      */
-    def saveAppBean(List<AppBean> appBeans, Server server) {
-
-        if (appBeans == null) {
-            throw new IllegalArgumentException("saveAppBean() appBeans must not be null ! ")
+    def saveApacheApp(AppBean appBean) {
+        log.debug("saveApacheApp() appBean:" + appBean)
+        App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl)
+        log.info("saveApacheApp() ==> save server:" + server.name)
+        myApp.addServer(server)
+        for (String portalName: appBean.portals) {
+            Portal portal = Portal.findByName(portalName)
+            if (!myApp.portals.contains(portal)) {
+                myApp.portals.add(portal)
+            }
         }
+        log.debug("saveApacheApp() app:" + appBean)
+        myApp.save(failOnError: true)
+        result = result + appBean.name + " "
+    }
 
-        if (server == null) {
-            throw new IllegalArgumentException("saveAppBean() server must not be null ! ")
-        }
+/**
+     * Save weblogic server and weblogic application in database.
+     * @param appBean AppBean
+     */
+    def saveWebloApp(AppBean appBean) {
+        log.info("saveWebloApp() weblos:" + appBean.weblos.toString() + " appBean:" + appBean.toString())
 
-        for (AppBean appBean : appBeans) {
-            log.debug("saveAppBean() appBean:" + appBean)
-            App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl)
-            myApp.addServer(server)
-            for (String portalName: appBean.portals) {
-                Portal portal = Portal.findByName(portalName)
-                if (!myApp.portals.contains(portal)) {
-                    myApp.portals.add(portal)
+        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl);
+        //Save portals in application
+        for (String str: appBean.portals) {
+            if (!app.portals.contains(str)) {
+                Portal portal = Portal.findByName(str)
+                if (portal != null) {
+                    app.portals.add(portal)
                 }
             }
-            log.debug("saveAppBean() app:" + appBean)
-            myApp.save(failOnError: true)
-            result = result + appBean.name + "\n"
+        }
+        app.save(failOnError: true)
 
-            if (myApp != null) {
+        log.info("saveWebloApp() App find or create:" + app)
+        for(String str : appBean.weblos) {
+
+            def params = str.tokenize(":")
+            log.info(params.toString())
+            if (params.size() == 2) {
+                String machinName = params.get(0)
+                String portTest = params.get(1)
+
+                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName,portTest,Server.TYPE.WEBLOGIC, machinName)
                 if (!server.linkToApps.contains(appBean.name)) {
-                    log.debug("Save application:" + appBean.name + " in the app list of web server:" + server.name )
-                    server.addToLinkApps(appBean.name);
-                    server.save(failOnError: true);
-                } else {
-                    log.debug("Nothing to save application:" + appBean.name + " still exist in the app list of web server:" + server.name )
+                    server.addToLinkApps(appBean.name)
                 }
+                server.save(failOnError: true)
+                log.info("saveWebloApp() Server find or create:" + server)
 
-                // Add to the machine app list only if it's a local application ( same name of machine in URL )
-                if (myApp.url.contains(machine.name)) {
-                    machine.addApplication(myApp)
-                }
+
+                Machine machine = Machine.findOrCreateByName(machinName)
+                machine.addApplication(app)
                 machine.addServer(server)
-                if (!machine.save(failOnError: true)) {
-                    log.error("Can't Save machine " + machine)
-                } else {
-                    log.info("Save machine OK:" + machine)
-                }
+                machine.save(failOnError: true)
+                log.info("saveWebloApp() Machine find or create:" + machine)
+
+                app.addServer(server)
+                app.save(failOnError: true)
+                result = result + app.name + " "
             }
         }
     }
 
-    def saveCheck(String machineName, String fileName, String confServerName) {
+    def static saveCheck(String machineName, String fileName, String confServerName) {
         if (machineName != null && fileName != null && confServerName!= null) {
             Check check = Check.findOrCreateByMachineNameAndFileNameAndConfServerName(machineName, fileName, confServerName)
             check.save(failOnError: true)
         }
-
-
     }
 
 }

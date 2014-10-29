@@ -1,5 +1,7 @@
 package toolprod
 
+import fr.edu.toolprod.bean.AppBean
+
 /**
  * List all application list in apache configuration
  */
@@ -35,6 +37,13 @@ class Machine {
         ipAddress(nullable: true)
     }
 
+    def addAppBean(AppBean appBean) {
+        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl)
+        apps.add(app)
+        this.save()
+    }
+
+
     def addApplication(App app) {
         if (app == null) {
             throw new IllegalArgumentException("Can't add a null application to Machine apps list !")
@@ -55,7 +64,7 @@ class Machine {
 
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "Machine{" +
                 "id=" + id +
                 ", name='" + name + '\'' +

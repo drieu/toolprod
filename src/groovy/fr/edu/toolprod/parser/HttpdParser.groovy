@@ -145,8 +145,9 @@ class HttpdParser {
 
                 } else if (strLine.startsWith("</LocationMatch>")) {
                     AppBean appBean = getAppBean(name, serverBean)
+                    appBean.weblos = weblos
                     appBeans.add(appBean);
-                    data.saveWeblo(weblos, appBean)
+                    /// data.saveWebloApp(weblos, appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -171,8 +172,9 @@ class HttpdParser {
 
                 } else if (strLine.startsWith("</Location>")) {
                     AppBean appBean = getAppBean(name, serverBean)
+                    appBean.weblos = weblos
                     appBeans.add(appBean);
-                    data.saveWeblo(weblos, appBean)
+                    ///data.saveWebloApp(weblos, appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -215,7 +217,10 @@ class HttpdParser {
                 bResult = false
             }
         }
-        if (!data.saveParsingData(serverBean, appBeans)) {
+//        if (!data.saveParsingData(serverBean, appBeans)) {
+//            bResult = false;
+//        }
+        if (!data.save(serverBean, appBeans)) {
             bResult = false;
         }
         result += data.result

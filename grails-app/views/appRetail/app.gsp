@@ -29,19 +29,24 @@
         <dl class="dl-horizontal">
             <dt>URL</dt>
             <dd><a href="${app.url}" target="_blank">${app.url}</a></dd>
+        </dl>
+        <dl class="dl-horizontal">
             <dt>Serveur APACHE</dt>
             <dd>
                 <g:each in="${app?.servers}" var="server">
-                    <g:if test="${server?.serverType.toString() == "APACHE"}">
-                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
+                    <g:if test="${server?.serverType?.toString() == "APACHE"}">
+                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
                     </g:if>
                 </g:each>
             </dd>
+        </dl>
+        <br/>
+        <dl class="dl-horizontal">
             <dt>Serveur WEBLOGIC</dt>
             <dd>
                 <g:each in="${app?.servers}" var="server">
-                    <g:if test="${server?.serverType.toString() == "WEBLOGIC"}">
-                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
+                    <g:if test="${server?.serverType?.toString() == "WEBLOGIC"}">
+                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
                     </g:if>
                 </g:each>
             </dd>

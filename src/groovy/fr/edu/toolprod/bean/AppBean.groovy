@@ -1,11 +1,7 @@
 package fr.edu.toolprod.bean
 
 /**
- * Created with IntelliJ IDEA.
- * User: drieu
- * Date: 13/06/14
- * Time: 17:08
- * To change this template use File | Settings | File Templates.
+ * AppBean class.
  */
 class AppBean {
 
@@ -29,7 +25,16 @@ class AppBean {
      */
     String serverPort = ""
 
+    /**
+     * Portal list.
+     */
     List<String> portals = new ArrayList<>()
+
+    /**
+     * Weblogic list.
+     */
+    List<String> weblos = new ArrayList<>()
+
 
     private static final String DEFAUL_APPNAME = "UNEUSED_APP"
 
@@ -39,20 +44,6 @@ class AppBean {
 
     private static final String DEFAUL_SERVER_PORT = "http://notdefined.com"
 
-
-    AppBean(String name, String description, String serverUrl, String serverPort) {
-        this.name = name
-        this.description = description
-        this.serverUrl = serverUrl
-        this.serverPort = serverPort
-    }
-
-    AppBean(String name) {
-        this.name = name
-        this.description = DEFAUL_DESCRIPTION
-        this.serverUrl = DEFAUL_SERVER_URL
-        this.serverPort = DEFAUL_SERVER_PORT
-    }
 
     AppBean() {
         this.name = DEFAUL_APPNAME
@@ -82,7 +73,7 @@ class AppBean {
 
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "AppBean{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
