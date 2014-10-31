@@ -9,6 +9,7 @@
     <title>Welcome to Production !</title>
     <g:javascript library='jquery'/>
     <g:javascript library='bootstrap'/>
+    <r:require module="export"/>
     <r:layoutResources/>
 </head>
 <body>
@@ -62,10 +63,10 @@
         <div class="panel-body">
 
             <table class="table table-hover table-striped">
+                <caption>
+                    Etat des fichiers de configuration Apache
+                </caption>
                 <thead>
-                    <caption>
-                        Etat des fichiers de configuration Apache
-                    </caption>
                     <tr>
                         <th>Machine</th>
                         <th>Fichier à vérifier</th>
@@ -80,12 +81,13 @@
                             <td>${check?.fileName}</td>
                             <td>${check?.confServerName}</td>
                             <td>
-                                <span class="label label-danger">KO</span>
+                                <span class="label label-warning">WARNING</span>
                             </td>
                         </tr>
                     </g:each>
                 </tbody>
             </table>
+            <export:formats />
         </div>
     </div>
 </div>
