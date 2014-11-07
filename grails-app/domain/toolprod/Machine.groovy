@@ -38,7 +38,7 @@ class Machine {
     }
 
     def addAppBean(AppBean appBean) {
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl)
+        App app = App.findOrCreateByNameAndDescription(appBean.name, appBean.description)
         apps.add(app)
         this.save()
     }
