@@ -132,12 +132,7 @@ class HttpdParser {
                     //extract name for Location
                     name = XmlParser.parseLocationName(strLine)
                     if (name.isEmpty()) {
-                        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
-                        //Get the name in filename
-                        name = file.originalFilename
-                        if(name.contains("httpd.conf.")) {
-                           name = name.substring("httpd.conf.".length(),name.length())
-                        }
+                        name = getNameFromFileName()
                     }
                     if (xmlStart != null) {
                         bLocationMatchTag = true
@@ -147,7 +142,6 @@ class HttpdParser {
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
                     appBeans.add(appBean);
-                    /// data.saveWebloApp(weblos, appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -159,22 +153,17 @@ class HttpdParser {
                     //extract name for Location
                     name = XmlParser.parseLocationName(strLine)
                     if (name.isEmpty()) {
-                        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
-                        //Get the name in filename
-                        name = file.originalFilename
-                        if(name.contains("httpd.conf.")) {
-                            name = name.substring("httpd.conf.".length(),name.length())
-                        }
+                        name = getNameFromFileName()
                     }
                     if (xmlStart != null) {
                         bLocationTag = true
                     }
 
                 } else if (strLine.startsWith("</Location>")) {
+
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
                     appBeans.add(appBean);
-                    ///data.saveWebloApp(weblos, appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -217,15 +206,30 @@ class HttpdParser {
                 bResult = false
             }
         }
-//        if (!data.saveParsingData(serverBean, appBeans)) {
-//            bResult = false;
-//        }
+
+        // If EMPTY httpd.conf create application with name of http.conf.name
+        if(appBeans.size() == 0) {
+            AppBean appBean = new AppBean();
+            appBean.name = getNameFromFileName();
+            appBeans.add(appBean)
+        }
+
         if (!data.save(serverBean, appBeans)) {
             bResult = false;
         }
         result += data.result
 
         return bResult
+    }
+
+    public String getNameFromFileName() {
+        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
+        //Get the name in filename
+        String name = file.originalFilename
+        if (name.contains("httpd.conf.")) {
+            name = name.substring("httpd.conf.".length(), name.length())
+        }
+        name
     }
 
     def getAppBean(String appName, ServerBean serverBean) {

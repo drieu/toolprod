@@ -1,0 +1,21 @@
+Bugs :
+- WebLogicHost and WebLogicPort for eid OK
+- Pb application in  include.frontal ==> appliloc5 ( creation annuaire_web )
+- Error creating machine webco ( balise LocationMatch )
+- Name in double for web server list and application list
+- Bug with webclasseur / in conf.The name is null.So does we tale the filename ?
+- Bug delete a portal in admin AppController ==> delete constraint error
+- Bug ColorItAgora Nothing in file httpd.conf but only redirectMatch. Thaht's why no application are created.
+
+
+Bug in Apache configuration.
+- Bad ServerName.
+- Problem when machine with different ac-XXX.fr
+
+Feature to do :
+- Add information in mAchine web page :
+
+Server web list :
+server1.fr (app1,app2,app3)	8082 	APACHE
+
+- Add counter

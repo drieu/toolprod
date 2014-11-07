@@ -59,7 +59,11 @@
                                     <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                     <td>${app?.name}</td>
                                     <td>${app?.description}</td>
-                                    <td><a href="${app?.url}"  target="_blank">${app?.url}</a></td>
+                                    <td>
+                                        <g:each in="${app?.urls}">
+                                            <a href="${it}" target="_blank">${it}</a>&nbsp;<br/>
+                                        </g:each>
+                                    </td>
                                 </tr>
                             </g:each>
                             </tbody>
@@ -131,7 +135,8 @@
                                                             result += str;
                                                             result += " ";
                                                         }
-                                                    %>${result}</small></td>
+                                                        print(result + " ")
+                                                    %></small></td>
                                                 <td>${mServ?.portNumber}</td>
                                                 <td>${mServ?.serverType}</td>
                                             </tr>
@@ -164,7 +169,11 @@
                                                     <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                                     <td>${app?.name}</td>
                                                     <td>${app?.description}</td>
-                                                    <td><a target="_blank" href="${app?.url}">${app?.url}</a></td>
+                                                    <td>
+                                                        <g:each in="${app?.urls}">
+                                                            <a href="${it}" target="_blank">${it}</a>&nbsp;<br/>
+                                                        </g:each>
+                                                    </td>
                                                 </tr>
                                         </g:each>
                                     </table>
@@ -213,7 +222,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <r:layoutResources/>
 </body>

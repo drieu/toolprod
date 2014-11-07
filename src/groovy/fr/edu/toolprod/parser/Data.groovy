@@ -121,7 +121,10 @@ class Data {
      */
     def saveApacheApp(AppBean appBean) {
         log.debug("saveApacheApp() appBean:" + appBean)
-        App myApp = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl)
+        App myApp = App.findOrCreateByNameAndDescription(appBean.name, appBean.description)
+        if (!myApp.urls.contains(appBean.serverUrl)) {
+            myApp.urls.add(appBean.serverUrl)
+        }
         log.info("saveApacheApp() ==> save server:" + server.name)
         myApp.addServer(server)
         for (String portalName: appBean.portals) {
@@ -142,7 +145,11 @@ class Data {
     def saveWebloApp(AppBean appBean) {
         log.info("saveWebloApp() weblos:" + appBean.weblos.toString() + " appBean:" + appBean.toString())
 
-        App app = App.findOrCreateByNameAndDescriptionAndUrl(appBean.name, appBean.description, appBean.serverUrl);
+        App app = App.findOrCreateByNameAndDescription(appBean.name, appBean.description);
+        if (!app.urls.contains(appBean.serverUrl)) {
+            app.urls.add(appBean.serverUrl)
+            app.save(failOnError: true)
+        }
         //Save portals in application
         for (String str: appBean.portals) {
             if (!app.portals.contains(str)) {

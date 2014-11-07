@@ -24,7 +24,7 @@ class App {
      * url
      * This parameter is construct ( see AppBean class for detail ).
      */
-    String url
+    List<String> urls = []
 
     /**
      * Portail in which app will be shown.
@@ -36,7 +36,7 @@ class App {
      * Server list.
      */
     List<Server> servers = []
-    static hasMany = [servers : Server, portals : Portal]
+    static hasMany = [servers : Server, portals : Portal, urls : String]
 
     private static final log = LogFactory.getLog(this)
 
@@ -49,8 +49,6 @@ class App {
     static constraints = {
         name(blank:false)
         description(size:0..400)
-        // URL set to false because of special URL in Apache configuration e.g: http://web3.ac-limoges.fr/inscrinetcl/([Ee]tab|[Ii]nscription
-        url(size:0..350, url:false)
     }
 
     def addServer(Server server) {
@@ -77,7 +75,7 @@ class App {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", url='" + url + '\'' +
+                ", urls='" + urls.toString() + '\'' +
                 ", portals=" + portals +
                 ", servers=" + servers +
                 ", version=" + version +

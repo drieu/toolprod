@@ -33,7 +33,13 @@
                     </button>
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                         <g:each in="${portals}" var="portal">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/listing?choice=${portal.name}">${portal.name}</a></li>
+
+                            <g:if test="${portalChoice.equals(portal.name)}">
+                                <li role="presentation" class="active"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/listing/?choice=${portal.name}">${portal.name}</a></li>
+                            </g:if>
+                            <g:else>
+                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/listing/?choice=${portal.name}">${portal.name}</a></li>
+                            </g:else>
                         </g:each>
                     </ul>
                 </div>
@@ -58,7 +64,11 @@
                                 <tr>
                                     <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                     <td>${app?.name}</td>
-                                    <td>${app?.serverUrl}</td>
+                                    <td>
+                                        <g:each in="${app?.serverUrls}">
+                                            <a href="${it}">${it}</a>&nbsp;
+                                        </g:each>
+                                        </td>
                                     <th>
                                         <g:each in="${app?.portals?.findAll()}">
                                             <span class="label label-info">${it}</span>
@@ -71,7 +81,11 @@
                             <tr>
                                 <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                                 <td>${app?.name}</td>
-                                <td>${app?.serverUrl}</td>
+                                <td>
+                                    <g:each in="${app?.serverUrls}">
+                                        <a href="${it}">${it}</a>&nbsp;
+                                    </g:each>
+                                </td>
                                 <th>
                                     <g:each in="${app?.portals?.findAll()}">
                                         <span class="label label-info">${it}</span>

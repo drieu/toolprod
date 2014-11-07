@@ -40,38 +40,43 @@
                         <tr>
                             <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
                             <td>${app?.name}</td>
-                            <td>${app?.url}</td>
                             <td>
-                                <dd><%
-                                    boolean status = true
-                                    HttpURLConnection connection = null;
-                                    OutputStreamWriter wr = null;
-                                    BufferedReader rd  = null;
-                                    StringBuilder sb = null;
-                                    String line = null;
-
-                                    URL serverAddress = null;
-
-                                    try {
-                                        serverAddress = new URL(app?.url);
-                                        //set up out communications stuff
-                                        connection = null;
-
-                                        //Set up the initial connection
-                                        connection = (HttpURLConnection)serverAddress.openConnection();
-                                        connection.setRequestMethod("GET");
-                                        connection.setDoOutput(true);
-                                        connection.setReadTimeout(1000);
-
-                                        connection.connect();
-
-                                        //get the output stream writer and write the output to the server
-                                        //not needed in this example
-                                        //wr = new OutputStreamWriter(connection.getOutputStream());
-                                        //wr.write("");
-                                        //wr.flush();
-
-                                        //read the result from the server
+                                <g:each in="${app?.urls}">
+                                    <a href="${it}">${it}</a>&nbsp;<br/>
+                                </g:each>
+                            </td>
+                            <td>
+                                <%
+//                                    boolean status = true
+//                                    HttpURLConnection connection = null;
+//                                    OutputStreamWriter wr = null;
+//                                    BufferedReader rd  = null;
+//                                    StringBuilder sb = null;
+//                                    String line = null;
+//
+//                                    URL serverAddress = null;
+//
+//                                    try {
+//                                        // TODO : compile error add a for urls
+//                                        serverAddress = new URL(app?.url);
+//                                        //set up out communications stuff
+//                                        connection = null;
+//
+//                                        //Set up the initial connection
+//                                        connection = (HttpURLConnection)serverAddress.openConnection();
+//                                        connection.setRequestMethod("GET");
+//                                        connection.setDoOutput(true);
+//                                        connection.setReadTimeout(1000);
+//
+//                                        connection.connect();
+//
+//                                        //get the output stream writer and write the output to the server
+//                                        //not needed in this example
+//                                        //wr = new OutputStreamWriter(connection.getOutputStream());
+//                                        //wr.write("");
+//                                        //wr.flush();
+//
+//                                        //read the result from the server
 //                                        rd  = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 //                                        sb = new StringBuilder();
 //
@@ -81,28 +86,28 @@
 //                                        }
 //
 //                                        System.out.println(sb.toString());
-
-                                    } catch (MalformedURLException e) {
-                                        status = false
-                                        e.printStackTrace();
-                                    } catch (ProtocolException e) {
-                                        status = false
-
-                                        e.printStackTrace();
-                                    } catch (IOException e) {
-                                        status = false
-
-                                        e.printStackTrace();
-                                    }
-                                    finally
-                                    {
-                                        //close the connection, set all objects to null
-                                        connection.disconnect();
-                                        rd = null;
-                                        sb = null;
-                                        wr = null;
-                                        connection = null;
-                                    }
+//
+//                                    } catch (MalformedURLException e) {
+//                                        status = false
+//                                        e.printStackTrace();
+//                                    } catch (ProtocolException e) {
+//                                        status = false
+//
+//                                        e.printStackTrace();
+//                                    } catch (IOException e) {
+//                                        status = false
+//
+//                                        e.printStackTrace();
+//                                    }
+//                                    finally
+//                                    {
+//                                        //close the connection, set all objects to null
+//                                        connection.disconnect();
+//                                        rd = null;
+//                                        sb = null;
+//                                        wr = null;
+//                                        connection = null;
+//                                    }
                                 %>
                                 <g:if test="${status}">
                                 <span class="label label-success">OK</span>
@@ -110,7 +115,6 @@
                                 <g:else>
                                 <span class="label label-danger">KO</span>
                                 </g:else>
-                                </dd>
 
 
                             </td>

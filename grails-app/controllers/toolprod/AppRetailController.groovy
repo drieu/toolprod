@@ -8,7 +8,7 @@ class AppRetailController {
         def myApp = null
         def selectApp = params.get("name")
         if (selectApp != null) {
-            myApp = App.findByName(selectApp)
+            myApp = App.findByName((String)selectApp)
         }
 
         return [app:myApp]
@@ -38,7 +38,7 @@ class AppRetailController {
            AppBean appBean = new AppBean()
            appBean.name = app.name
            appBean.description = app.description
-           appBean.serverUrl = app.url
+           appBean.serverUrls = app.urls
            appBean.portals = new ArrayList<>()
 
             for(Portal portal : app.portals) {

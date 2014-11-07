@@ -21,6 +21,11 @@ class AppBean {
     String serverUrl = ""
 
     /**
+     * Store temporaly all urls
+     */
+    List<String> serverUrls = []
+
+    /**
      * port of Server which launch the application.
      */
     String serverPort = ""
