@@ -26,7 +26,6 @@
                     </a>
                     <g:each in="${machines}" var="machine">
                         <g:each in="${machineGroup.regex}" var="regex">
-
                                 <g:if test="${machine.name.contains(regex)}">
                                     <a href="<g:createLink action="getMachineApps" params="[machine:machine.name,group:machineGroup.groupName]" />" class="list-group-item">
                                         ${machine.name}

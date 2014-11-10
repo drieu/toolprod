@@ -211,6 +211,11 @@ class HttpdParser {
         if(appBeans.size() == 0) {
             AppBean appBean = new AppBean();
             appBean.name = getNameFromFileName();
+            for (String choice : selectedPortals) {
+                if (!appBean.portals.contains(choice))  {
+                    appBean.portals.add(choice)
+                }
+            }
             appBeans.add(appBean)
         }
 

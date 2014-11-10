@@ -129,7 +129,7 @@ class Data {
         myApp.addServer(server)
         for (String portalName: appBean.portals) {
             Portal portal = Portal.findByName(portalName)
-            if (!myApp.portals.contains(portal)) {
+            if (portal != null && !myApp.portals.contains(portal)) {
                 myApp.portals.add(portal)
             }
         }
@@ -154,7 +154,7 @@ class Data {
         for (String str: appBean.portals) {
             if (!app.portals.contains(str)) {
                 Portal portal = Portal.findByName(str)
-                if (portal != null) {
+                if (portal != null && !app.portals.contains(portal)) {
                     app.portals.add(portal)
                 }
             }

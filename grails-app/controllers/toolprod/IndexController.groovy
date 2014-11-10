@@ -41,7 +41,7 @@ class IndexController {
             if ( machine != null) {
                 apps = machine.apps
                 for(App app : apps) {
-                    if( (app?.servers?.size() == 1) && (app?.url?.contains(machine?.name))) {
+                    if( (app?.servers?.size() == 1) && (app?.urls?.contains(machine?.name))) {
                         localApps.add(app)
                     }
                 }
