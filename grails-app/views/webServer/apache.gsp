@@ -17,17 +17,20 @@
 
     <div class="row">
         <div class="col-md-3">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-success">
-                    Serveurs ${type}
-                </a>
-                <g:each in="${servers}" var="server">
-                    <a href="<g:createLink action="getWebServer" params="[name: server.name , type:'apache', port: server.portNumber]"/>"
-                       class="list-group-item">
-                        ${server.name} : ${server.portNumber}
-                    </a>
-                </g:each>
-            </div>
+                    <g:each in="${map.keySet()}" var="servername">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-warning">
+                                Serveur ${servername}
+                            </a>
+                            <g:each in="${map.get(servername)}" var="portNumber">
+                                <a href="<g:createLink action="getWebServer" params="[name:servername, type:'weblogic', port: portNumber]" />" class="list-group-item">
+                                    ${portNumber}
+                                </a>
+                            </g:each>
+
+                        </div>
+                    </g:each>
+
         </div>
 
         <div class="col-md-9">

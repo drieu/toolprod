@@ -15,6 +15,15 @@ class WebServerControllerSpec extends Specification {
     def cleanup() {
     }
 
-    void "test something"() {
-    }
+//    void "test apache type"() {
+//        when: def model = controller.apache()
+//
+//        then: model.type == 'apache'
+//    }
+//
+//    void "test weblogic type"() {
+//        when: def model = controller.weblogic()
+//
+//        then: model.type == 'weblogic'
+//    }
 }

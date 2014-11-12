@@ -212,9 +212,54 @@
             </g:if>
             <g:else>
                 <g:if test="${searchResults == null}">
-                    <div class="alert alert-success alert-dismissable">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <p class="alert-link">Bienvenue !</p>
+
+                    <blockquote>
+                        <h1>Bienvenue sur Toolprod</h1>
+                        <footer>Une boîte à outil pour la production</footer>
+                    </blockquote>
+                    <br/>
+                    <div class="well well-lg">
+                        Pour le moment, cet outil permet de :
+                        <ul>
+                            <li>Répertoriez les applications existantes</li>
+                            <li>Répertoriez les machines, les serveurs apache et weblogic pour chaque application</li>
+                            <li>Faire un contrôle simple des fichiers Apache</li>
+                        </ul>
+                    </div>
+                    <br/>
+
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Erreurs dans les fichiers Apache  <span class="badge">${count}</span></h3>
+                        </div>
+
+                        <div class="panel-body">
+                            <table class="table table-hover table-striped">
+                                <caption>
+                                    Etat des fichiers de configuration Apache
+                                </caption>
+                                <thead>
+                                <tr>
+                                    <th>Machine</th>
+                                    <th>Fichier à vérifier</th>
+                                    <th>ServerName</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                        <g:each in="${toolprod.Check.findAll()}" var="check">
+                                            <tr>
+                                                <td>${check?.machineName}</td>
+                                                <td>${check?.fileName}</td>
+                                                <td>${check?.confServerName}</td>
+                                                <td>
+                                                    <span class="label label-warning">WARNING</span>
+                                                </td>
+                                            </tr>
+                                        </g:each>
+                                        </tbody>
+                            </table>
+                        </div>
                     </div>
                 </g:if>
             </g:else>

@@ -45,7 +45,18 @@ class WebServerController {
             log.info("WebServerController:apache() linkapps :" + selectServer.linkToApps)
 
         }
-        return [servers: servers, type: type, selectServer: selectServer]
+
+        Map<String, List<String>> map = new HashMap<>()
+        for(Server s : servers) {
+            List<String> lst = map.get(s.name)
+            if (lst == null ) {
+                lst = new ArrayList<>()
+            }
+            lst.add(s.portNumber)
+            map.put(s.name, lst)
+        }
+
+        return [servers: servers, type: type, selectServer: selectServer, map:map]
     }
 
     /**
@@ -54,11 +65,22 @@ class WebServerController {
      */
     def weblogic() {
         log.debug("WebServerController:weblogic()")
-        def selectServer = null
+        def selectServer = null;
         def servers = Server.findAll("from Server as s where s.serverType=:type",[type:Server.TYPE.WEBLOGIC])
         if (servers.isEmpty()) {
             log.info("WebServerController:weblogic() No result return by query !")
         }
+        Map<String, List<String>> map = new HashMap<>()
+        for(Server s : servers) {
+            List<String> lst = map.get(s.name)
+            if (lst == null ) {
+                lst = new ArrayList<>()
+            }
+            lst.add(s.portNumber)
+            map.put(s.name, lst)
+        }
+
+
         def type = Server.TYPE.WEBLOGIC.toString()
 
         String param = params.get(NAME_PARAM)
@@ -69,7 +91,7 @@ class WebServerController {
             log.debug("WebServerController:weblogic() linkapps :" + selectServer.linkToApps)
 
         }
-        return [servers: servers, type: type, selectServer:selectServer]
+        return [servers: servers, type: type, selectServer: selectServer, map:map]
     }
 
     /**

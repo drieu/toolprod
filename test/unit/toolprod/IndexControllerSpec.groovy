@@ -16,19 +16,19 @@ class IndexControllerSpec extends Specification {
     }
 
 
-    void "test empty getMachineApps"() {
-        when:
-        controller.getMachineApps()
-
-        then:
-        response.redirectedUrl == '/?machine='
-    }
-
-    void "test empty search"() {
-        when:
-        controller.search()
-
-        then:
-        response.redirectedUrl == '/?query='
-    }
+//    void "test empty getMachineApps"() {
+//        when:
+//        controller.getMachineApps()
+//
+//        then:
+//        response.redirectedUrl == '/?machine='
+//    }
+//
+//    void "test empty search"() {
+//        when:
+//        controller.search()
+//
+//        then:
+//        response.redirectedUrl == '/?query='
+//    }
 }

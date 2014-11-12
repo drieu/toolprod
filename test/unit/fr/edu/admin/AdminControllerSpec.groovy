@@ -15,12 +15,12 @@ class AdminControllerSpec extends Specification {
     def cleanup() {
     }
 
-    void "test initData"() {
+//    void "test initData"() {
 //        when :
 //        controller.initData()
 //
 //        then :
 //        view == 'admin/initData'
 //        model.title == 'Welcome to Production !'
-    }
+//    }
 }
