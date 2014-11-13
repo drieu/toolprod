@@ -9,6 +9,7 @@
     <title>Welcome to Production !</title>
     <g:javascript library='jquery'/>
     <g:javascript library='bootstrap'/>
+    <r:require module="export"/>
     <r:layoutResources/>
 </head>
 
@@ -44,7 +45,7 @@
                     </ul>
                 </div>
                 <br/>
-
+                <br/>
                 <table class="table table-hover table-striped">
                     <thead>
                     <caption>
@@ -95,6 +96,7 @@
                         </g:else>
                     </g:each>
                 </table>
+                <export:formats />
             </div>
         </div>
     </div>
