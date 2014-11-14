@@ -67,7 +67,8 @@
                                     <td>${app?.name}</td>
                                     <td>
                                         <g:each in="${app?.serverUrls}">
-                                            <a href="${it}">${it}</a>&nbsp;
+                                            <a href="${it}">${it}</a>
+                                            <br/>
                                         </g:each>
                                         </td>
                                     <th>
@@ -84,7 +85,8 @@
                                 <td>${app?.name}</td>
                                 <td>
                                     <g:each in="${app?.serverUrls}">
-                                        <a href="${it}">${it}</a>&nbsp;
+                                        <a href="${it}">${it}</a>
+                                        <br/>
                                     </g:each>
                                 </td>
                                 <th>

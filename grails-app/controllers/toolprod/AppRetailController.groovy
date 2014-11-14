@@ -83,14 +83,14 @@ class AppRetailController {
             for (String p : appBean.portals) {
                 if (p != null) {
                     printAppBean.portals += p
-                    printAppBean.portals + " "
+                    printAppBean.portals += " "
                 }
             }
 
             for(String url: appBean.serverUrls) {
                 if (url != null) {
                     printAppBean.urls += url
-                    printAppBean.urls + " "
+                    printAppBean.urls += "\n"
                 }
             }
             if (backupChoice != null) {
