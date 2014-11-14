@@ -3,13 +3,13 @@ package toolprod
 /**
  * Table with check result
  */
-class Check {
+class Status {
 
     String machineName
 
     String fileName
 
-    String confServerName
+    String name
 
     static constraints = {
     }

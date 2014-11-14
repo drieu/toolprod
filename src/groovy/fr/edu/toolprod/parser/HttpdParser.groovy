@@ -269,7 +269,7 @@ class HttpdParser {
     }
 
     /**
-     * Check in apache configuration if ServerName is equals to machineName
+     * Status in apache configuration if ServerName is equals to machineName
      * @param machineName
      * @param fileName
      * @return  true if no error during parsing

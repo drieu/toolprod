@@ -247,11 +247,11 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                        <g:each in="${toolprod.Check.findAll()}" var="check">
+                                        <g:each in="${toolprod.Status.findAll()}" var="check">
                                             <tr>
                                                 <td>${check?.machineName}</td>
                                                 <td>${check?.fileName}</td>
-                                                <td>${check?.confServerName}</td>
+                                                <td>${check?.name}</td>
                                                 <td>
                                                     <span class="label label-warning">WARNING</span>
                                                 </td>

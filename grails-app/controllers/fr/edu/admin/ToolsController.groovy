@@ -2,8 +2,7 @@ package fr.edu.admin
 
 import fr.edu.toolprod.parser.HttpdParser
 import org.springframework.web.multipart.MultipartHttpServletRequest
-import toolprod.Check
-import toolprod.Portal
+import toolprod.Status
 
 class ToolsController {
 
@@ -15,9 +14,9 @@ class ToolsController {
     def index() {}
 
     def clearCheckTable() {
-        log.info("clearCheck() : DELETE all data in Check table")
-        Check.executeUpdate('delete from Check')
-        flash.message = "SUCCESS : Données effacees de la table Check"
+        log.info("clearCheck() : DELETE all data in Status table")
+        Status.executeUpdate('delete from Status')
+        flash.message = "SUCCESS : Données effacees de la table Status"
         redirect(controller:'tools',action:'checkApacheConf')
     }
 
@@ -37,12 +36,12 @@ class ToolsController {
             if(format && format != "html"){
                 response.contentType = grailsApplication.config.grails.mime.types[format]
                 response.setHeader("Content-disposition", "attachment; filename=check.${params.extension}")
-                List fields = ["machineName", "fileName", "confServerName"]
-                Map labels = ["machineName": "Nom de machine", "fileName": "Nom de fichier", "confServerName":"Valeur du ServerName"]
+                List fields = ["machineName", "fileName", "name"]
+                Map labels = ["machineName": "Nom de machine", "fileName": "Nom de fichier", "name":"Valeur du ServerName"]
 
                 Map formatters = new HashMap()
                 Map parameters = new HashMap()
-                exportService.export(format, response.outputStream,Check.list(params), fields, labels, formatters, parameters)
+                exportService.export(format, response.outputStream,Status.list(params), fields, labels, formatters, parameters)
 
             }
         }
@@ -80,7 +79,7 @@ class ToolsController {
         }
 
 
-        List<Check> checks = Check.findAll()
+        List<Status> checks = Status.findAll()
         int count = checks.size()
         return [checks:checks, count:count]
     }
@@ -93,10 +92,10 @@ class ToolsController {
             response.contentType = grailsApplication.config.grails.mime.types[params.format]
             response.setHeader("Content-disposition", "attachment; filename=books.${params.extension}")
 
-            exportService.export(params.format, response.outputStream,Check.list(params), [:], [:])
+            exportService.export(params.format, response.outputStream,Status.list(params), [:], [:])
         }
 
-        [ bookInstanceList: Check.list( params ) ]
+        [ bookInstanceList: Status.list( params ) ]
     }
 
 }

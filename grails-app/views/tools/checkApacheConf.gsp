@@ -79,7 +79,7 @@
                         <tr>
                             <td>${check?.machineName}</td>
                             <td>${check?.fileName}</td>
-                            <td>${check?.confServerName}</td>
+                            <td>${check?.name}</td>
                             <td>
                                 <span class="label label-warning">WARNING</span>
                             </td>

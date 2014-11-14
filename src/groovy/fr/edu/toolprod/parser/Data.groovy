@@ -4,7 +4,7 @@ import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
 import org.apache.commons.logging.LogFactory
 import toolprod.App
-import toolprod.Check
+import toolprod.Status
 import toolprod.Machine
 import toolprod.Portal
 import toolprod.Server
@@ -208,7 +208,7 @@ class Data {
 
     def static saveCheck(String machineName, String fileName, String confServerName) {
         if (machineName != null && fileName != null && confServerName!= null) {
-            Check check = Check.findOrCreateByMachineNameAndFileNameAndConfServerName(machineName, fileName, confServerName)
+            Status check = Status.findOrCreateByMachineNameAndFileNameAndName(machineName, fileName, confServerName)
             check.save(failOnError: true)
         }
     }
