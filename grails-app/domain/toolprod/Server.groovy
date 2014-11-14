@@ -54,7 +54,7 @@ class Server {
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return "Server{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
@@ -67,7 +67,25 @@ class Server {
                 '}';
     }
 
-    /**
+    boolean equals(o) {
+        if (this.is(o)) return true
+        if (getClass() != o.class) return false
+
+        Server server = (Server) o
+
+        if (name != server.name) return false
+        if (portNumber != server.portNumber) return false
+
+        return true
+    }
+
+    int hashCode() {
+        int result
+        result = (name != null ? name.hashCode() : 0)
+        result = 31 * result + (portNumber != null ? portNumber.hashCode() : 0)
+        return result
+    }
+/**
      * Add an application to linkapps
      * @param appName application name.
      */
@@ -92,7 +110,7 @@ class Server {
         log.info("Save serverBean:" + serverBean)
         Server server = Server.find{name==serverBean.name; portNumber==serverBean.portNumber}
         if (server == null) {
-            server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
+            server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber.toInteger(), serverType: Server.TYPE.APACHE)
             server.modules = serverBean.modules;
             server.save();
 

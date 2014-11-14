@@ -84,7 +84,7 @@ class Data {
 
 
     /**
-     * Save server.
+     * Save server Apache on Machine
      * @param serverBean
      * @return
      */
@@ -126,7 +126,10 @@ class Data {
             myApp.urls.add(appBean.serverUrl)
         }
         log.info("saveApacheApp() ==> save server:" + server.name)
-        myApp.addServer(server)
+        if (!myApp.servers.contains(server)) {
+            myApp.addServer(server)
+        }
+
         for (String portalName: appBean.portals) {
             Portal portal = Portal.findByName(portalName)
             if (portal != null && !myApp.portals.contains(portal)) {
@@ -170,12 +173,12 @@ class Data {
                 String machinName = params.get(0)
                 String portTest = params.get(1)
 
-                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName,portTest,Server.TYPE.WEBLOGIC, machinName)
+                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName, portTest.toInteger(),Server.TYPE.WEBLOGIC, machinName)
                 if (!server.linkToApps.contains(appBean.name)) {
                     server.addToLinkApps(appBean.name)
                 }
                 server.save(failOnError: true)
-                log.info("saveWebloApp() Server find or create:" + server)
+                log.info("saveWebloApp() Server " + server)
 
 
                 Machine machine = Machine.findOrCreateByName(machinName)
@@ -184,7 +187,19 @@ class Data {
                 machine.save(failOnError: true)
                 log.info("saveWebloApp() Machine find or create:" + machine)
 
-                app.addServer(server)
+                // Why equals method of server cannot be call ???
+                boolean bFind = false
+                for (Server serv : app.servers) {
+                    if (serv.name.equals(server.name) && serv.portNumber.equals(server.portNumber)) {
+                        bFind = true
+                        break
+                    }
+                }
+                if (!bFind) {
+                    log.info("saveWebloApp() add server to the App list.")
+                    app.addServer(server)
+                }
+
                 app.save(failOnError: true)
                 result = result + app.name + " "
             }
