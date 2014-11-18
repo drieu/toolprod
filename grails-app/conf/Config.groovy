@@ -91,14 +91,29 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+        // Set level for all application artifacts
+        log4j = {
+            info "grails.app"
+            debug "fr.edu.toolprod"
+        }
     }
     test {
         grails.logging.jul.usebridge = false
         grails.host = "172.30.209.14"
+        // Set level for all application artifacts
+        log4j = {
+            info "grails.app"
+            debug "fr.edu.toolprod"
+        }
     }
     production {
         grails.logging.jul.usebridge = false
         // TODO: grails.serverURL = "http://www.changeme.com"
+        // Set level for all application artifacts
+        log4j = {
+            info "grails.app"
+            info "fr.edu.toolprod"
+        }
     }
 }
 
@@ -110,9 +125,7 @@ log4j = {
         console name:'stdout', layout:pattern(conversionPattern: '[%-5p] %d %c{2} - %m%n')
     }
 
-    // Set level for all application artifacts
-    info "grails.app"
-    debug "fr.edu.toolprod"
+
 
 // Set for a specific controller in the default package debug "grails.app.controllers.YourController"
 // Set for a specific domain class debug "grails.app.domain.org.example.Book"

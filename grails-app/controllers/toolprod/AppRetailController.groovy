@@ -38,16 +38,13 @@ class AppRetailController {
      */
     def listing() {
 
-
+        log.info("AppRetailController:listing()")
         def portalChoice = params.choice
         if (portalChoice != null) {
             backupChoice = portalChoice
         }
         List<AppBean> appBeans = new ArrayList<>()
         def apps = App.findAll()
-
-
-
 
         for(App app : apps) {
            log.info(app.toString())
@@ -71,7 +68,6 @@ class AppRetailController {
                    }
                }
            }
-           log.info(appBean.toString())
            appBeans.add(appBean)
         }
         List<PrintAppBean> printAppBeans = new ArrayList<>()
@@ -127,7 +123,7 @@ class AppRetailController {
             }
         }
 
-        def portals = Portal.findAll().unique{ it.name}
+        def portals = Portal.findAll().unique{ it.name }
         return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
     }
 }
