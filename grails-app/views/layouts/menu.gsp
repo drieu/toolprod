@@ -38,6 +38,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="/toolprod/appRetail/listing">Liste des applications</a></li>
+                        <li><a href="/toolprod/appRetail/crontab">Liste des crontab</a></li>
                         %{--<li><a href="/toolprod/appRetail/status">Status</a></li>--}%
                     </ul>
                 </li>

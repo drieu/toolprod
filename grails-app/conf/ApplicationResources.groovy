@@ -12,4 +12,10 @@ modules = {
         resource url:'bootstrap/css/bootstrap.css'
         resource url:'bootstrap/js/bootstrap.js'
     }
+
+    fullcalendar {
+        resource url:'/js/moment.min.js'
+        resource url:'/css/fullcalendar.min.css'
+        resource url:'/js/fullcalendar.min.js'
+    }
 }

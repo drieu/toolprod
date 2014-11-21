@@ -8,6 +8,7 @@
     <meta name="author" content="">
     <title>Welcome to Production !</title>
     <g:javascript library='jquery'/>
+    <r:require module="jquery-ui"/>
     <g:javascript library='bootstrap'/>
     <r:layoutResources/>
 </head>
@@ -39,6 +40,7 @@
         </div>
 
         <div class="col-md-9">
+
             <g:if test="${searchResults != null && searchResults.isEmpty()}">
                 <div class="alert alert-success alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -227,7 +229,6 @@
                         </ul>
                     </div>
                     <br/>
-
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <h3 class="panel-title">Erreurs dans les fichiers Apache  <span class="badge">${count}</span></h3>

@@ -126,4 +126,11 @@ class AppRetailController {
         def portals = Portal.findAll().unique{ it.name }
         return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
     }
+
+    /**
+     * Affiche la liste des crontab dans un planing
+     */
+    def crontab() {
+
+    }
 }
