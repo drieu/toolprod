@@ -44,7 +44,7 @@ class XmlParser {
                 String appUrl = params.get(2);
 
                 // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
-                String appServer = XmlParser.parseServerFromHttpProxyPass(appUrl);//TODO : ?????
+                String appServer = XmlParser.parseServerFromHttpProxyPass(appUrl);
                 String appPort = XmlParser.parsePortFromHttpProxyPass(appUrl);
 
                 appBean = new AppBean();
@@ -57,8 +57,10 @@ class XmlParser {
                         appBean.name = appBean.name.substring("httpd.conf.".length(),appBean.name.length())
                     }
                 }
-                appBean.serverUrl = appUrl;
-                appBean.serverPort = appPort;
+                appBean.serverUrl = appUrl
+                appBean.serverPort = appPort
+                appBean.appServer = appServer
+                appBean.appPort = appPort
             }
         }
         return appBean

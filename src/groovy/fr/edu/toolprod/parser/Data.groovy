@@ -1,13 +1,17 @@
 package fr.edu.toolprod.parser
 
+import com.tree.TreeNode
+import com.tree.TreeNodeImpl
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
+import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Status
 import toolprod.Machine
 import toolprod.Portal
 import toolprod.Server
+import toolprod.TreeNode
 
 /**
  * Data is used to save App parsed in httpd conf and the result of check method in database.
@@ -136,6 +140,84 @@ class Data {
                 myApp.portals.add(portal)
             }
         }
+
+        // Add server parent and child
+        // Add a virtual parent
+
+        if (myApp.node == null) {
+            String virtualName = "parent_" + appBean.name
+            myApp.node = new TreeNode(new Server(virtualName, "80", virtualName))
+            myApp.node.save()
+            log.info("ROOT virtual parent child :" + myApp.node.toString())
+
+
+            TreeNode child = myApp.node.addChild(new Server(appBean.appServer, appBean.appPort, appBean.appServer))
+            child.save()
+            log.info("Server child 1:" + child.toString())
+
+
+            child.addChild(server)
+            child.save()
+            log.info("Server child 2 :" + child.toString())
+
+
+            TreeNode node = myApp.node
+            log.info("Parent:" + node.toString())
+            for (TreeNode c : node.getChildren()) {
+                if (c != null && c.data != null) {
+                    log.info("Child:" + c.data.toString())
+                }
+            }
+        }
+
+//        if ( (myApp != null) && (myApp.node != null) ) {
+//            if (myApp.node.parent == null) {
+//                log.info("No parent => add virtual parent and child")
+//                String virtualName = "parent_" + appBean.name
+//                log.info("Create parent :" + virtualName)
+//                TreeNode parent = new TreeNode(new Server(virtualName, "80", virtualName))
+//                parent.save()
+//
+//                myApp.node.parent = parent
+//
+//                log.info("Server child :" + server.toString())
+//                myApp.node.addChild(server)
+//                TreeNode node = myApp.node
+//                log.info("Parent:" + node.toString())
+//                for (TreeNode child : node.getChildren()) {
+//                    if (child != null && child.data != null) {
+//                        log.info("Child:" + child.data.toString())
+//                    }
+//                }
+//            }
+//        }
+
+
+//        // Server Node
+//        if (myApp.node == null) {
+//            log.info("ICI")
+//            myApp.node = appBean.node
+//
+//        } else {
+//            log.info("ICI 2")
+//            TreeNode root = new TreeNode(myApp.node)
+//
+//            TreeNode<Server> searchNode = appBean.node
+//            TreeNodeImpl nodeImpl = new TreeNodeImpl()
+//            TreeNode<Server> search = nodeImpl.search(searchNode, server)
+//
+//            if ( search == null ) {
+//                if (root != null) {
+//                    root.addChild(appBean.node)
+//                }
+//            } else {
+//                root = nodeImpl.getRoot(myApp.node)
+//                root.addChild(myApp.node)
+//            }
+//        }
+        //log.info("NODE :" + myApp.node.toString())
+
+
         log.debug("saveApacheApp() app:" + appBean)
         myApp.save(failOnError: true)
         result = result + appBean.name + " "
@@ -162,6 +244,27 @@ class Data {
                 }
             }
         }
+
+//        // Server Node
+//        if (app.node == null) {
+//            app.node = appBean.node
+//
+//        } else {
+//           TreeNodeImpl nodeImpl = new TreeNodeImpl()
+//           TreeNode search = nodeImpl.search(app.node, server)
+//           TreeNode root
+//           if ( search == null ) {
+//               root = nodeImpl.getRoot(app.node)
+//               root.addChild(appBean.node)
+//
+//           } else {
+//               // TODO
+//           }
+//        }
+//        log.info("NODE :" + app.node.toString())
+
+
+
         app.save(failOnError: true)
 
         log.info("saveWebloApp() App find or create:" + app)

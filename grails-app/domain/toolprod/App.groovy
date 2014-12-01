@@ -1,6 +1,5 @@
 package toolprod
 
-import fr.edu.toolprod.bean.AppBean
 import org.apache.commons.logging.LogFactory
 
 /**
@@ -32,6 +31,9 @@ class App {
     List<Portal> portals = []
 
 
+    TreeNode<Server> node
+
+
     /**
      * Server list.
      */
@@ -49,6 +51,7 @@ class App {
     static constraints = {
         name(blank:false)
         description(size:0..400)
+        node(nullable: true)
     }
 
     def addServer(Server server) {

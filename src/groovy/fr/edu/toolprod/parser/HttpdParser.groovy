@@ -2,13 +2,11 @@ package fr.edu.toolprod.parser
 
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
-import fr.edu.toolprod.parser.XmlParser
+import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
-import toolprod.App
 import toolprod.Machine
-import toolprod.MachineGroup
-import toolprod.Portal
 import toolprod.Server
+import toolprod.TreeNode
 
 /**
  * Parse httpd.conf file.
@@ -122,7 +120,13 @@ class HttpdParser {
                                 appBean.portals.add(choice)
                             }
                         }
-                        appBeans.add(appBean);
+
+//                        // Add server parent and child
+//                        String virtualName = "parent_" + name
+//                        appBean.node.parent = new TreeNode(new Server(virtualName, "80", virtualName))
+//                        appBean.node.addChild(new Server(appBean.appServer, appBean.appPort, appBean.appServer))
+//                        appBean.node.addChild(serverBean)
+//                        appBeans.add(appBean)
                     }
 
                 } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
@@ -141,7 +145,19 @@ class HttpdParser {
                 } else if (strLine.startsWith("</LocationMatch>")) {
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
-                    appBeans.add(appBean);
+                    appBeans.add(appBean)
+
+                    // Add server parent and child
+                    // Add a virtual parent
+//                    String virtualName = "parent_" + name
+//                    appBean.node.parent = new TreeNode(new ServerBean(virtualName, "80", virtualName))
+//                    for(String w : weblos) {
+//                        //Add child for the virtual parent
+//                        String childWebloName = StringUtils.substringBefore(w, ':')
+//                        String childWebloPort = StringUtils.substringAfter(w, ':')
+//                        ServerBean weblosServerBean = new ServerBean(childWebloName, childWebloPort, childWebloName)
+//                        appBean.node.addChild(weblosServerBean)
+//                    }
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -164,6 +180,18 @@ class HttpdParser {
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
                     appBeans.add(appBean);
+
+                    // Add server parent and child
+                    // Add a virtual parent
+//                    String virtualName = "parent_" + name
+//                    appBean.node.parent = new ServerBean(virtualName, "80", virtualName)
+//                    for(String w : weblos) {
+//                        //Add child for the virtual parent
+//                        String childWebloName = StringUtils.substringBefore(w, ':')
+//                        String childWebloPort = StringUtils.substringAfter(w, ':')
+//                        ServerBean weblosServerBean = new ServerBean(childWebloName, childWebloPort, childWebloName)
+//                        appBean.node.addChild(weblosServerBean)
+//                    }
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -216,6 +244,7 @@ class HttpdParser {
                     appBean.portals.add(choice)
                 }
             }
+//            appBean.node.parent = new TreeNode(new ServerBean(appBean.appServer, appBean.appPort, appBean.appServer))
             appBeans.add(appBean)
         }
 

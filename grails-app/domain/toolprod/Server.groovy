@@ -6,7 +6,7 @@ import org.apache.commons.logging.LogFactory
 /**
  * Servers like Apache, Weblogic
  */
-class Server {
+class Server implements Comparable{
 
     /**
      * ServerName in apache conf.
@@ -47,6 +47,15 @@ class Server {
 
     private static final log = LogFactory.getLog(this)
 
+    Server(String name, String portNumber, String machineHostName) {
+        this.name = name
+        if (portNumber == null) {
+            portNumber = "0"
+        }
+        this.portNumber = portNumber.toInteger()
+        this.machineHostName = machineHostName
+    }
+
     static constraints = {
         name()
         portNumber(defaultValue:80)
@@ -84,6 +93,16 @@ class Server {
         result = (name != null ? name.hashCode() : 0)
         result = 31 * result + (portNumber != null ? portNumber.hashCode() : 0)
         return result
+    }
+
+    @Override
+    int compareTo(Object o) {
+        if (o instanceof Server) {
+            if ( (this.name.equals(o.name)) && (this.portNumber.equals(o.portNumber)) ) {
+                return 0
+            }
+        }
+        return 1
     }
 /**
      * Add an application to linkapps

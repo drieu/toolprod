@@ -1,5 +1,8 @@
 package fr.edu.toolprod.bean
 
+import com.tree.TreeNode
+import toolprod.TreeNode
+
 /**
  * AppBean class.
  */
@@ -39,6 +42,13 @@ class AppBean {
      * Weblogic list.
      */
     List<String> weblos = new ArrayList<>()
+
+
+//    TreeNode node = new TreeNode()
+
+
+    String appServer
+    String appPort
 
 
     private static final String DEFAUL_APPNAME = "UNEUSED_APP"

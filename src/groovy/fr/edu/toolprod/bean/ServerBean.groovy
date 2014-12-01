@@ -28,7 +28,15 @@ class ServerBean {
      */
     List<String> modules = []
 
-    /**
+    ServerBean() {
+    }
+
+    ServerBean(String name, String portNumber, String machineHostName) {
+        this.name = name
+        this.portNumber = portNumber
+        this.machineHostName = machineHostName
+    }
+/**
      * Add a module to the modules list.
      * @param moduleName  Name of the module.
      * @return
