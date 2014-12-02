@@ -98,4 +98,177 @@ class ToolsController {
         [ bookInstanceList: Status.list( params ) ]
     }
 
+    /**
+     * Generate mail name automatically
+     */
+    def mail() {
+        def types = new ArrayList<String>()
+
+        String rne = params.get("rne")
+        String type = params.get("type")
+        types.add("intendance")
+        types.add("magasin")
+
+        log.info("Type:" + type)
+        log.info("RNE:" + rne)
+
+        if (type == null) {
+            type = "TYPE"
+        }
+        if (rne == null) {
+            rne = "RNE"
+        }
+
+        String uid = type + rne
+        String mail = type + "." + rne + "@ac-limoges.fr"
+
+        [ types: types, mail: mail, uid: uid, rne: rne, type: type ]
+    }
+
+    def downloadUID() {
+
+        String uid = params.get("uid")
+        String rne = params.get("rne")
+        String type = params.get("type")
+        String mail = params.get("mail")
+
+
+        String fileName = uid.toString() + ".ldif"
+        File file = new File(fileName)
+
+        String content = ""
+
+        content +=  "dn: uid=" + uid + ",ou=fonctionnelles,ou=ac-limoges,ou=education,o=gouv,c=fr"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "sunUCDefaultApplication: mail"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "preferredLanguage: fr"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "sunUCTimeFormat: 24"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "sunUCDateFormat: D/M/Y"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "sunUCDateDelimiter: /"
+        content +=  System.getProperty("line.separator")
+
+
+        content +=  "sunUCTheme: theme_dark_blue"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "mailHost: store72.ac-limoges.fr"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "mailMessageStore: popfonct"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "psRoot: ldap://ldap-m7.ac-limoges.fr:389/piPStoreOwner=" + uid + ",o=ac-limoges.fr,o=PiServerDb"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: sunUCPreferences"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: top"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: InetOrgPerson"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: mailrecipient"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: nsLicenseUser"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: organizationalPerson"
+        content +=  System.getProperty("line.separator")
+
+
+        content +=  "objectClass: person"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: educationnationale"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: nsMessagingServerUser"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: inetsubscriber"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: ipuser"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: inetuser"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: iplanet-am-user-service"
+        content +=  System.getProperty("line.separator")
+
+
+        content +=  "objectClass: iplanet-am-managed-person"
+        content +=  System.getProperty("line.separator")
+
+
+        content +=  "objectClass: userpresenceprofile"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: inetlocalmailrecipient"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: inetmailuser"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "objectClass: icscalendaruser"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "givenName: " + type
+        content +=  System.getProperty("line.separator")
+
+        content +=  "sn: " + rne
+        content +=  System.getProperty("line.separator")
+
+        content +=  "userPassword: TO_DEFINE"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "ou: " + rne
+        content +=  System.getProperty("line.separator")
+
+        content +=  "mailUserStatus: active"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "inetUserStatus: active"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "mail: " + mail
+        content +=  System.getProperty("line.separator")
+
+        content +=  "uid: " + uid
+        content +=  System.getProperty("line.separator")
+
+        content +=  "mailDeliveryOption: mailbox"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "nsLicensedFor: mail"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "cn: " + type + " " + rne
+        content +=  System.getProperty("line.separator")
+
+        content += "iplanet-am-modifiable-by: cn=top-level admin role,o=gouv,c=fr"
+        content +=  System.getProperty("line.separator")
+
+        content +=  "iplanet-am-user-login-status: active"
+
+        file.write(content)
+
+        //file.write("iplanet-am-modifiable-by: cn=top-level admin role,o=gouv,c=fr" + System.getProperty("line.separator") + "iplanet-am-user-login-status: active")
+
+        render(file: file, contentType: 'text/plain', fileName: fileName)
+    }
+
 }
