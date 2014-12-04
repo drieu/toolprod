@@ -19,9 +19,37 @@ class AppRetailController {
         def selectApp = params.get("name")
         if (selectApp != null) {
             myApp = App.findByName((String)selectApp)
+
+            log.info("Show node")
+            TreeNode node = myApp.node
+            log.info("====>Parent:" + node.toString())
+            for (TreeNode c : node.getChildren()) {
+                if (c != null && c.nodeData != null) {
+                    log.info("Child:" + c.nodeData.toString())
+                }
+            }
+//            log.info(myApp.node?.toString())
+//            TreeNode<String> treeRoot = myApp.node;
+//            for (TreeNode<String> node : treeRoot) {
+//                String indent = createIndent(node.getLevel());
+//                System.out.println(indent + node.nodeData);
+//            }
+            log.info("End of Show node")
         }
 
+
+
         return [app:myApp]
+    }
+
+
+
+    private static String createIndent(int depth) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            sb.append(' ');
+        }
+        return sb.toString();
     }
 
     /**

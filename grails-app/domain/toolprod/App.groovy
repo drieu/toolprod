@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory
  */
 class App {
 
-    static searchable = true
+    //static searchable = true
 
     /**
      * Application name.
@@ -31,7 +31,7 @@ class App {
     List<Portal> portals = []
 
 
-    TreeNode<Server> node
+    TreeNode node
 
 
     /**
@@ -72,14 +72,16 @@ class App {
 
     }
 
+
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "App{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", urls='" + urls.toString() + '\'' +
+                ", urls=" + urls +
                 ", portals=" + portals +
+                ", node=" + node +
                 ", servers=" + servers +
                 ", version=" + version +
                 '}';

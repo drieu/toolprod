@@ -120,14 +120,8 @@ class HttpdParser {
                                 appBean.portals.add(choice)
                             }
                         }
-
-//                        // Add server parent and child
-//                        String virtualName = "parent_" + name
-//                        appBean.node.parent = new TreeNode(new Server(virtualName, "80", virtualName))
-//                        appBean.node.addChild(new Server(appBean.appServer, appBean.appPort, appBean.appServer))
-//                        appBean.node.addChild(serverBean)
-//                        appBeans.add(appBean)
                     }
+                    appBeans.add(appBean);
 
                 } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
                     def params = strLine.tokenize()
@@ -146,18 +140,6 @@ class HttpdParser {
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
                     appBeans.add(appBean)
-
-                    // Add server parent and child
-                    // Add a virtual parent
-//                    String virtualName = "parent_" + name
-//                    appBean.node.parent = new TreeNode(new ServerBean(virtualName, "80", virtualName))
-//                    for(String w : weblos) {
-//                        //Add child for the virtual parent
-//                        String childWebloName = StringUtils.substringBefore(w, ':')
-//                        String childWebloPort = StringUtils.substringAfter(w, ':')
-//                        ServerBean weblosServerBean = new ServerBean(childWebloName, childWebloPort, childWebloName)
-//                        appBean.node.addChild(weblosServerBean)
-//                    }
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -237,6 +219,7 @@ class HttpdParser {
 
         // If EMPTY httpd.conf create application with name of http.conf.name
         if(appBeans.size() == 0) {
+            log.info("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
             appBean.name = getNameFromFileName();
             for (String choice : selectedPortals) {

@@ -3,33 +3,40 @@ package toolprod
 import com.tree.TreeNodeIter
 
 
-class TreeNode<T>  {
+class TreeNode  {
 
-    public T data;
+    String name
 
-    public TreeNode<T> parent;
+    Server nodeData;
+
+    TreeNode parent;
 
     static hasMany = [children : TreeNode, elementsIndex: TreeNode]
 
+    static constraints = {
+       name(nullable: true)
+       nodeData(nullable: true)
+       parent(nullable: true)
+    }
 
-    public TreeNode(T data) {
-        this.data = data;
-        this.children = new LinkedList<TreeNode<T>>();
-        this.elementsIndex = new LinkedList<TreeNode<T>>();
+    public TreeNode(Server nodeData) {
+        this.nodeData = nodeData;
+        this.children = new LinkedList<TreeNode>();
+        this.elementsIndex = new LinkedList<TreeNode>();
         this.elementsIndex.add(this);
     }
 
-    public TreeNode<T> addChild(T child) {
-        TreeNode<T> childNode = new TreeNode<T>(child);
+    public TreeNode addChild(Server child) {
+        TreeNode childNode = new TreeNode(child);
         childNode.parent = this;
         childNode.save()
         System.out.println("ChildNode:" + childNode)
 
         if (children == null) {
-            this.children = new LinkedList<TreeNode<T>>();
+            this.children = new LinkedList<TreeNode>();
         }
         if (elementsIndex == null) {
-            elementsIndex = new LinkedList<TreeNode<T>>();
+            elementsIndex = new LinkedList<TreeNode>();
         }
         this.children.add(childNode);
         this.registerChildForSearch(childNode);
@@ -43,15 +50,15 @@ class TreeNode<T>  {
             return parent.getLevel() + 1;
     }
 
-    private void registerChildForSearch(TreeNode<T> node) {
+    private void registerChildForSearch(TreeNode node) {
         elementsIndex.add(node);
         if (parent != null)
             parent.registerChildForSearch(node);
     }
 
-    public TreeNode<T> findTreeNode(Comparable<T> cmp) {
-        for (TreeNode<T> element : this.elementsIndex) {
-            T elData = element.data;
+    public TreeNode findTreeNode(Comparable cmp) {
+        for (TreeNode element : this.elementsIndex) {
+            Server elData = element.nodeData;
             if (cmp.compareTo(elData) == 0)
                 return element;
         }
@@ -61,11 +68,11 @@ class TreeNode<T>  {
 
     @Override
     public String toString() {
-        return data != null ? data.toString() : "[data null]";
+        return nodeData != null ? nodeData.toString() : "[nodeData null]";
     }
 
 //    @Override
-//    public Iterator<TreeNode<T>> iterator() {
+//    public Iterator<TreeNode> iterator() {
 ////        TreeNodeIter<T> iter = new TreeNodeIter<T>(this);
 ////        return iter;
 //        return null
@@ -80,6 +87,5 @@ class TreeNode<T>  {
         return children.size() == 0;
     }
 
-    static constraints = {
-    }
+
 }

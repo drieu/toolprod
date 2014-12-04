@@ -134,6 +134,7 @@ class Data {
             myApp.addServer(server)
         }
 
+        log.info("saveApacheApp() ==> add portals ")
         for (String portalName: appBean.portals) {
             Portal portal = Portal.findByName(portalName)
             if (portal != null && !myApp.portals.contains(portal)) {
@@ -143,82 +144,59 @@ class Data {
 
         // Add server parent and child
         // Add a virtual parent
+//        log.info("saveApacheApp() ==> node ")
+//        if (myApp.node == null) {
+//            myApp.node = new TreeNode()
+//            myApp.node.save()
+//        }
 
-        if (myApp.node == null) {
-            String virtualName = "parent_" + appBean.name
-            myApp.node = new TreeNode(new Server(virtualName, "80", virtualName))
-            myApp.node.save()
-            log.info("ROOT virtual parent child :" + myApp.node.toString())
+        log.info("saveApacheApp() ==> add node if exist ")
+
+        // Save virtual Parent
+        String virtualName = "parent_" + appBean.name
+        Server serverParent = new Server(virtualName, "80", virtualName)
+        serverParent.serverType=Server.TYPE.APACHE
+        serverParent.save(failOnError: true)
+
+        // save treeNode with virtual parent
+        TreeNode treeNodeParent = new TreeNode(serverParent)
+        treeNodeParent.nodeData = serverParent
+        treeNodeParent.name = "parent"
+        treeNodeParent.save(failOnError: true)
+        log.info("saveApacheApp() ==> treeNodeParent:" + treeNodeParent.toString())
+
+        myApp.node = treeNodeParent
+        myApp.save(failOnError: true)
+        log.info("MyApp with PARENT :" + myApp.toString())
 
 
-            TreeNode child = myApp.node.addChild(new Server(appBean.appServer, appBean.appPort, appBean.appServer))
-            child.save()
-            log.info("Server child 1:" + child.toString())
+
+//        Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
+//        serverChild.serverType=Server.TYPE.APACHE
+//        serverChild.save(failOnError: true)
+//        log.info("saveApacheApp() ===> Server child 1:" + serverChild.toString())
+//        TreeNode child = myApp.node.addChild(serverChild)
+//        child.name = "child"
+//        child.save(failOnError: true)
+//
+//        log.info("saveApacheApp() ===> Server child 2 :" + server.toString())
+//        child.addChild(server)
+//        child.name = "child"
+//        child.save(failOnError: true)
+//        myApp.node.save(failOnError: true)
+//        myApp.save(failOnError: true)
 
 
-            child.addChild(server)
-            child.save()
-            log.info("Server child 2 :" + child.toString())
-
-
-            TreeNode node = myApp.node
-            log.info("Parent:" + node.toString())
-            for (TreeNode c : node.getChildren()) {
-                if (c != null && c.data != null) {
-                    log.info("Child:" + c.data.toString())
-                }
+        TreeNode node = myApp.node
+        log.info("saveApacheApp() ====>SHOW RESULT<=======")
+        log.info("saveApacheApp() ====>Parent:" + node.toString())
+        for (TreeNode c : node.getChildren()) {
+            if (c != null && c.nodeData != null) {
+                log.info("saveApacheApp() Child:" + c.nodeData.toString())
             }
         }
 
-//        if ( (myApp != null) && (myApp.node != null) ) {
-//            if (myApp.node.parent == null) {
-//                log.info("No parent => add virtual parent and child")
-//                String virtualName = "parent_" + appBean.name
-//                log.info("Create parent :" + virtualName)
-//                TreeNode parent = new TreeNode(new Server(virtualName, "80", virtualName))
-//                parent.save()
-//
-//                myApp.node.parent = parent
-//
-//                log.info("Server child :" + server.toString())
-//                myApp.node.addChild(server)
-//                TreeNode node = myApp.node
-//                log.info("Parent:" + node.toString())
-//                for (TreeNode child : node.getChildren()) {
-//                    if (child != null && child.data != null) {
-//                        log.info("Child:" + child.data.toString())
-//                    }
-//                }
-//            }
-//        }
 
-
-//        // Server Node
-//        if (myApp.node == null) {
-//            log.info("ICI")
-//            myApp.node = appBean.node
-//
-//        } else {
-//            log.info("ICI 2")
-//            TreeNode root = new TreeNode(myApp.node)
-//
-//            TreeNode<Server> searchNode = appBean.node
-//            TreeNodeImpl nodeImpl = new TreeNodeImpl()
-//            TreeNode<Server> search = nodeImpl.search(searchNode, server)
-//
-//            if ( search == null ) {
-//                if (root != null) {
-//                    root.addChild(appBean.node)
-//                }
-//            } else {
-//                root = nodeImpl.getRoot(myApp.node)
-//                root.addChild(myApp.node)
-//            }
-//        }
-        //log.info("NODE :" + myApp.node.toString())
-
-
-        log.debug("saveApacheApp() app:" + appBean)
         myApp.save(failOnError: true)
         result = result + appBean.name + " "
     }

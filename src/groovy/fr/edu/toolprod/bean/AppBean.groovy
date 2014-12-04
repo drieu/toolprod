@@ -87,14 +87,19 @@ class AppBean {
     }
 
 
+
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "AppBean{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", serverUrl='" + serverUrl + '\'' +
+                ", serverUrls=" + serverUrls +
                 ", serverPort='" + serverPort + '\'' +
                 ", portals=" + portals +
+                ", weblos=" + weblos +
+                ", appServer='" + appServer + '\'' +
+                ", appPort='" + appPort + '\'' +
                 '}';
     }
 }
