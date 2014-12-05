@@ -29,8 +29,8 @@ class TreeNode  {
     public TreeNode addChild(Server child) {
         TreeNode childNode = new TreeNode(child);
         childNode.parent = this;
-        childNode.save()
-        System.out.println("ChildNode:" + childNode)
+        childNode.save(failOnError: true)
+//        System.out.println("ChildNode:" + childNode)
 
         if (children == null) {
             this.children = new LinkedList<TreeNode>();

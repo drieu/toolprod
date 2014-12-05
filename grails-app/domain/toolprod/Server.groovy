@@ -24,10 +24,6 @@ class Server implements Comparable{
     String machineHostName
 
 
-    Server parent
-
-    Server child
-
     /**
      * List references application.
      */
@@ -68,8 +64,6 @@ class Server implements Comparable{
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", portNumber=" + portNumber +
-                ", parent=" + parent +
-                ", child=" + child +
                 ", linkToApps=" + linkToApps +
                 ", serverType=" + serverType +
                 ", version=" + version +

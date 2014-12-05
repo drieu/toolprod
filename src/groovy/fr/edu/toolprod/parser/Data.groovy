@@ -142,63 +142,84 @@ class Data {
             }
         }
 
-        // Add server parent and child
-        // Add a virtual parent
-//        log.info("saveApacheApp() ==> node ")
-//        if (myApp.node == null) {
-//            myApp.node = new TreeNode()
-//            myApp.node.save()
-//        }
-
         log.info("saveApacheApp() ==> add node if exist ")
 
-        // Save virtual Parent
-        String virtualName = "parent_" + appBean.name
-        Server serverParent = new Server(virtualName, "80", virtualName)
-        serverParent.serverType=Server.TYPE.APACHE
-        serverParent.save(failOnError: true)
 
-        // save treeNode with virtual parent
-        TreeNode treeNodeParent = new TreeNode(serverParent)
-        treeNodeParent.nodeData = serverParent
-        treeNodeParent.name = "parent"
-        treeNodeParent.save(failOnError: true)
-        log.info("saveApacheApp() ==> treeNodeParent:" + treeNodeParent.toString())
-
+        TreeNode treeNodeParent = saveSourceNode(appBean.name)
         myApp.node = treeNodeParent
         myApp.save(failOnError: true)
         log.info("MyApp with PARENT :" + myApp.toString())
 
+        TreeNode childNode = saveChild(treeNodeParent, appBean)
+        saveChild(childNode, server)
 
+        myApp.node.save(failOnError: true)
+        myApp.save(failOnError: true)
+        showNode(myApp)
+        result = result + appBean.name + " "
+    }
 
-//        Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
-//        serverChild.serverType=Server.TYPE.APACHE
-//        serverChild.save(failOnError: true)
-//        log.info("saveApacheApp() ===> Server child 1:" + serverChild.toString())
-//        TreeNode child = myApp.node.addChild(serverChild)
-//        child.name = "child"
-//        child.save(failOnError: true)
-//
-//        log.info("saveApacheApp() ===> Server child 2 :" + server.toString())
-//        child.addChild(server)
-//        child.name = "child"
-//        child.save(failOnError: true)
-//        myApp.node.save(failOnError: true)
-//        myApp.save(failOnError: true)
-
-
+    def showNode(App myApp) {
         TreeNode node = myApp.node
-        log.info("saveApacheApp() ====>SHOW RESULT<=======")
-        log.info("saveApacheApp() ====>Parent:" + node.toString())
+        log.info("saveApacheApp() ====>SHOW NODE<====")
+        log.info("saveApacheApp() ====>Source :" + node.toString())
         for (TreeNode c : node.getChildren()) {
             if (c != null && c.nodeData != null) {
-                log.info("saveApacheApp() Child:" + c.nodeData.toString())
+                log.info("saveApacheApp() Child 1:" + c.toString())
+                for (TreeNode cbis : c.getChildren()) {
+                    if (c != null && c.nodeData != null) {
+                        log.info("saveApacheApp() Child 2:" + cbis.toString())
+                    }
+                }
             }
         }
+    }
 
+    /**
+     * Save a child with server
+     * @param node
+     * @param server
+     * @return
+     */
+    def saveChild(TreeNode childNode, Server server) {
+        log.info("saveChild() ===> Server child :" + server.toString())
+        TreeNode node = childNode.addChild(server)
+        node.name = "childNodeBis"
+        node.save(failOnError: true)
+        return node
+    }
 
-        myApp.save(failOnError: true)
-        result = result + appBean.name + " "
+    /**
+     * Save a child.
+     */
+    def saveChild(TreeNode treeNodeParent, AppBean appBean) {
+        Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
+        serverChild.serverType=Server.TYPE.APACHE
+        serverChild.save(failOnError: true)
+        log.info("saveChild() ===> Server child 1:" + serverChild.toString())
+
+        TreeNode childNode = treeNodeParent.addChild(serverChild)
+        childNode.parent = treeNodeParent
+        childNode.name = "child"
+        childNode.save(failOnError: true)
+        return childNode
+    }
+
+    /**
+     * Save a fake server app which will have server parents found in httpd.conf.
+     */
+    def saveSourceNode(String sourceName) {
+        String virtualName = "source_" + sourceName
+        Server serverSource = new Server(virtualName, "80", virtualName)
+        serverSource.serverType=Server.TYPE.APACHE
+        serverSource.save(failOnError: true)
+
+        TreeNode node = new TreeNode(serverSource)
+        node.nodeData = serverSource
+        node.name = "parent"
+        node.save(failOnError: true)
+        log.info("saveSourceNode() ==> SOURCE node:" + node.toString())
+        return node
     }
 
 /**
