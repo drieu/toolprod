@@ -56,6 +56,10 @@
                 </g:each>
             </dd>
         </dl>
+
+        <br/>
+
+        <g:render template="/appRetail/machineTree" model="[nodes:app?.node]"/>
         %{--<div id="jstree_demo">--}%
         %{--</div>--}%
     </g:if>
