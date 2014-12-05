@@ -25,15 +25,15 @@ class AppRetailController {
             log.info("====>Parent:" + node.toString())
             for (TreeNode c : node.getChildren()) {
                 if (c != null && c.nodeData != null) {
-                    log.info("Child:" + c.nodeData.toString())
+                    log.info("Child 1:" + c.nodeData.toString())
+                    for (TreeNode cbis : c.getChildren()) {
+                        if (c != null && c.nodeData != null) {
+                            log.info("Child 2:" + cbis.toString())
+                        }
+                    }
                 }
             }
-//            log.info(myApp.node?.toString())
-//            TreeNode<String> treeRoot = myApp.node;
-//            for (TreeNode<String> node : treeRoot) {
-//                String indent = createIndent(node.getLevel());
-//                System.out.println(indent + node.nodeData);
-//            }
+
             log.info("End of Show node")
         }
 

@@ -163,17 +163,6 @@ class HttpdParser {
                     appBean.weblos = weblos
                     appBeans.add(appBean);
 
-                    // Add server parent and child
-                    // Add a virtual parent
-//                    String virtualName = "parent_" + name
-//                    appBean.node.parent = new ServerBean(virtualName, "80", virtualName)
-//                    for(String w : weblos) {
-//                        //Add child for the virtual parent
-//                        String childWebloName = StringUtils.substringBefore(w, ':')
-//                        String childWebloPort = StringUtils.substringAfter(w, ':')
-//                        ServerBean weblosServerBean = new ServerBean(childWebloName, childWebloPort, childWebloName)
-//                        appBean.node.addChild(weblosServerBean)
-//                    }
 
                     weblos = new ArrayList<>()
                     bLocationTag = false

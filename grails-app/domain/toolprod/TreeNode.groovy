@@ -30,7 +30,6 @@ class TreeNode  {
         TreeNode childNode = new TreeNode(child);
         childNode.parent = this;
         childNode.save(failOnError: true)
-//        System.out.println("ChildNode:" + childNode)
 
         if (children == null) {
             this.children = new LinkedList<TreeNode>();
@@ -56,15 +55,25 @@ class TreeNode  {
             parent.registerChildForSearch(node);
     }
 
-    public TreeNode findTreeNode(Comparable cmp) {
+    public TreeNode findTreeNode(Server server) {
         for (TreeNode element : this.elementsIndex) {
             Server elData = element.nodeData;
-            if (cmp.compareTo(elData) == 0)
+            if (server.compareTo(elData) == 0)
                 return element;
         }
 
         return null;
     }
+
+//    public TreeNode findTreeNode(Comparable cmp) {
+//        for (TreeNode element : this.elementsIndex) {
+//            Server elData = element.nodeData;
+//            if (cmp.compareTo(elData) == 0)
+//                return element;
+//        }
+//
+//        return null;
+//    }
 
     @Override
     public String toString() {
@@ -86,6 +95,8 @@ class TreeNode  {
     public boolean isLeaf() {
         return children.size() == 0;
     }
+
+
 
 
 }
