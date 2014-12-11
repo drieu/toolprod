@@ -16,68 +16,32 @@ class AppRetailController {
      */
     def backupChoice
 
+    /**
+     * Show details for an application
+     * @return
+     */
     def app() {
         def myApp = null
+        String data
         def selectApp = params.get("name")
         if (selectApp != null) {
             myApp = App.findByName((String)selectApp)
-
-            log.info("Show node")
-            TreeNode node = myApp.node
-            log.info("====>Parent:" + node.toString())
-            for (TreeNode c : node.getChildren()) {
-                if (c != null && c.nodeData != null) {
-                    log.info("Child 1:" + c.nodeData.toString())
-                    for (TreeNode cbis : c.getChildren()) {
-                        if (c != null && c.nodeData != null) {
-                            log.info("Child 2:" + cbis.toString())
-                        }
-                    }
-                }
-            }
-
-
-            log.info("End of Show node")
+            data = createDataFromNode(myApp.node)
         }
-
-
-        String data = "var data = [\n" +
-                "    {\n" +
-                "        label:'node1',\n" +
-                "        children: [\n" +
-                "            { label: 'child1' },\n" +
-                "            { label: 'child2' }\n" +
-                "        ]\n" +
-                "    },\n" +
-                "    {\n" +
-                "        label: 'node2',\n" +
-                "        children: [\n" +
-                "            { label: 'child3' }\n" +
-                "        ]\n" +
-                "    }\n" +
-                "];"
-        data = createDataFromNode(myApp.node)
         return [app:myApp, data:data]
     }
 
-//    for (TreeNode c : node.getChildren()) {
-//        if (c != null && c.nodeData != null) {
-//            log.info("Child 1:" + c.nodeData.toString())
-//            for (TreeNode cbis : c.getChildren()) {
-//                if (c != null && c.nodeData != null) {
-//                    log.info("Child 2:" + cbis.toString())
-//                }
-//            }
-//        }
-//    }
-
-
+    /**
+     * Produce String in JSON format
+     * e.g : var zNodes={ ... }
+     * @param node
+     * @return String
+     */
     private String createDataFromNode(TreeNode node) {
-        String data = "var data = [\n"
-
+        String data = "var zNodes = [\n"
         for (TreeNode c : node.getChildren()) {
             data += "{\n"
-            data +=  "label:'" + node.name + "',\n"
+            data +=  "name:'" + node.name + "',open:true,\n"
                 data += createDataChildFromNode(c)
             data += "},\n"
         }
@@ -89,14 +53,14 @@ class AppRetailController {
         String result = ""
         result += "\t\tchildren: [\n"
         log.info("NAME:" + cbis?.nodeData?.name)
-        result += "                    { label: '" + cbis?.nodeData?.name + "',\n"
+        result += "                    { name: '" + cbis?.nodeData?.name + "',open:true,\n"
         log.info("SIZE:" + cbis.getChildren().size())
             if (cbis.getChildren().size() != 0) {
                 result += "\t\tchildren: [\n"
                 int count = cbis.getChildren().size()
                 int cpt = 0
                 for (TreeNode node : cbis.getChildren())  {
-                    result +=  "{label:'" + node?.nodeData?.name + "'}\n"
+                    result +=  "{name:'" + node?.nodeData?.name + "'}\n"
                     if (cpt != count - 1) {
                         result += ","
                     }
@@ -226,7 +190,7 @@ class AppRetailController {
     }
 
     def renderJSONOutput() {
-        //log.info("renderJSONOutput()")
+        log.info("renderJSONOutput()")
 //        def name = params.get("name")
 //        if (name == null) {
 //            log.warn("renderJSONOutput() No data")

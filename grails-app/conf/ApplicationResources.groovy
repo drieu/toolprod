@@ -7,9 +7,9 @@ modules = {
         resource url:'jquery/jquery-2.1.0.min.js'
     }
 
-    jqtree {
-        resource url:'js/tree.jquery.js'
-        resource url:'css/jqtree.css'
+    ztree {
+        resource url:'js/jquery.ztree.all-3.5.min.js'
+        resource url:'css/zTreeStyle.css'
     }
 
     bootstrap {

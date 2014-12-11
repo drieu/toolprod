@@ -16,20 +16,29 @@
     <g:javascript library='jquery'/>
     <g:javascript library='bootstrap'/>
     <g:javascript library='application'/>
-    <g:javascript library='jqtree'/>
+    <g:javascript library='ztree'/>
     <r:layoutResources/>
-    <script>
-    ${raw(data)}
-    $(document).ready(function () {
-        $('#tree_node').tree({
-            data:data,
-            autoOpen: true
+
+    <SCRIPT LANGUAGE="JavaScript">
+        ${raw(data)}
+        var zTreeObj;
+        // zTree configuration information, refer to API documentation (setting details)
+        var setting = {
+        };
+        // zTree data attributes, refer to the API documentation (treeNode data details)
+//        var zNodes = [
+//            {name:"test1", open:true, children:[
+//                {name:"test1_1"}, {name:"test1_2"}]},
+//            {name:"test2", open:true, children:[
+//                {name:"test2_1"}, {name:"test2_2"}]}
+//        ];
+        $(document).ready(function(){
+            zTreeObj = $.fn.zTree.init($("#treeApp"), setting, zNodes);
         });
-    });
-    </script>
+    </SCRIPT>
 </head>
 
-<body onload="CreateTree();">
+<body>
 <div class="container">
     <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
     <g:applyLayout name="menu"/>
@@ -78,14 +87,7 @@
         <div class="well well-lg">Pas d'application !</div>
     </g:else>
 
-    %{--DATA :--}%
-    <div id="tree_node"></div>
-    <br/>
-    %{--<br/>--}%
-    %{--DATA 2 :--}%
-
-    %{--END--}%
-
+    <ul id="treeApp" class="ztree"></ul>
 </div>
 <r:layoutResources/>
 </body>
