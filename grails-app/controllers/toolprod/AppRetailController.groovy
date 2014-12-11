@@ -26,10 +26,54 @@ class AppRetailController {
         def selectApp = params.get("name")
         if (selectApp != null) {
             myApp = App.findByName((String)selectApp)
-            data = createDataFromNode(myApp.node)
+//            data = createDataFromNode(myApp.node)
+
+            data += "\nvar zNodes = [\n"
+            data += createTree(myApp.node)
+            data += "]}]\n;"
+            log.info(data)
+
         }
         return [app:myApp, data:data]
     }
+
+    public String createTree(TreeNode node) {
+       String data = ""
+       if (node != null) {
+           data += "{name:'" + node?.nodeData?.name + "',open:true"
+
+           if (node.getChildren().size() != 0) {
+               data += ", children:["
+
+               int nbChild =  node.getChildren().size()
+               int cpt = 0
+               for (TreeNode child : node.getChildren()) {
+
+                   if (child.getChildren().size() == 0) {
+                       if (cpt == ( nbChild -1 )) { // if last
+                           data += "{name:'" + child?.nodeData?.name + "',open:true}]"
+                       } else {
+                           data += "{name:'" + child?.nodeData?.name + "',open:true,"
+                       }
+                   } else {
+                       data += "\n"
+                       data += createTree(child)
+                       if (cpt == ( nbChild -1 )) {
+                            data += "}"
+                       } else {
+                           data += "},"
+                       }
+                       data += "\n"
+                   }
+                   cpt = cpt + 1
+               }
+
+           }
+       }
+
+       return data
+    }
+
 
     /**
      * Produce String in JSON format
@@ -55,20 +99,21 @@ class AppRetailController {
         log.info("NAME:" + cbis?.nodeData?.name)
         result += "                    { name: '" + cbis?.nodeData?.name + "',open:true,\n"
         log.info("SIZE:" + cbis.getChildren().size())
-            if (cbis.getChildren().size() != 0) {
-                result += "\t\tchildren: [\n"
-                int count = cbis.getChildren().size()
-                int cpt = 0
-                for (TreeNode node : cbis.getChildren())  {
-                    result +=  "{name:'" + node?.nodeData?.name + "'}\n"
-                    if (cpt != count - 1) {
-                        result += ","
-                    }
-                    cpt = cpt + 1
-//                    result += createDataChildFromNode(node)
+        if (cbis.getChildren().size() != 0) {
+            result += "\t\tchildren: [\n"
+            int count = cbis.getChildren().size()
+            int cpt = 0
+            for (TreeNode node : cbis.getChildren())  {
+                result +=  "{name:'" + node?.nodeData?.name + "'}\n"
+                if (cpt != count - 1) {
+                    result += ","
                 }
-                result += "\t\t]}\n"
+                cpt = cpt + 1
+//                    result += createDataChildFromNode(node)
             }
+            result += "\t\t]\n"
+        }
+        result += "}\n"
         result += "\t\t]\n"
         return result
 

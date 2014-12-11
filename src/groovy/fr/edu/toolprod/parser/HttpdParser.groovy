@@ -229,7 +229,7 @@ class HttpdParser {
     }
 
     public String getNameFromFileName() {
-        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
+        log.warn("getNameFromFileName() Name not found => Get the name in filename:" + file.originalFilename)
         //Get the name in filename
         String name = file.originalFilename
         if (name.contains("httpd.conf.")) {

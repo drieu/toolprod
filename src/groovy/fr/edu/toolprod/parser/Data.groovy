@@ -173,13 +173,18 @@ class Data {
             // search parent
             log.info("Childs exist.Need to search where to add the node ...")
             TreeNode node
-            log.info("Search server in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
-            Server searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
-            if (searchServer == null) {
-                log.info("Nothing found !")
-                node = saveChild(treeNodeParent, appBean)
+            if (appBean.appServer == null ) {
+                // we are on the local server
+                node = treeNodeParent
             } else {
-                node = searchNode(treeNodeParent, searchServer)
+                log.info("Search server in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
+                Server searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
+                if (searchServer == null) {
+                    log.info("Nothing found !")
+                    node = saveChild(treeNodeParent, appBean)
+                } else {
+                    node = searchNode(treeNodeParent, searchServer)
+                }
             }
             saveChild(node, server)
         }
@@ -244,6 +249,7 @@ class Data {
      * Save a fake server app which will have server parents found in httpd.conf.
      */
     def saveSourceNode(String sourceName) {
+        log.info("saveSourceNode() Save parent with name : |source_" + sourceName + "|")
         String virtualName = "source_" + sourceName
         Server serverSource = new Server(virtualName, "80", virtualName)
         serverSource.serverType=Server.TYPE.APACHE
