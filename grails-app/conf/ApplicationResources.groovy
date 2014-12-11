@@ -1,11 +1,15 @@
 modules = {
     application {
         resource url:'js/application.js'
-        resource url:'js/jstree.js'
     }
 
     jquery {
         resource url:'jquery/jquery-2.1.0.min.js'
+    }
+
+    jqtree {
+        resource url:'js/tree.jquery.js'
+        resource url:'css/jqtree.css'
     }
 
     bootstrap {

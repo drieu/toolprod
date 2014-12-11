@@ -2,6 +2,8 @@ package toolprod
 
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.PrintAppBean
+import grails.converters.JSON
+import org.apache.commons.lang.StringEscapeUtils
 
 class AppRetailController {
 
@@ -34,12 +36,78 @@ class AppRetailController {
                 }
             }
 
+
             log.info("End of Show node")
         }
 
 
+        String data = "var data = [\n" +
+                "    {\n" +
+                "        label:'node1',\n" +
+                "        children: [\n" +
+                "            { label: 'child1' },\n" +
+                "            { label: 'child2' }\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    {\n" +
+                "        label: 'node2',\n" +
+                "        children: [\n" +
+                "            { label: 'child3' }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "];"
+        data = createDataFromNode(myApp.node)
+        return [app:myApp, data:data]
+    }
 
-        return [app:myApp]
+//    for (TreeNode c : node.getChildren()) {
+//        if (c != null && c.nodeData != null) {
+//            log.info("Child 1:" + c.nodeData.toString())
+//            for (TreeNode cbis : c.getChildren()) {
+//                if (c != null && c.nodeData != null) {
+//                    log.info("Child 2:" + cbis.toString())
+//                }
+//            }
+//        }
+//    }
+
+
+    private String createDataFromNode(TreeNode node) {
+        String data = "var data = [\n"
+
+        for (TreeNode c : node.getChildren()) {
+            data += "{\n"
+            data +=  "label:'" + node.name + "',\n"
+                data += createDataChildFromNode(c)
+            data += "},\n"
+        }
+        data += "];"
+        return data
+    }
+
+    private String createDataChildFromNode(TreeNode cbis) {
+        String result = ""
+        result += "\t\tchildren: [\n"
+        log.info("NAME:" + cbis?.nodeData?.name)
+        result += "                    { label: '" + cbis?.nodeData?.name + "',\n"
+        log.info("SIZE:" + cbis.getChildren().size())
+            if (cbis.getChildren().size() != 0) {
+                result += "\t\tchildren: [\n"
+                int count = cbis.getChildren().size()
+                int cpt = 0
+                for (TreeNode node : cbis.getChildren())  {
+                    result +=  "{label:'" + node?.nodeData?.name + "'}\n"
+                    if (cpt != count - 1) {
+                        result += ","
+                    }
+                    cpt = cpt + 1
+//                    result += createDataChildFromNode(node)
+                }
+                result += "\t\t]}\n"
+            }
+        result += "\t\t]\n"
+        return result
+
     }
 
 
@@ -151,7 +219,72 @@ class AppRetailController {
             }
         }
 
+
+
         def portals = Portal.findAll().unique{ it.name }
         return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
     }
+
+    def renderJSONOutput() {
+        //log.info("renderJSONOutput()")
+//        def name = params.get("name")
+//        if (name == null) {
+//            log.warn("renderJSONOutput() No data")
+//            render("Pas de données")
+//        }
+        def name = "aeronautique"
+        App myApp = App.findByName(name)
+        if (myApp != null) {
+//            TreeNode node = myApp.node
+//            log.info("====>Parent:" + node.toString())
+//            for (TreeNode c : node.getChildren()) {
+//                if (c != null && c.nodeData != null) {
+//                    log.info("Child 1:" + c.nodeData.toString())
+//                    for (TreeNode cbis : c.getChildren()) {
+//                        if (c != null && c.nodeData != null) {
+//                            log.info("Child 2:" + cbis.toString())
+//                        }
+//                    }
+//                }
+//            }
+            def myHomeAddress = [
+                    building:"25",
+                    street: "High Street",
+                    city:"Cambridge",
+                    country:"UK",
+                    pref: true]
+
+            def myWorkAddress = [
+                    building:"1",
+                    street: "Science Park",
+                    city:"Cambridge",
+                    country:"UK"]
+
+            def dave = [
+                    name: "David Bower",
+                    address: [myHomeAddress, myWorkAddress]]
+
+            def people = [people:[dave]]
+            //log.info("Render JSON")
+//            people = "    {\n" +
+//                    "        label: 'node1', id: 1,\n" +
+//                    "        children: [\n" +
+//                    "            { label: 'child1', id: 2 },\n" +
+//                    "            { label: 'child2', id: 3 }\n" +
+//                    "        ]\n" +
+//                    "    },\n" +
+//                    "    {\n" +
+//                    "        label: 'node2', id: 4,\n" +
+//                    "        children: [\n" +
+//                    "            { label: 'child3', id: 5 }\n" +
+//                    "        ]\n" +
+//                    "    }"
+            render people as JSON
+        } else {
+            //log.warn("renderJSONOutput()  No app found with name:" + name)
+        }
+        //log.info("renderJSONOutput() No data")
+    }
+
+
 }
