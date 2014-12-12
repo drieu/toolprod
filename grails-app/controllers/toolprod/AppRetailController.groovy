@@ -1,7 +1,12 @@
 package toolprod
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.PrintAppBean
+import fr.edu.toolprod.bean.ServerBean
+import fr.edu.toolprod.gson.GSONBean
+import fr.edu.toolprod.gson.GSONParser
 import grails.converters.JSON
 import org.apache.commons.lang.StringEscapeUtils
 
@@ -26,21 +31,79 @@ class AppRetailController {
         def selectApp = params.get("name")
         if (selectApp != null) {
             myApp = App.findByName((String)selectApp)
-//            data = createDataFromNode(myApp.node)
 
             data += "\nvar zNodes = [\n"
             data += createTree(myApp.node)
-            data += "]}]\n;"
-            log.info(data)
+            data += "\n];"
 
         }
+//        Use to test
+//        data += "\nvar zNodes = [\n"
+//        data += createDataTest()
+//        data += "\n];"
+        log.info(data)
         return [app:myApp, data:data]
     }
 
+    public String createDataTest() {
+        ServerBean serverBean
+
+        ServerBean child
+        ServerBean child2
+        ServerBean child3
+
+        ServerBean serverBeanChild
+        ServerBean serverBeanChild2
+
+        serverBean = new ServerBean()
+        serverBean.name = "source_aeronautique"
+        serverBean.portNumber = "80"
+
+        child = new ServerBean()
+        child.name = "appliloc6.ac-limoges.fr"
+        child.portNumber = "8015"
+
+        child2 = new ServerBean()
+        child2.name = "appliloc7.ac-limoges.fr"
+        child2.portNumber = "8016"
+
+        child3 = new ServerBean()
+        child3.name = "appliloc8.ac-limoges.fr"
+        child3.portNumber = "8019"
+
+        serverBeanChild = new ServerBean()
+        serverBeanChild.name = "web1.ac-limoges.fr"
+        serverBeanChild.portNumber = "8052"
+
+        serverBeanChild2 = new ServerBean()
+        serverBeanChild2.name = "web2.ac-limoges.fr"
+        serverBeanChild2.portNumber = "8063"
+
+        GSONBean gsonBean = new GSONBean()
+        gsonBean.name = "source_aeronautique"
+
+        gsonBean.nodeData = serverBean
+        GSONBean nChild = gsonBean.addChild(child)
+        GSONBean nChild2 = nChild.addChild(child2)
+        GSONBean nChild3 = nChild2.addChild(child3)
+
+        GSONBean sChild = gsonBean.addChild(serverBeanChild)
+        GSONBean sChild2 = sChild.addChild(serverBeanChild2)
+
+
+        GSONParser parser = new GSONParser()
+        return parser.createTree(gsonBean)
+    }
+
+    /**
+     * Generate GSON String from a TreeNode
+     * @param node
+     * @return GSON String e.g:{name:...
+     */
     public String createTree(TreeNode node) {
        String data = ""
        if (node != null) {
-           data += "{name:'" + node?.nodeData?.name + "',open:true"
+           data += "{name:'" + node?.nodeData?.name + "_" + node?.nodeData?.portNumber + "',open:true"
 
            if (node.getChildren().size() != 0) {
                data += ", children:["
@@ -51,82 +114,27 @@ class AppRetailController {
 
                    if (child.getChildren().size() == 0) {
                        if (cpt == ( nbChild -1 )) { // if last
-                           data += "{name:'" + child?.nodeData?.name + "',open:true}]"
+                           data += "{name:'" + child?.nodeData?.name + "_" + node?.nodeData?.portNumber  + "',open:true}"
                        } else {
-                           data += "{name:'" + child?.nodeData?.name + "',open:true,"
+                           data += "{name:'" + child?.nodeData?.name + "_" + node?.nodeData?.portNumber  + "',open:true},"
                        }
                    } else {
                        data += "\n"
                        data += createTree(child)
-                       if (cpt == ( nbChild -1 )) {
-                            data += "}"
-                       } else {
+                       if (cpt != ( nbChild -1 )) {
                            data += "},"
                        }
                        data += "\n"
                    }
                    cpt = cpt + 1
                }
-
+               data += "]}"
+           } else {
+               data += "}"
            }
        }
 
        return data
-    }
-
-
-    /**
-     * Produce String in JSON format
-     * e.g : var zNodes={ ... }
-     * @param node
-     * @return String
-     */
-    private String createDataFromNode(TreeNode node) {
-        String data = "var zNodes = [\n"
-        for (TreeNode c : node.getChildren()) {
-            data += "{\n"
-            data +=  "name:'" + node.name + "',open:true,\n"
-                data += createDataChildFromNode(c)
-            data += "},\n"
-        }
-        data += "];"
-        return data
-    }
-
-    private String createDataChildFromNode(TreeNode cbis) {
-        String result = ""
-        result += "\t\tchildren: [\n"
-        log.info("NAME:" + cbis?.nodeData?.name)
-        result += "                    { name: '" + cbis?.nodeData?.name + "',open:true,\n"
-        log.info("SIZE:" + cbis.getChildren().size())
-        if (cbis.getChildren().size() != 0) {
-            result += "\t\tchildren: [\n"
-            int count = cbis.getChildren().size()
-            int cpt = 0
-            for (TreeNode node : cbis.getChildren())  {
-                result +=  "{name:'" + node?.nodeData?.name + "'}\n"
-                if (cpt != count - 1) {
-                    result += ","
-                }
-                cpt = cpt + 1
-//                    result += createDataChildFromNode(node)
-            }
-            result += "\t\t]\n"
-        }
-        result += "}\n"
-        result += "\t\t]\n"
-        return result
-
-    }
-
-
-
-    private static String createIndent(int depth) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            sb.append(' ');
-        }
-        return sb.toString();
     }
 
     /**
