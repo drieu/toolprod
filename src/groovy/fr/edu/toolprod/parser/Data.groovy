@@ -177,12 +177,13 @@ class Data {
                 // we are on the local server
                 node = treeNodeParent
             } else {
-                log.info("Search server in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
+                log.info("Search searchServer in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
                 Server searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                 if (searchServer == null) {
-                    log.info("Nothing found !")
+                    log.info("saveApacheApp() no searchServer found.Save it under treeNodeParent")
                     node = saveChild(treeNodeParent, appBean)
                 } else {
+                    log.info("saveApacheApp() searchServer still exists")
                     node = searchNode(treeNodeParent, searchServer)
                 }
             }
@@ -194,8 +195,6 @@ class Data {
         log.info("Search node for  :" + searchServer.toString())
         return treeRoot.findTreeNode(searchServer);
     }
-
-
 
 
     def showNode(App myApp) {
@@ -221,7 +220,7 @@ class Data {
      * @return
      */
     def saveChild(TreeNode childNode, Server server) {
-        log.info("saveChild() ===> Server child :" + server.toString())
+        log.info("saveChild(childNode, server) ===> Save Server child :" + server?.toString() + " under node:" + childNode?.nodeData?.name)
         TreeNode node = childNode.addChild(server)
         node.name = "childNodeBis"
         node.save(failOnError: true)
@@ -229,14 +228,14 @@ class Data {
     }
 
     /**
-     * Save a child.
+     * Save a child with appBean.
      */
     def saveChild(TreeNode treeNodeParent, AppBean appBean) {
-        log.info("AppBean to save() :" + appBean.toString())
+        log.info("saveChild(treeNodeParent, appBean) AppBean to save() :" + appBean.toString())
         Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
         serverChild.serverType=Server.TYPE.APACHE
         serverChild.save(failOnError: true)
-        log.info("saveChild() ===> Server child 1:" + serverChild.toString())
+        log.info("saveChild() Save Server child :" + serverChild.toString() + " under treeNodeParent node:" + treeNodeParent?.nodeData?.name )
 
         TreeNode childNode = treeNodeParent.addChild(serverChild)
         childNode.parent = treeNodeParent
