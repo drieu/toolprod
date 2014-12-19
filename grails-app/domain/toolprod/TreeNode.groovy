@@ -57,11 +57,12 @@ class TreeNode  {
 
     public TreeNode findTreeNode(Server server) {
         for (TreeNode element : this.elementsIndex) {
+            log.info("ICI element name:" + element.name)
             Server elData = element.nodeData;
             if (server.compareTo(elData) == 0)
                 return element;
         }
-
+        log.info("Nothing found !")
         return null;
     }
 

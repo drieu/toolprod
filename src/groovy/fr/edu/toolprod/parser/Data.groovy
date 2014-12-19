@@ -4,7 +4,6 @@ package fr.edu.toolprod.parser
 //import com.tree.TreeNodeImpl
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
-import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Status
@@ -142,125 +141,13 @@ class Data {
             }
         }
 
-        log.info("saveApacheApp() ==> add node if exist ")
+        log.info("saveApacheApp() ==> save tree")
+        TreeNodeData treeNodeData = new TreeNodeData()
+        treeNodeData.saveApacheTree(myApp, appBean, server)
+        result = result + appBean.name + " "
 
-        TreeNode treeNodeParent = TreeNode.findByName("source_" + appBean.name)
-        if (treeNodeParent == null) {
-            treeNodeParent = saveSourceNode(appBean.name)
-            myApp.node = treeNodeParent
-            myApp.save(failOnError: true)
-        }
-        log.info("MyApp with SOURCE NODE :" + myApp.toString())
-
-        if (treeNodeParent.isLeaf()) {
-
-            //appL..X
-            TreeNode childNode
-            if (appBean.appServer != null) {//If appBean.appServer != null, it is a link to an other apache
-                childNode = saveChild(treeNodeParent, appBean)
-            } else {
-                childNode = treeNodeParent
-            }
-
-            //webX
-            saveChild(childNode, server)
-
-            myApp.node.save(failOnError: true)
-            myApp.save(failOnError: true)
-            showNode(myApp)
-            result = result + appBean.name + " "
-        } else {
-            // search parent
-            log.info("Childs exist.Need to search where to add the node ...")
-            TreeNode node
-            if (appBean.appServer == null ) {
-                // we are on the local server
-                node = treeNodeParent
-            } else {
-                log.info("Search searchServer in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
-                Server searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
-                if (searchServer == null) {
-                    log.info("saveApacheApp() no searchServer found.Save it under treeNodeParent")
-                    node = saveChild(treeNodeParent, appBean)
-                } else {
-                    log.info("saveApacheApp() searchServer still exists")
-                    node = searchNode(treeNodeParent, searchServer)
-                }
-            }
-            saveChild(node, server)
-        }
     }
 
-    def searchNode(TreeNode treeRoot, Server searchServer) {
-        log.info("Search node for  :" + searchServer.toString())
-        return treeRoot.findTreeNode(searchServer);
-    }
-
-
-    def showNode(App myApp) {
-        TreeNode node = myApp.node
-        log.info("saveApacheApp() ====>SHOW NODE<====")
-        log.info("saveApacheApp() ====>Source :" + node.toString())
-        for (TreeNode c : node.getChildren()) {
-            if (c != null && c.nodeData != null) {
-                log.info("saveApacheApp() Child 1:" + c.toString())
-                for (TreeNode cbis : c.getChildren()) {
-                    if (c != null && c.nodeData != null) {
-                        log.info("saveApacheApp() Child 2:" + cbis.toString())
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Save a child with server
-     * @param node
-     * @param server
-     * @return
-     */
-    def saveChild(TreeNode childNode, Server server) {
-        log.info("saveChild(childNode, server) ===> Save Server child :" + server?.toString() + " under node:" + childNode?.nodeData?.name)
-        TreeNode node = childNode.addChild(server)
-        node.name = "childNodeBis"
-        node.save(failOnError: true)
-        return node
-    }
-
-    /**
-     * Save a child with appBean.
-     */
-    def saveChild(TreeNode treeNodeParent, AppBean appBean) {
-        log.info("saveChild(treeNodeParent, appBean) AppBean to save() :" + appBean.toString())
-        Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
-        serverChild.serverType=Server.TYPE.APACHE
-        serverChild.save(failOnError: true)
-        log.info("saveChild() Save Server child :" + serverChild.toString() + " under treeNodeParent node:" + treeNodeParent?.nodeData?.name )
-
-        TreeNode childNode = treeNodeParent.addChild(serverChild)
-        childNode.parent = treeNodeParent
-        childNode.name = "child"
-        childNode.save(failOnError: true)
-        return childNode
-    }
-
-    /**
-     * Save a fake server app which will have server parents found in httpd.conf.
-     */
-    def saveSourceNode(String sourceName) {
-        log.info("saveSourceNode() Save parent with name : |source_" + sourceName + "|")
-        String virtualName = "source_" + sourceName
-        Server serverSource = new Server(virtualName, "80", virtualName)
-        serverSource.serverType=Server.TYPE.APACHE
-        serverSource.save(failOnError: true)
-
-        TreeNode node = new TreeNode(serverSource)
-        node.nodeData = serverSource
-        node.name = virtualName
-        node.save(failOnError: true)
-        log.info("saveSourceNode() ==> SOURCE node:" + node.toString())
-        return node
-    }
 
 /**
      * Save weblogic server and weblogic application in database.
