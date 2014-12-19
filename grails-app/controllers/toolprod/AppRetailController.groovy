@@ -151,59 +151,40 @@ class AppRetailController {
      */
     def listing() {
 
-        log.info("AppRetailController:listing()")
+        log.info("listing()")
         def portalChoice = params.choice
         if (portalChoice != null) {
             backupChoice = portalChoice
         }
-        List<AppBean> appBeans = new ArrayList<>()
-        def apps = App.findAll()
 
+        List<AppBean> appBeans = new ArrayList<>()
+        List<PrintAppBean> printAppBeans = new ArrayList<>()
+        def apps = App.findAll()
         for(App app : apps) {
-           log.info(app.toString())
-           AppBean appBean = new AppBean()
-           appBean.name = app.name
-           appBean.description = app.description
-           appBean.serverUrls = app.urls
-           appBean.portals = new ArrayList<>()
+            log.info("getAppBeans() : Application : " + app.toString())
+            AppBean appBean = new AppBean()
+            appBean.name = app.name
+            appBean.description = app.description
+            appBean.serverUrls = app.urls
+            appBean.portals = new ArrayList<>()
 
             for(Portal portal : app.portals) {
-               if (portal != null) {
-                   if (portal.name != null) {
-                       if (portalChoice != null) {
-                           if (portal.name.equals(portalChoice)) {
-                               log.info("Add : name:" + appBean.name + " portail:" + portalChoice)
+                if (portal != null) {
+                    if (portal.name != null) {
+                        if (portalChoice != null) {
+                            if (portal.name.equals(portalChoice)) {
+                                log.info("getAppBeans Add : name:" + appBean.name + " portail:" + portalChoice)
                                 appBean.portals.add(portal.name)
-                           }
-                       } else {
-                           appBean.portals.add(portal.name)
-                       }
-                   }
-               }
-           }
-           appBeans.add(appBean)
-        }
-        List<PrintAppBean> printAppBeans = new ArrayList<>()
-        for(AppBean appBean : appBeans) {
-            PrintAppBean printAppBean = new PrintAppBean()
-            printAppBean.name = appBean.name
-
-
-            for (String p : appBean.portals) {
-                if (p != null) {
-                    printAppBean.portals += p
-                    printAppBean.portals += " "
+                            }
+                        } else {
+                            appBean.portals.add(portal.name)
+                        }
+                    }
                 }
             }
-
-            for(String url: appBean.serverUrls) {
-                if (url != null) {
-                    printAppBean.urls += url
-                    printAppBean.urls += "\n"
-                }
-            }
+            appBeans.add(appBean)
+            PrintAppBean printAppBean = getPrintAppBean()
             if (backupChoice != null) {
-
                 if (appBean.portals.contains(backupChoice)) {
                     printAppBeans.add(printAppBean)
                 }
@@ -236,71 +217,30 @@ class AppRetailController {
             }
         }
 
-
-
         def portals = Portal.findAll().unique{ it.name }
+        log.info("AppRetailController:listing() render()")
         return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
     }
 
-    def renderJSONOutput() {
-        log.info("renderJSONOutput()")
-//        def name = params.get("name")
-//        if (name == null) {
-//            log.warn("renderJSONOutput() No data")
-//            render("Pas de données")
-//        }
-        def name = "aeronautique"
-        App myApp = App.findByName(name)
-        if (myApp != null) {
-//            TreeNode node = myApp.node
-//            log.info("====>Parent:" + node.toString())
-//            for (TreeNode c : node.getChildren()) {
-//                if (c != null && c.nodeData != null) {
-//                    log.info("Child 1:" + c.nodeData.toString())
-//                    for (TreeNode cbis : c.getChildren()) {
-//                        if (c != null && c.nodeData != null) {
-//                            log.info("Child 2:" + cbis.toString())
-//                        }
-//                    }
-//                }
-//            }
-            def myHomeAddress = [
-                    building:"25",
-                    street: "High Street",
-                    city:"Cambridge",
-                    country:"UK",
-                    pref: true]
+    def getPrintAppBean(AppBean appBean) {
+        PrintAppBean printAppBean = new PrintAppBean()
+        printAppBean.name = appBean.name
 
-            def myWorkAddress = [
-                    building:"1",
-                    street: "Science Park",
-                    city:"Cambridge",
-                    country:"UK"]
 
-            def dave = [
-                    name: "David Bower",
-                    address: [myHomeAddress, myWorkAddress]]
-
-            def people = [people:[dave]]
-            //log.info("Render JSON")
-//            people = "    {\n" +
-//                    "        label: 'node1', id: 1,\n" +
-//                    "        children: [\n" +
-//                    "            { label: 'child1', id: 2 },\n" +
-//                    "            { label: 'child2', id: 3 }\n" +
-//                    "        ]\n" +
-//                    "    },\n" +
-//                    "    {\n" +
-//                    "        label: 'node2', id: 4,\n" +
-//                    "        children: [\n" +
-//                    "            { label: 'child3', id: 5 }\n" +
-//                    "        ]\n" +
-//                    "    }"
-            render people as JSON
-        } else {
-            //log.warn("renderJSONOutput()  No app found with name:" + name)
+        for (String p : appBean.portals) {
+            if (p != null) {
+                printAppBean.portals += p
+                printAppBean.portals += " "
+            }
         }
-        //log.info("renderJSONOutput() No data")
+
+        for(String url: appBean.serverUrls) {
+            if (url != null) {
+                printAppBean.urls += url
+                printAppBean.urls += "\n"
+            }
+        }
+        return printAppBean
     }
 
 
