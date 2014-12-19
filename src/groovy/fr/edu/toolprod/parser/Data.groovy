@@ -128,12 +128,12 @@ class Data {
         if (!myApp.urls.contains(appBean.serverUrl)) {
             myApp.urls.add(appBean.serverUrl)
         }
-        log.info("saveApacheApp() ==> save server:" + server.name)
+        log.info("saveApacheApp() save server:" + server.name)
         if (!myApp.servers.contains(server)) {
             myApp.addServer(server)
         }
 
-        log.info("saveApacheApp() ==> add portals ")
+        log.info("saveApacheApp() add portals ")
         for (String portalName: appBean.portals) {
             Portal portal = Portal.findByName(portalName)
             if (portal != null && !myApp.portals.contains(portal)) {
@@ -141,7 +141,7 @@ class Data {
             }
         }
 
-        log.info("saveApacheApp() ==> save tree")
+        log.info("saveApacheApp() save tree")
         TreeNodeData treeNodeData = new TreeNodeData()
         treeNodeData.saveApacheTree(myApp, appBean, server)
         result = result + appBean.name + " "
@@ -170,26 +170,6 @@ class Data {
                 }
             }
         }
-
-//        // Server Node
-//        if (app.node == null) {
-//            app.node = appBean.node
-//
-//        } else {
-//           TreeNodeImpl nodeImpl = new TreeNodeImpl()
-//           TreeNode search = nodeImpl.search(app.node, server)
-//           TreeNode root
-//           if ( search == null ) {
-//               root = nodeImpl.getRoot(app.node)
-//               root.addChild(appBean.node)
-//
-//           } else {
-//               // TODO
-//           }
-//        }
-//        log.info("NODE :" + app.node.toString())
-
-
 
         app.save(failOnError: true)
 

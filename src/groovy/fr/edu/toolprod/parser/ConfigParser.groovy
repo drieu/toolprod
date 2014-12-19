@@ -57,7 +57,7 @@ class ConfigParser {
                 bResult = false
             }
         }
-        log.info("result=" + result)
+        log.debug("parse() result=" + result)
         return bResult
     }
 
