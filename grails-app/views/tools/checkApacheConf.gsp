@@ -7,10 +7,11 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <g:javascript library='bootstrap'/>
-    <r:require module="export"/>
-    <r:layoutResources/>
+    <asset:javascript src="jquery.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
+    // TODO : voir export plugin et export format !
 </head>
 <body>
 <div class="container">
@@ -87,10 +88,9 @@
                     </g:each>
                 </tbody>
             </table>
-            <export:formats />
+            %{--<export:formats />--}%
         </div>
     </div>
 </div>
-<r:layoutResources/>
 </body>
 </html>

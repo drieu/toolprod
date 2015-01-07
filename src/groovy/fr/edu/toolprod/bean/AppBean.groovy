@@ -1,11 +1,13 @@
 package fr.edu.toolprod.bean
 
 import com.tree.TreeNode
+import grails.validation.Validateable
 import toolprod.TreeNode
 
 /**
  * AppBean class.
  */
+@Validateable
 class AppBean {
 
     /**

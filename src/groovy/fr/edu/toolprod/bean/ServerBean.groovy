@@ -1,11 +1,14 @@
 package fr.edu.toolprod.bean
 
+import grails.validation.Validateable
+
 /**
  * Bean to store temporaly state of a Server.
  * User: drieu
  * Date: 13/06/14
  * Time: 16:43
  */
+@Validateable
 class ServerBean {
 
     /**

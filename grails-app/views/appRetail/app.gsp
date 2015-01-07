@@ -13,11 +13,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <g:javascript library='bootstrap'/>
-    <g:javascript library='application'/>
-    <g:javascript library='ztree'/>
-    <r:layoutResources/>
+    <asset:javascript src="jquery.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
+    <asset:stylesheet href="ztree/zTreeStyle.css"/>
+    <asset:javascript src="ztree/jquery.ztree.all-3.5.min.js"/>
+
+    %{--<g:javascript library='jquery'/>--}%
+    %{--<g:javascript library='bootstrap'/>--}%
+    %{--<g:javascript library='application'/>--}%
+    %{--<g:javascript library='ztree'/>--}%
+    %{--<r:layoutResources/>--}%
 
     <SCRIPT LANGUAGE="JavaScript">
         ${raw(data)}
