@@ -126,7 +126,9 @@ log4j = {
         console name:'stdout', layout:pattern(conversionPattern: '[%-5p] %d %c{2} - %m%n')
     }
 
-
+    logger {
+        info 'com.linkedin.grails.profiler'
+    }
 
 // Set for a specific controller in the default package debug "grails.app.controllers.YourController"
 // Set for a specific domain class debug "grails.app.domain.org.example.Book"

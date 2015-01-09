@@ -64,6 +64,7 @@ grails.project.dependency.resolution = {
         compile ':cache:1.1.3'
         compile ":crash:1.3.0-cr7"
 //       compile ":export:1.6"  // Pb with Grails 2.4.4
+        compile ":profiler:0.5"
 
 
 
@@ -72,8 +73,7 @@ grails.project.dependency.resolution = {
         runtime ":database-migration:1.4.0"
         compile ":asset-pipeline:2.1.0"
         runtime ":jquery:1.11.1"
-//        runtime ":resources:1.2.13"
-        // Uncomment these (or add new ones) to enable additional resources capabilities
+
         //runtime ":zipped-resources:1.0.1"
         //runtime ":cached-resources:1.1"
         //runtime ":yui-minify-resources:0.1.5"
