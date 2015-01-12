@@ -40,7 +40,12 @@ grails.mime.types = [
 //grails.urlmapping.cache.maxsize = 1000
 
 // What URL patterns should be processed by the resources plugin
-grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*', '/bootstrap/css/*']
+grails.resources.adhoc.includes = ['/images/**', '/css/**', '/js/**', '/plugins/**', '/**/fonts/**']
+grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*', '/bootstrap/css/*', '/fonts/']
+
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/**/fonts/**':                 ['permitAll'],
+]
 
 // Legacy setting for codec used to encode data with ${}
 grails.views.default.codec = "html"

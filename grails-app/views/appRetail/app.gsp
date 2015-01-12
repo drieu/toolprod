@@ -47,7 +47,6 @@
 
 <body>
 <div class="container">
-    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
     <g:applyLayout name="menu"/>
     <g:if test="${app != null}">
         <h1>Application : ${app?.name}</h1>
@@ -96,6 +95,5 @@
 
     <ul id="treeApp" class="ztree"></ul>
 </div>
-<r:layoutResources/>
 </body>
 </html>
