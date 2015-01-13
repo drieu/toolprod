@@ -9,6 +9,7 @@
     <asset:javascript src="jquery.js"/>
     <asset:javascript src="application.js"/>
     <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:stylesheet href="mybootstrap.css"/>
     <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
 <body>
@@ -17,19 +18,25 @@
 
     <div class="row">
         <div class="col-md-3">
+            <div class="list-group">
             <g:each in="${map.keySet()}" var="servername">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-warning">
-                        Serveur ${servername}
-                    </a>
-                    <g:each in="${map.get(servername)}" var="portNumber">
-                        <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />" class="list-group-item">
-                            ${portNumber}
-                        </a>
-                    </g:each>
 
-                </div>
+                <g:if test="${!servername.startsWith('source_')}">
+
+                        <a href="#" class="list-group-item list-group-item-warning">
+                            Serveur ${servername}
+                        </a>
+                        <g:each in="${map.get(servername)}" var="portNumber">
+                            <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
+                                ${portNumber}
+                            </a>
+                        </g:each>
+
+
+                </g:if>
             </g:each>
+        </div>
+            <br/>
         </div>
 
         <div class="col-md-9">

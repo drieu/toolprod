@@ -114,9 +114,9 @@ class AppRetailController {
 
                    if (child.getChildren().size() == 0) {
                        if (cpt == ( nbChild -1 )) { // if last
-                           data += "{name:'" + child?.nodeData?.name + "_" + node?.nodeData?.portNumber  + "',open:true}"
+                           data += "{name:'" + child?.nodeData?.name + "_" + child?.nodeData?.portNumber  + "',open:true}"
                        } else {
-                           data += "{name:'" + child?.nodeData?.name + "_" + node?.nodeData?.portNumber  + "',open:true},"
+                           data += "{name:'" + child?.nodeData?.name + "_" + child?.nodeData?.portNumber  + "',open:true},"
                        }
                    } else {
                        data += "\n"

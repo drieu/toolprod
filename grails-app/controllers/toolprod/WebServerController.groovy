@@ -46,13 +46,14 @@ class WebServerController {
 
         }
 
-        Map<String, List<String>> map = new HashMap<>()
+        Map<String, List<Integer>> map = new HashMap<>()
         for(Server s : servers) {
-            List<String> lst = map.get(s.name)
+            List<Integer> lst = map.get(s.name)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
             lst.add(s.portNumber)
+            lst.sort()
             map.put(s.name, lst)
         }
 

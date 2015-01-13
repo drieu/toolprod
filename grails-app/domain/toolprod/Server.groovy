@@ -46,9 +46,9 @@ class Server implements Comparable{
     Server(String name, String portNumber, String machineHostName) {
         this.name = name
         if (portNumber == null) {
-            portNumber = "0"
+            portNumber = "80"
         } else if ( portNumber.isEmpty()) {
-            portNumber = "0"
+            portNumber = "80"
         }
         this.portNumber = portNumber.toInteger()
         this.machineHostName = machineHostName
