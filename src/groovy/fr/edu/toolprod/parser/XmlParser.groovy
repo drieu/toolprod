@@ -44,8 +44,13 @@ class XmlParser {
                 String appUrl = params.get(2);
 
                 // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
-                String appServer = XmlParser.parseServerFromHttpProxyPass(appUrl);//TODO : ?????
+                log.info("---------------------------------appurl:" + appUrl)
+                String appServer = XmlParser.parseServerFromHttpProxyPass(appUrl);
+                log.info("---------------------------------appServer:" + appServer)
+
                 String appPort = XmlParser.parsePortFromHttpProxyPass(appUrl);
+                log.info("---------------------------------appPort:" + appPort)
+
 
                 appBean = new AppBean();
                 appBean.name = appName;
@@ -57,10 +62,14 @@ class XmlParser {
                         appBean.name = appBean.name.substring("httpd.conf.".length(),appBean.name.length())
                     }
                 }
-                appBean.serverUrl = appUrl;
-                appBean.serverPort = appPort;
+                appBean.serverUrl = appUrl
+                appBean.serverPort = appPort
+                appBean.appServer = appServer
+                appBean.appPort = appPort
             }
         }
+        log.info("Extract ProxyPass:" + appBean.toString())
+
         return appBean
     }
 
@@ -236,10 +245,13 @@ class XmlParser {
             int beginIndex = strProtocol.size();
             str = myUrl.substring(beginIndex);
 
+            log.info("parseServerFromHttpProxyPass() str:" + str)
             int pos = str.indexOf(COLON.toString());
             if (pos > 0) {
                 // extract before :
                 result = str.substring(0, pos);
+                log.info("parseServerFromHttpProxyPass() extract before : result:" + str)
+
             } else { //webX.fr/appli/
                 pos = str.indexOf(SLASH);
                 if (pos > 0) {
@@ -247,8 +259,12 @@ class XmlParser {
                 } else {
                     result = str;
                 }
+                log.info("parseServerFromHttpProxyPass() else : result:" + str)
+
+
             }
         }
+        log.info("Protocol:" + strProtocol)
         return result;
     }
 

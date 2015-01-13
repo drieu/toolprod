@@ -15,7 +15,7 @@ import toolprod.Server
 class AdminController {
 
     def index() {
-        println("Index action from AdminController !")
+        log.info("index() Index action from AdminController !")
         redirect(action:'init')
     }
 
@@ -23,12 +23,12 @@ class AdminController {
      * Initialize datas like portals, machine Group.
      */
     def initData() {
-        log.info("AdminController:initData()")
+        log.info("initData()")
         boolean bResult = false
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
             request.getFiles("files[]").each { file ->
-                log.info("AdminController:initData() file to parse:" + file.originalFilename)
+                log.info("initData() file to parse :" + file.originalFilename)
                 if (!file.originalFilename.isEmpty()) {
                     ConfigParser configParser = new ConfigParser(file.inputStream)
                     bResult = configParser.parse()
@@ -47,9 +47,9 @@ class AdminController {
                                 List<String> machines = machineByGroup.get(groupName)
                                 for (String name : machines) {
                                     machineGroup.regex.add(name)
-                                    log.info("AdminController:initData() Add machine name:" + name + " in group:" + groupName)
+                                    log.info("initData() Add machine name:" + name + " in group:" + groupName)
                                 }
-                                log.info("AdminController:initData() Save group:" + groupName + " OK")
+                                log.info("initData() Save group:" + groupName + " OK")
                                 machineGroup.save(failOnError: true)
                             }
                         }
@@ -76,16 +76,16 @@ class AdminController {
      * @return
      */
     def init() {
-        log.info("AdminController:init() action from AdminController : init()")
+        log.info("init()")
         List<String> portalsChoice = params.list('portalsChoice')
-        log.debug("Choix :" + portalsChoice.toString())
+        log.debug("init() portal choice :" + portalsChoice.toString())
         def portals = Portal.findAll()
 
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
             boolean bResult = true
             request.getFiles("files[]").each { file ->
-                log.debug("AdminController:init() file to parse:" + file.originalFilename)
+                log.debug("init() file to parse:" + file.originalFilename)
 
                 def machineName = request.getParameterValues("machinename")
                 log.info("Name of machine : " + machineName[0])
@@ -97,7 +97,7 @@ class AdminController {
                     message += parser.result
                 } else {
                     bResult = false
-                    log.debug("AdminController:init() machineName:" + machineName)
+                    log.debug("init() machineName:" + machineName)
                     message += 'Import failed because file is null or is empty'
                 }
             }

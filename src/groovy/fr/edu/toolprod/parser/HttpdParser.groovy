@@ -2,13 +2,11 @@ package fr.edu.toolprod.parser
 
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
-import fr.edu.toolprod.parser.XmlParser
+import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
-import toolprod.App
 import toolprod.Machine
-import toolprod.MachineGroup
-import toolprod.Portal
 import toolprod.Server
+import toolprod.TreeNode
 
 /**
  * Parse httpd.conf file.
@@ -122,8 +120,8 @@ class HttpdParser {
                                 appBean.portals.add(choice)
                             }
                         }
-                        appBeans.add(appBean);
                     }
+                    appBeans.add(appBean);
 
                 } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
                     def params = strLine.tokenize()
@@ -141,7 +139,7 @@ class HttpdParser {
                 } else if (strLine.startsWith("</LocationMatch>")) {
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
-                    appBeans.add(appBean);
+                    appBeans.add(appBean)
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -164,6 +162,7 @@ class HttpdParser {
                     AppBean appBean = getAppBean(name, serverBean)
                     appBean.weblos = weblos
                     appBeans.add(appBean);
+
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
@@ -209,6 +208,7 @@ class HttpdParser {
 
         // If EMPTY httpd.conf create application with name of http.conf.name
         if(appBeans.size() == 0) {
+            log.info("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
             appBean.name = getNameFromFileName();
             for (String choice : selectedPortals) {
@@ -216,6 +216,7 @@ class HttpdParser {
                     appBean.portals.add(choice)
                 }
             }
+//            appBean.node.parent = new TreeNode(new ServerBean(appBean.appServer, appBean.appPort, appBean.appServer))
             appBeans.add(appBean)
         }
 
@@ -228,7 +229,7 @@ class HttpdParser {
     }
 
     public String getNameFromFileName() {
-        log.warn("Name not found => Get the name in filename:" + file.originalFilename)
+        log.warn("getNameFromFileName() Name not found => Get the name in filename:" + file.originalFilename)
         //Get the name in filename
         String name = file.originalFilename
         if (name.contains("httpd.conf.")) {

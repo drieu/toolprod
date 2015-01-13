@@ -1,11 +1,14 @@
 package fr.edu.toolprod.bean
 
+import grails.validation.Validateable
+
 /**
  * Bean to store temporaly state of a Server.
  * User: drieu
  * Date: 13/06/14
  * Time: 16:43
  */
+@Validateable
 class ServerBean {
 
     /**
@@ -28,7 +31,15 @@ class ServerBean {
      */
     List<String> modules = []
 
-    /**
+    ServerBean() {
+    }
+
+    ServerBean(String name, String portNumber, String machineHostName) {
+        this.name = name
+        this.portNumber = portNumber
+        this.machineHostName = machineHostName
+    }
+/**
      * Add a module to the modules list.
      * @param moduleName  Name of the module.
      * @return

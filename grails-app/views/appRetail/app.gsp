@@ -13,9 +13,36 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <g:javascript library='bootstrap'/>
-    <r:layoutResources/>
+    <asset:javascript src="jquery.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
+    <asset:stylesheet href="ztree/zTreeStyle.css"/>
+    <asset:javascript src="ztree/jquery.ztree.all-3.5.min.js"/>
+
+    %{--<g:javascript library='jquery'/>--}%
+    %{--<g:javascript library='bootstrap'/>--}%
+    %{--<g:javascript library='application'/>--}%
+    %{--<g:javascript library='ztree'/>--}%
+    %{--<r:layoutResources/>--}%
+
+    <SCRIPT LANGUAGE="JavaScript">
+        ${raw(data)}
+        var zTreeObj;
+        // zTree configuration information, refer to API documentation (setting details)
+        var setting = {
+        };
+        // zTree data attributes, refer to the API documentation (treeNode data details)
+//        var zNodes = [
+//            {name:"test1", open:true, children:[
+//                {name:"test1_1"}, {name:"test1_2"}]},
+//            {name:"test2", open:true, children:[
+//                {name:"test2_1"}, {name:"test2_2"}]}
+//        ];
+        $(document).ready(function(){
+            zTreeObj = $.fn.zTree.init($("#treeApp"), setting, zNodes);
+        });
+    </SCRIPT>
 </head>
 
 <body>
@@ -56,12 +83,17 @@
             </dd>
         </dl>
 
+        <br/>
+
+        %{--<g:render template="/appRetail/machineTree" model="[nodes:app?.node]"/>--}%
+        %{--<div id="jstree_demo">--}%
+        %{--</div>--}%
     </g:if>
     <g:else>
         <div class="well well-lg">Pas d'application !</div>
     </g:else>
-</div>
 
-<r:layoutResources/>
+    <ul id="treeApp" class="ztree"></ul>
+</div>
 </body>
 </html>

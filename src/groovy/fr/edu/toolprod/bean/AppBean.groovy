@@ -1,8 +1,13 @@
 package fr.edu.toolprod.bean
 
+import com.tree.TreeNode
+import grails.validation.Validateable
+import toolprod.TreeNode
+
 /**
  * AppBean class.
  */
+@Validateable
 class AppBean {
 
     /**
@@ -41,6 +46,13 @@ class AppBean {
     List<String> weblos = new ArrayList<>()
 
 
+//    TreeNode node = new TreeNode()
+
+
+    String appServer
+    String appPort
+
+
     private static final String DEFAUL_APPNAME = "UNEUSED_APP"
 
     private static final String DEFAUL_DESCRIPTION = "EMPTY"
@@ -77,14 +89,19 @@ class AppBean {
     }
 
 
+
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "AppBean{" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", serverUrl='" + serverUrl + '\'' +
+                ", serverUrls=" + serverUrls +
                 ", serverPort='" + serverPort + '\'' +
                 ", portals=" + portals +
+                ", weblos=" + weblos +
+                ", appServer='" + appServer + '\'' +
+                ", appPort='" + appPort + '\'' +
                 '}';
     }
 }

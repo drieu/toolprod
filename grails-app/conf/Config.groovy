@@ -39,8 +39,10 @@ grails.mime.types = [
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
-// What URL patterns should be processed by the resources plugin
-grails.resources.adhoc.patterns = ['/images/*', '/css/*', '/js/*', '/plugins/*', '/bootstrap/css/*']
+
+grails.plugin.springsecurity.controllerAnnotations.staticRules = [
+        '/**/vendor/**':                 ['permitAll'],
+]
 
 // Legacy setting for codec used to encode data with ${}
 grails.views.default.codec = "html"
@@ -95,6 +97,7 @@ environments {
         log4j = {
             info "grails.app"
             debug "fr.edu.toolprod"
+            info "fr.edu.toolprod.parser"
         }
     }
     test {
@@ -125,7 +128,9 @@ log4j = {
         console name:'stdout', layout:pattern(conversionPattern: '[%-5p] %d %c{2} - %m%n')
     }
 
-
+    logger {
+        info 'com.linkedin.grails.profiler'
+    }
 
 // Set for a specific controller in the default package debug "grails.app.controllers.YourController"
 // Set for a specific domain class debug "grails.app.domain.org.example.Book"

@@ -1,5 +1,7 @@
 package fr.edu.toolprod.parser
 
+//import com.tree.TreeNode
+//import com.tree.TreeNodeImpl
 import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
 import org.apache.commons.logging.LogFactory
@@ -8,6 +10,7 @@ import toolprod.Status
 import toolprod.Machine
 import toolprod.Portal
 import toolprod.Server
+import toolprod.TreeNode
 
 /**
  * Data is used to save App parsed in httpd conf and the result of check method in database.
@@ -125,21 +128,26 @@ class Data {
         if (!myApp.urls.contains(appBean.serverUrl)) {
             myApp.urls.add(appBean.serverUrl)
         }
-        log.info("saveApacheApp() ==> save server:" + server.name)
+        log.info("saveApacheApp() save server:" + server.name)
         if (!myApp.servers.contains(server)) {
             myApp.addServer(server)
         }
 
+        log.info("saveApacheApp() add portals ")
         for (String portalName: appBean.portals) {
             Portal portal = Portal.findByName(portalName)
             if (portal != null && !myApp.portals.contains(portal)) {
                 myApp.portals.add(portal)
             }
         }
-        log.debug("saveApacheApp() app:" + appBean)
-        myApp.save(failOnError: true)
+
+        log.info("saveApacheApp() save tree")
+        TreeNodeData treeNodeData = new TreeNodeData()
+        treeNodeData.saveApacheTree(myApp, appBean, server)
         result = result + appBean.name + " "
+
     }
+
 
 /**
      * Save weblogic server and weblogic application in database.
@@ -162,6 +170,7 @@ class Data {
                 }
             }
         }
+
         app.save(failOnError: true)
 
         log.info("saveWebloApp() App find or create:" + app)

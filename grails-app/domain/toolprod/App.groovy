@@ -1,6 +1,5 @@
 package toolprod
 
-import fr.edu.toolprod.bean.AppBean
 import org.apache.commons.logging.LogFactory
 
 /**
@@ -8,7 +7,7 @@ import org.apache.commons.logging.LogFactory
  */
 class App {
 
-    static searchable = true
+    //static searchable = true
 
     /**
      * Application name.
@@ -32,6 +31,9 @@ class App {
     List<Portal> portals = []
 
 
+    TreeNode node
+
+
     /**
      * Server list.
      */
@@ -49,6 +51,7 @@ class App {
     static constraints = {
         name(blank:false)
         description(size:0..400)
+        node(nullable: true)
     }
 
     def addServer(Server server) {
@@ -69,14 +72,16 @@ class App {
 
     }
 
+
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "App{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", urls='" + urls.toString() + '\'' +
+                ", urls=" + urls +
                 ", portals=" + portals +
+                ", node=" + node +
                 ", servers=" + servers +
                 ", version=" + version +
                 '}';
