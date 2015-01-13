@@ -11,7 +11,7 @@
     <asset:javascript src="application.js"/>
     <asset:stylesheet href="bootstrap/bootstrap.css"/>
     <asset:javascript src="bootstrap/bootstrap.js"/>
-    // TODO : voir export plugin et export format !
+%{--    // TODO : voir export plugin et export format !--}%
 </head>
 <body>
 <div class="container">
