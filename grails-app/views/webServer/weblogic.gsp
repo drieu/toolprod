@@ -9,6 +9,7 @@
     <asset:javascript src="jquery.js"/>
     <asset:javascript src="application.js"/>
     <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:stylesheet href="mybootstrap.css"/>
     <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
 
@@ -18,24 +19,29 @@
 
     <div class="row">
         <div class="col-md-3">
-            <g:each in="${map.keySet()}" var="servername">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-warning">
-                        Serveur ${servername}
-                    </a>
-                    <g:each in="${map.get(servername)}" var="portNumber">
-                        <a href="<g:createLink action="getWebServer" params="[name:servername, type:'weblogic', port: portNumber]" />" class="list-group-item">
-                            ${portNumber}
-                        </a>
-                    </g:each>
+            <div class="list-group">
+                <g:each in="${map.keySet()}" var="servername">
 
-                </div>
-            </g:each>
+                    <g:if test="${!((String)servername).startsWith('source_')}">
+
+                        <a href="#" class="list-group-item list-group-item-success">
+                            ${servername}
+                        </a>
+                        <g:each in="${map.get(servername)}" var="portNumber">
+                            <a href="<g:createLink action="getWebServer" params="[name:servername, type:'weblogic', port: portNumber]" />">
+                                ${portNumber}
+                            </a>
+                        </g:each>
+
+
+                    </g:if>
+                </g:each>
+            </div>
         </div>
         <div class="col-md-9">
             <g:if test="${selectServer != null}">
                 <div class="row">
-                    <div class="panel panel-warning">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h3 class="panel-title">Serveur web</h3>
                         </div>
@@ -58,7 +64,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="panel panel-warning">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <h3 class="panel-title">Liste des applications référencées</h3>
                         </div>

@@ -21,7 +21,7 @@
         <div class="col-md-9">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    Liste des applications &nbsp;&nbsp;<span class="badge">${apps?.size()}</span>
+                    Liste des applications &nbsp;&nbsp;<span class="badge">${appBeans?.size()}</span>
                 </h4>
             </div>
             <div class="panel-body">

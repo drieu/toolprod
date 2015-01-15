@@ -46,15 +46,19 @@ class WebServerController {
 
         }
 
-        Map<String, List<Integer>> map = new HashMap<>()
+        Map<String, List<String>> map = new TreeMap<>()
         for(Server s : servers) {
             List<Integer> lst = map.get(s.name)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
-            lst.add(s.portNumber)
-            lst.sort()
-            map.put(s.name, lst)
+            if (!lst.contains(s.portNumber)) {
+                lst.add(s.portNumber)
+                lst.sort()
+                if ((s.name != null) && (!s.name.isEmpty())) {
+                    map.put(s.name, lst)
+                }
+            }
         }
 
         return [servers: servers, type: type, selectServer: selectServer, map:map]
@@ -71,14 +75,19 @@ class WebServerController {
         if (servers.isEmpty()) {
             log.info("WebServerController:weblogic() No result return by query !")
         }
-        Map<String, List<String>> map = new HashMap<>()
+        Map<String, List<String>> map = new TreeMap<>()
         for(Server s : servers) {
-            List<String> lst = map.get(s.name)
+            List<Integer> lst = map.get(s.name)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
-            lst.add(s.portNumber)
-            map.put(s.name, lst)
+            if (!lst.contains(s.portNumber)) {
+                lst.add(s.portNumber)
+                lst.sort()
+                if ((s.name != null) && (!s.name.isEmpty())) {
+                    map.put(s.name, lst)
+                }
+            }
         }
 
 

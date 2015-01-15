@@ -120,8 +120,8 @@ class HttpdParser {
                                 appBean.portals.add(choice)
                             }
                         }
+                        appBeans.add(appBean);
                     }
-                    appBeans.add(appBean);
 
                 } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
                     def params = strLine.tokenize()
@@ -176,7 +176,7 @@ class HttpdParser {
                     for(String str : parseLocationHostAndPort(strLine)) { // If WebLogicHost and WebLogicPort
                         weblos.add(str)
                     }
-                    log.info(weblos.toString())
+                    log.debug("parse() weblos:" + weblos?.toString())
                 }
 
 
@@ -188,10 +188,8 @@ class HttpdParser {
                     for(String str : parseLocationHostAndPort(strLine)) { // If WebLogicHost and WebLogicPort
                         weblos.add(str)
                     }
-                    log.info(weblos.toString())
+                    log.debug("parse() weblos:" + weblos?.toString())
                 }
-
-
             }
 
         } catch (IOException e) {
@@ -219,6 +217,7 @@ class HttpdParser {
 //            appBean.node.parent = new TreeNode(new ServerBean(appBean.appServer, appBean.appPort, appBean.appServer))
             appBeans.add(appBean)
         }
+
 
         if (!data.save(serverBean, appBeans)) {
             bResult = false;

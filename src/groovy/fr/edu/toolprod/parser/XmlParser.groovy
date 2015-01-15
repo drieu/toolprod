@@ -32,7 +32,7 @@ class XmlParser {
      * @return AppBean or NULL if bad ProxyPass Line
      */
     def static parseProxyPass(String line, String fileName) {
-        log.info("Extract ProxyPass:" + line)
+        log.info("parseProxyPass() Extract ProxyPass:" + line)
         AppBean appBean = null;
 
         if (line != null) {
@@ -44,18 +44,18 @@ class XmlParser {
                 String appUrl = params.get(2);
 
                 // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
-                log.info("---------------------------------appurl:" + appUrl)
+                log.debug("parseProxyPass() appurl:" + appUrl)
                 String appServer = XmlParser.parseServerFromHttpProxyPass(appUrl);
-                log.info("---------------------------------appServer:" + appServer)
+                log.debug("parseProxyPass() appServer:" + appServer)
 
                 String appPort = XmlParser.parsePortFromHttpProxyPass(appUrl);
-                log.info("---------------------------------appPort:" + appPort)
+                log.debug("parseProxyPass() appPort:" + appPort)
 
 
                 appBean = new AppBean();
                 appBean.name = appName;
                 if (appName.isEmpty()) {
-                    log.warn("Name not found => Get the name in filename:" + fileName)
+                    log.warn("parseProxyPass() Name not found => Get the name in filename:" + fileName)
                     //Get the name in filename
                     appBean.name = fileName
                     if(appBean.name.contains("httpd.conf.")) {
@@ -68,7 +68,7 @@ class XmlParser {
                 appBean.appPort = appPort
             }
         }
-        log.info("Extract ProxyPass:" + appBean.toString())
+        log.debug("parseProxyPass() Extract ProxyPass:" + appBean.toString())
 
         return appBean
     }
@@ -245,12 +245,12 @@ class XmlParser {
             int beginIndex = strProtocol.size();
             str = myUrl.substring(beginIndex);
 
-            log.info("parseServerFromHttpProxyPass() str:" + str)
+            log.debug("parseServerFromHttpProxyPass() str:" + str)
             int pos = str.indexOf(COLON.toString());
             if (pos > 0) {
                 // extract before :
                 result = str.substring(0, pos);
-                log.info("parseServerFromHttpProxyPass() extract before : result:" + str)
+                log.debug("parseServerFromHttpProxyPass() extract before : result:" + str)
 
             } else { //webX.fr/appli/
                 pos = str.indexOf(SLASH);
@@ -259,12 +259,12 @@ class XmlParser {
                 } else {
                     result = str;
                 }
-                log.info("parseServerFromHttpProxyPass() else : result:" + str)
+                log.debug("parseServerFromHttpProxyPass() else : result:" + str)
 
 
             }
         }
-        log.info("Protocol:" + strProtocol)
+        log.debug("parseServerFromHttpProxyPass() Protocol:" + strProtocol)
         return result;
     }
 

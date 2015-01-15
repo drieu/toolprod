@@ -47,7 +47,6 @@ class MachineController {
         List<String> refs = new ArrayList<>()
         List<App> results = null
 
-        log.debug("IndexController:index() Parameter machine passed in request:" + params.get("machine"))
         String param = params.get(MACHINE_PARAM)
         if (param != null) {
             machine = Machine.findByName(param);
@@ -92,6 +91,7 @@ class MachineController {
 
     def list() {
         List<Machine> machines = Machine.findAll()
+        machines = machines.sort{it.name}
         return [machines:machines]
     }
 }

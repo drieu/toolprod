@@ -128,12 +128,12 @@ class Data {
         if (!myApp.urls.contains(appBean.serverUrl)) {
             myApp.urls.add(appBean.serverUrl)
         }
-        log.info("saveApacheApp() save server:" + server.name)
+        log.debug("saveApacheApp() save server:" + server.name)
         if (!myApp.servers.contains(server)) {
             myApp.addServer(server)
         }
 
-        log.info("saveApacheApp() add portals ")
+        log.debug("saveApacheApp() add portals ")
         for (String portalName: appBean.portals) {
             Portal portal = Portal.findByName(portalName)
             if (portal != null && !myApp.portals.contains(portal)) {

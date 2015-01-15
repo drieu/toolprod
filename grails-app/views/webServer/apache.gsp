@@ -19,30 +19,30 @@
     <div class="row">
         <div class="col-md-3">
             <div class="list-group">
-            <g:each in="${map.keySet()}" var="servername">
+                <g:each in="${map.keySet()}" var="servername">
 
-                <g:if test="${!servername.startsWith('source_')}">
+                    <g:if test="${!((String)servername).startsWith('source_')}">
 
-                        <a href="#" class="list-group-item list-group-item-warning">
-                            Serveur ${servername}
-                        </a>
-                        <g:each in="${map.get(servername)}" var="portNumber">
-                            <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
-                                ${portNumber}
+                            <a href="#" class="list-group-item list-group-item-warning">
+                                ${servername}
                             </a>
-                        </g:each>
+                            <g:each in="${map.get(servername)}" var="portNumber">
+                                <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
+                                    ${portNumber}
+                                </a>
+                            </g:each>
 
 
-                </g:if>
-            </g:each>
-        </div>
+                    </g:if>
+                </g:each>
+           </div>
             <br/>
         </div>
 
         <div class="col-md-9">
             <g:if test="${selectServer != null}">
                 <div class="row">
-                    <div class="panel panel-success">
+                    <div class="panel panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title">Serveur web</h3>
                         </div>
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="panel panel-success">
+                    <div class="panel panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title">Liste des applications référencées</h3>
                         </div>
@@ -91,7 +91,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="panel panel-success">
+                    <div class="panel panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title">Liste des modules</h3>
                         </div>

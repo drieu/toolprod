@@ -139,18 +139,29 @@ class TreeNodeData {
             if (appBean.appServer == null ) {
                 treeNodeData.saveChild(treeNodeParent, server)    // we are on the local server
             } else {
-                Server searchServer = Server.findByNameAndPortNumber(server.name, server.portNumber)
+                if (appBean.appPort == null) {
+                    appBean.appPort = 80
+                } else if (appBean.appPort.isEmpty()) {
+                    appBean.appPort = 80
+                }
+                int portDefault = server.portNumber
+                if (server.portNumber == null) {
+                    portDefault = 80
+                } else if (appBean.appPort.isEmpty()) {
+                    portDefault = 80
+                }
+                Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
                 if ( searchServer != null ) {
                     TreeNode sNode = treeNodeData.searchNode(searchServer)
                     if ( sNode != null ) {
 
                         searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                         if (searchServer == null) {
-                            log.info("saveApacheTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
+                            log.debug("saveApacheTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
                             node = treeNodeData.saveChild(treeNodeParent, appBean)
 
                         } else {
-                            log.info("saveApacheTree() searchServer still exists")
+                            log.debug("saveApacheTree() searchServer still exists")
                             node = treeNodeData.searchNode(searchServer)
                         }
                         sNode.parent = node
@@ -160,20 +171,20 @@ class TreeNodeData {
                     }
                 } else {
 
-                    log.info("saveApacheTree() Search searchServer in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
+                    log.debug("saveApacheTree() Search searchServer in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
                     searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                     if (searchServer == null) {
-                        log.info("saveApacheTree() no searchServer found.Save it under treeNodeParent")
+                        log.debug("saveApacheTree() no searchServer found.Save it under treeNodeParent")
                         node = treeNodeData.saveChild(treeNodeParent, appBean)
 
                     } else {
-                        log.info("saveApacheTree() searchServer still exists")
+                        log.debug("saveApacheTree() searchServer still exists")
                         node = treeNodeData.searchNode(searchServer)
                     }
                     treeNodeData.saveChild(node, server)
                 }
             }
-            treeNodeData.showNode(myApp)
+            //treeNodeData.showNode(myApp)
         }
     }
 }
