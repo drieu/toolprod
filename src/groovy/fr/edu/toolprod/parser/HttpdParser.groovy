@@ -166,6 +166,17 @@ class HttpdParser {
 
                     weblos = new ArrayList<>()
                     bLocationTag = false
+
+                } else if (strLine.startsWith("<VirtualHost")) {
+                    AppBean appBean = new AppBean();
+                    String strName = getNameFromFileName();
+                    int pos = strName.indexOf(".")
+                    if (pos > 0) {
+                        strName = strName.substring(pos + 1, strName.length())
+                    }
+                    appBean.name = strName
+                    appBeans.add(appBean)
+
                 }
 
                 if (bLocationMatchTag) {

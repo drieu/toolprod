@@ -186,7 +186,7 @@ class XmlParser {
                 def params = line.tokenize(SEMICOLON)
                 final String weblogicClusterLine = "WebLogicCluster" + SPACE
 
-                log.debug("parseWebLogicCluster() params wbelo:" + params.toString())
+                log.debug("parseWebLogicCluster() ================> params weblo for line:" + line + " params:" + params.toString())
                 for(String weblo :params) {
                     log.debug("param :" + weblo)
                     weblo = weblo.trim()
@@ -204,7 +204,7 @@ class XmlParser {
                 }
             }
         }
-        log.debug("parseWebLogicCluster() weblos:" + weblos.toString())
+        //log.info("parseWebLogicCluster() result for line " + line  + " => weblos:" + weblos.toString())
         return weblos
     }
 
@@ -362,4 +362,6 @@ class XmlParser {
 
         return name
     }
+
+
 }
