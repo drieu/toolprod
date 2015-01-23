@@ -1,6 +1,7 @@
 package fr.edu.toolprod.parser
 
 import org.apache.commons.logging.LogFactory
+import toolprod.MailType
 
 /**
  * Parse config file to init toolprod parameters ( portals, group ...)
@@ -45,6 +46,9 @@ class ConfigParser {
                  if (line.startsWith("group_"))  {
                      parseGroup(line)
                  }
+                if (line.startsWith("mail_type"))  {
+                    parseMailType(line)
+                }
             }
             bResult = true
         } catch (IOException e) {
@@ -60,6 +64,35 @@ class ConfigParser {
         log.debug("parse() result=" + result)
         return bResult
     }
+
+    /**
+     * Parse line which contains mailType.
+     * @param line e.g: group_frontaux=web1,web2,web3,web4,web5,web6
+     * @return
+     */
+    public parseMailType(String line) {
+        log.debug("parseMailType() line=" + line)
+
+        int posEq = line.indexOf('=')
+        if ( posEq > 0 ) {
+            def str = line.substring(posEq + 1, line.length())
+            def lst = str.tokenize(",")
+            for(String value : lst) {
+                int pos = value.indexOf(':')
+                if ( pos > 0 && (!value.isEmpty())) {
+                    def fullNameType = value.substring(0, pos)
+                    def shortNameType = value.substring( pos + 1, value.length())
+                    if ( !fullNameType.isEmpty() && !shortNameType.isEmpty()) {
+                        MailType mailType = new MailType()
+                        mailType.fullNameType = fullNameType
+                        mailType.shortNameType = shortNameType
+                        mailType.save(failOnError: true)
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Parse line which contains group and regex for group.

@@ -2,6 +2,7 @@ package fr.edu.admin
 
 import fr.edu.toolprod.parser.HttpdParser
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import toolprod.MailType
 import toolprod.Status
 
 class ToolsController {
@@ -106,8 +107,7 @@ class ToolsController {
 
         String rne = params.get("rne")
         String type = params.get("type")
-        types.add("intendance")
-        types.add("magasin")
+        String pwd = params.get("pwd")
 
         log.info("Type:" + type)
         log.info("RNE:" + rne)
@@ -122,15 +122,20 @@ class ToolsController {
         String uid = type + rne
         String mail = type + "." + rne + "@ac-limoges.fr"
 
-        [ types: types, mail: mail, uid: uid, rne: rne, type: type ]
+        [ types: types, mail: mail, uid: uid, rne: rne, type: type, pwd: pwd ]
     }
 
+    /**
+     * generate an ldif file with params
+     * @return
+     */
     def downloadUID() {
 
         String uid = params.get("uid")
         String rne = params.get("rne")
         String type = params.get("type")
         String mail = params.get("mail")
+        String pwd = params.get("pwd")
 
 
         String fileName = uid.toString() + ".ldif"
@@ -139,25 +144,6 @@ class ToolsController {
         String content = ""
 
         content +=  "dn: uid=" + uid + ",ou=fonctionnelles,ou=ac-limoges,ou=education,o=gouv,c=fr"
-        content +=  System.getProperty("line.separator")
-
-        content +=  "sunUCDefaultApplication: mail"
-        content +=  System.getProperty("line.separator")
-
-        content +=  "preferredLanguage: fr"
-        content +=  System.getProperty("line.separator")
-
-        content +=  "sunUCTimeFormat: 24"
-        content +=  System.getProperty("line.separator")
-
-        content +=  "sunUCDateFormat: D/M/Y"
-        content +=  System.getProperty("line.separator")
-
-        content +=  "sunUCDateDelimiter: /"
-        content +=  System.getProperty("line.separator")
-
-
-        content +=  "sunUCTheme: theme_dark_blue"
         content +=  System.getProperty("line.separator")
 
         content +=  "mailHost: store72.ac-limoges.fr"
@@ -232,7 +218,7 @@ class ToolsController {
         content +=  "sn: " + rne
         content +=  System.getProperty("line.separator")
 
-        content +=  "userPassword: TO_DEFINE"
+        content +=  "userPassword: " + pwd
         content +=  System.getProperty("line.separator")
 
         content +=  "ou: " + rne

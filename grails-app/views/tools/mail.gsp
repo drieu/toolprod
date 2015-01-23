@@ -27,10 +27,15 @@
                     <input type="text" class="form-control" id="rne" name="rne" placeholder="....087XXX" value="">
                 </div>
                 <br/>
+                <div class="form-group">
+                    <label for="rne">Mot de passe</label>
+                    <input type="text" class="form-control" id="pwd" name="pwd" placeholder="....087XXX" value="">
+                </div>
+                <br/>
                 <select name="type" class="form-control">
                     <option selected>Choix du type de boîte</option>
-                    <g:each in="${types}" var="type">
-                        <option>${type}</option>
+                    <g:each in="${toolprod.MailType.findAll()}" var="type">
+                        <option value="${type.shortNameType}">${type?.fullNameType}</option>
                     </g:each>
                 </select>
                 <br/>
@@ -55,6 +60,10 @@
                 <tr>
                     <td>Mail</td>
                     <td>${mail}</td>
+                </tr>
+                <tr>
+                    <td>Mot de passe</td>
+                    <td>${pwd}</td>
                 </tr>
                 <tr>
                     <td>Fichier LDAP</td>
