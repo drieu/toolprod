@@ -41,7 +41,7 @@ class AppRetailController {
 //        data += "\nvar zNodes = [\n"
 //        data += createDataTest()
 //        data += "\n];"
-        log.info(data)
+//        log.info(data)
         return [app:myApp, data:data]
     }
 
@@ -122,7 +122,7 @@ class AppRetailController {
                        data += "\n"
                        data += createTree(child)
                        if (cpt != ( nbChild -1 )) {
-                           data += "},"
+                           data += ","
                        }
                        data += "\n"
                    }

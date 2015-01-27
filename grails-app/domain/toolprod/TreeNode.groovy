@@ -7,6 +7,8 @@ class TreeNode  {
 
     String name
 
+    String port
+
     Server nodeData;
 
     TreeNode parent;
@@ -15,6 +17,7 @@ class TreeNode  {
 
     static constraints = {
        name(nullable: true)
+       port(nullable: true)
        nodeData(nullable: true)
        parent(nullable: true)
     }

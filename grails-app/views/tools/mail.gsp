@@ -23,13 +23,13 @@
         <div class="panel-body">
             <form role="form">
                 <div class="form-group">
-                    <label for="rne">RNE</label>
+                    <label for="rne">RNE ( avec le 0 devant ! )</label>
                     <input type="text" class="form-control" id="rne" name="rne" placeholder="....087XXX" value="">
                 </div>
                 <br/>
                 <div class="form-group">
                     <label for="rne">Mot de passe</label>
-                    <input type="text" class="form-control" id="pwd" name="pwd" placeholder="....087XXX" value="">
+                    <input type="text" class="form-control" id="pwd" name="pwd" placeholder="****" value="">
                 </div>
                 <br/>
                 <select name="type" class="form-control">
@@ -69,6 +69,30 @@
                     <td>Fichier LDAP</td>
                     <td><g:link action="downloadUID" params="[uid: uid, rne: rne, type: type, mail: mail]">Fichier LDAP</g:link></td>
                 </tr>
+            </table>
+            <br/>
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Récapitulatif des normes </h3>
+        </div>
+        <div class="panel-body">
+            <br/>
+            <table class="table table-hover">
+                <tr>
+                    <th>Type de boîte</th>
+                    <th>Norme pour l'uid</th>
+                    <th>Norme pour le mail</th>
+                </tr>
+                <g:each in="${toolprod.MailType.findAll()}" var="type">
+                    <tr>
+                        <td>${type.fullNameType}</td>
+                        <td>${type.shortNameType}</td>
+                        <td>${type.shortNameType}.RNE@ac-limoges.fr</td>
+                    </tr>
+                </g:each>
             </table>
             <br/>
         </div>

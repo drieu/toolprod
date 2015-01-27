@@ -174,6 +174,7 @@ class Data {
         app.save(failOnError: true)
 
         log.info("saveWebloApp() App find or create:" + app)
+        List<Server> webloServers = new ArrayList<>()
         for(String str : appBean.weblos) {
 
             def params = str.tokenize(":")
@@ -211,8 +212,14 @@ class Data {
 
                 app.save(failOnError: true)
                 result = result + app.name + " "
+                webloServers.add(server)
             }
         }
+
+        log.info("saveWebloApp() save tree")
+        TreeNodeData treeNodeData = new TreeNodeData()
+        treeNodeData.saveWebloTree(app, appBean, server, webloServers)
+        result = result + appBean.name + " "
     }
 
     def static saveCheck(String machineName, String fileName, String confServerName) {
