@@ -86,7 +86,7 @@ class ConfigParser {
                         MailType mailType = new MailType()
                         mailType.fullNameType = fullNameType
                         mailType.shortNameType = shortNameType
-                        mailType.save(failOnError: true)
+                        mailType.save(failOnError: true, flush:true)
                     }
                 }
             }

@@ -70,7 +70,7 @@ class HttpdParser {
             throw new IllegalArgumentException("MachineName must not be null !")
         }
         machine = Machine.findOrCreateByName(machineName)
-        machine.save(failOnError: true)
+        machine.save(failOnError: true, flush:true)
 
     }
 
@@ -136,11 +136,12 @@ class HttpdParser {
                         bLocationMatchTag = true
                     }
 
-                } else if (strLine.startsWith("</LocationMatch>")) {
-                    AppBean appBean = getAppBean(name, serverBean)
-                    appBean.weblos = weblos
-                    appBeans.add(appBean)
-
+                } else if (strLine.startsWith("</LocationMatch>")) {  // LocationMatch is parsed only for WebLogicCluster
+                    if (!weblos.isEmpty()) {
+                        AppBean appBean = getAppBean(name, serverBean)
+                        appBean.weblos = weblos
+                        appBeans.add(appBean)
+                    }
                     weblos = new ArrayList<>()
                     bLocationTag = false
 
@@ -157,12 +158,13 @@ class HttpdParser {
                         bLocationTag = true
                     }
 
-                } else if (strLine.startsWith("</Location>")) {
+                } else if (strLine.startsWith("</Location>")) { // Location is parsed only for WebLogicCluster
 
-                    AppBean appBean = getAppBean(name, serverBean)
-                    appBean.weblos = weblos
-                    appBeans.add(appBean);
-
+                    if (!weblos.isEmpty()) {
+                        AppBean appBean = getAppBean(name, serverBean)
+                        appBean.weblos = weblos
+                        appBeans.add(appBean);
+                    }
 
                     weblos = new ArrayList<>()
                     bLocationTag = false

@@ -32,7 +32,7 @@ class TreeNode  {
     public TreeNode addChild(Server child) {
         TreeNode childNode = new TreeNode(child);
         childNode.parent = this;
-        childNode.save(failOnError: true)
+        childNode.save(failOnError: true, flush:true)
 
         if (children == null) {
             this.children = new LinkedList<TreeNode>();

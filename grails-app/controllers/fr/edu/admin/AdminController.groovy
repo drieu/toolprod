@@ -50,7 +50,7 @@ class AdminController {
                                     log.info("initData() Add machine name:" + name + " in group:" + groupName)
                                 }
                                 log.info("initData() Save group:" + groupName + " OK")
-                                machineGroup.save(failOnError: true)
+                                machineGroup.save(failOnError: true, flush:true)
                             }
                         }
                     }

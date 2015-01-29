@@ -127,7 +127,7 @@ class Server implements Comparable{
         if (server == null) {
             server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber.toInteger(), serverType: Server.TYPE.APACHE)
             server.modules = serverBean.modules;
-            server.save();
+            server.save(failOnError: true, flush:true)
 
         } else {
             log.info("Server still " + serverBean.name + " exist in database");

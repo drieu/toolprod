@@ -40,7 +40,7 @@ class Machine {
     def addAppBean(AppBean appBean) {
         App app = App.findOrCreateByNameAndDescription(appBean.name, appBean.description)
         apps.add(app)
-        this.save()
+        this.save(failOnError: true, flush:true)
     }
 
 
@@ -49,7 +49,7 @@ class Machine {
             throw new IllegalArgumentException("Can't add a null application to Machine apps list !")
         }
         apps.add(app)
-        this.save()
+        this.save(failOnError: true, flush:true)
     }
 
     def addServer(Server server) {

@@ -28,7 +28,7 @@ class TreeNodeData {
             if (treeNodeParent == null) {
                 treeNodeParent = saveSourceNode(nodeParentName)
                 myApp.node = treeNodeParent
-                myApp.save(failOnError: true)
+                myApp.save(failOnError: true, flush:true)
                 log.debug("createParentNodeForApp() create parent: " + nodeParentName)
             }
         } else {
@@ -46,13 +46,13 @@ class TreeNodeData {
         String virtualName = "source_" + sourceName
         Server serverSource = new Server(virtualName, "80", virtualName)
         serverSource.serverType=Server.TYPE.APACHE
-        serverSource.save(failOnError: true)
+        serverSource.save(failOnError: true, flush:true)
 
         TreeNode node = new TreeNode(serverSource)
         node.nodeData = serverSource
         node.name = virtualName
         node.port = "80"
-        node.save(failOnError: true)
+        node.save(failOnError: true, flush:true)
         log.info("saveSourceNode() ==> SOURCE node:" + node.toString())
         return node
     }
@@ -100,7 +100,7 @@ class TreeNodeData {
             resultNode = childNode.addChild(server)
             resultNode.name = server.name
             resultNode.port = server.portNumber
-            resultNode.save(failOnError: true)
+            resultNode.save(failOnError: true, flush:true)
         }
         return resultNode
     }
@@ -112,7 +112,7 @@ class TreeNodeData {
         log.info("saveApacheServerChild(treeNodeParent, appBean) AppBean to save() :" + appBean.toString())
         Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
         serverChild.serverType=Server.TYPE.APACHE
-        serverChild.save(failOnError: true)
+        serverChild.save(failOnError: true, flush:true)
         log.info("saveApacheServerChild() Save Server child :" + serverChild.toString() + " under treeNodeParent node:" + treeNodeParent?.nodeData?.name )
 
         TreeNode resultNode = TreeNode.findByNameAndPort(serverChild.name, serverChild.portNumber.toString())
@@ -121,7 +121,7 @@ class TreeNodeData {
             resultNode.parent = treeNodeParent
             resultNode.name = serverChild.name
             resultNode.port = serverChild.portNumber
-            resultNode.save(failOnError: true)
+            resultNode.save(failOnError: true, flush:true)
         }
         return resultNode
     }
@@ -133,7 +133,7 @@ class TreeNodeData {
         log.info("saveApacheServerChild(treeNodeParent, appBean) AppBean to save() :" + appBean.toString())
         Server serverChild = new Server(appBean.appServer, appBean.appPort, appBean.appServer)
         serverChild.serverType=Server.TYPE.WEBLOGIC
-        serverChild.save(failOnError: true)
+        serverChild.save(failOnError: true, flush:true)
         log.info("saveApacheServerChild() Save Server child :" + serverChild.toString() + " under treeNodeParent node:" + treeNodeParent?.nodeData?.name )
 
         TreeNode resultNode = TreeNode.findByNameAndPort(serverChild.name, serverChild.portNumber.toString())
@@ -142,7 +142,7 @@ class TreeNodeData {
             resultNode.parent = treeNodeParent
             resultNode.name = serverChild.name
             resultNode.port = serverChild.portNumber
-            resultNode.save(failOnError: true)
+            resultNode.save(failOnError: true, flush:true)
         }
         return resultNode
     }
@@ -160,8 +160,8 @@ class TreeNodeData {
                 childNode = treeNodeParent
             }
             treeNodeData.saveServerChild(childNode, server)
-            myApp.node.save(failOnError: true)
-            myApp.save(failOnError: true)
+            myApp.node.save(failOnError: true, flush:true)
+            myApp.save(failOnError: true, flush:true)
 
         } else {
             log.info("saveApacheTree() Childs exist.Need to search where to add the node ...")
@@ -196,7 +196,7 @@ class TreeNodeData {
                             node = treeNodeData.searchNode(searchServer)
                         }
                         sNode.parent = node
-                        sNode.save()
+                        sNode.save(failOnError: true, flush:true)
                     } else {
                         TreeNode childNode
                         if (appBean.appServer != null) {//If appBean.appServer != null, it is a link to an other apache
@@ -205,8 +205,8 @@ class TreeNodeData {
                             childNode = treeNodeParent
                         }
                         treeNodeData.saveServerChild(childNode, server)
-                        myApp.node.save(failOnError: true)
-                        myApp.save(failOnError: true)
+                        myApp.node.save(failOnError: true, flush:true)
+                        myApp.save(failOnError: true, flush:true)
                     }
                 } else {
 
@@ -244,8 +244,8 @@ class TreeNodeData {
             for (Server webloServer : webloServers) {
                 treeNodeData.saveServerChild(webloNode, webloServer)
             }
-            myApp.node.save(failOnError: true)
-            myApp.save(failOnError: true)
+            myApp.node.save(failOnError: true, flush:true)
+            myApp.save(failOnError: true, flush:true)
 
         } else {
             log.info("saveWebloTree() Childs exist.Need to search where to add the node ... TODO")
@@ -288,7 +288,7 @@ class TreeNodeData {
                             }
                         }
                         sNode.parent = node
-                        sNode.save()
+                        sNode.save(failOnError: true, flush:true)
                     } else {
                         log.warn("saveWebloTree() unknown case cannot find a server and not node !")
                     }

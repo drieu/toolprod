@@ -68,7 +68,7 @@ class Data {
         if (!server.linkToApps.contains(appBean.name)) {
             log.debug("addAppToServer() : Save application:" + appBean.name + " in the app list of web server:" + server.name )
             server.addToLinkApps(appBean.name);
-            server.save(failOnError: true);
+            server.save(failOnError: true,flush:true);
         } else {
             log.debug("addAppToServer() : Nothing to save application:" + appBean.name + " still exist in the app list of web server:" + server.name )
         }
@@ -78,7 +78,7 @@ class Data {
             machine.addAppBean(appBean)
         }
         machine.addServer(server)
-        if (!machine.save(failOnError: true)) {
+        if (!machine.save(failOnError: true,flush:true)) {
             log.error("addAppToServer() : Can't Save machine " + machine)
         } else {
             log.info("addAppToServer() : Save machine OK:" + machine)
@@ -99,7 +99,7 @@ class Data {
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
             server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
-            server.save(failOnError: true)
+            server.save(failOnError: true,flush:true)
         } else {
             server = Server.saveServer(serverBean)
         }
@@ -110,7 +110,7 @@ class Data {
         } else {
             if (!machine.getServers()?.contains(server)) {
                 machine.addServer(server);
-                machine.save();
+                machine.save(failOnError: true, flush: true);
                 log.info("Save OK server " + server.name + " in machine " + machine.name);
             }
         }
@@ -159,7 +159,7 @@ class Data {
         App app = App.findOrCreateByNameAndDescription(appBean.name, appBean.description);
         if (!app.urls.contains(appBean.serverUrl)) {
             app.urls.add(appBean.serverUrl)
-            app.save(failOnError: true)
+            app.save(failOnError: true,flush:true)
         }
         //Save portals in application
         for (String str: appBean.portals) {
@@ -171,7 +171,7 @@ class Data {
             }
         }
 
-        app.save(failOnError: true)
+        app.save(failOnError: true,flush:true)
 
         log.info("saveWebloApp() App find or create:" + app)
         List<Server> webloServers = new ArrayList<>()
@@ -187,14 +187,14 @@ class Data {
                 if (!server.linkToApps.contains(appBean.name)) {
                     server.addToLinkApps(appBean.name)
                 }
-                server.save(failOnError: true)
+                server.save(failOnError: true,flush:true)
                 log.info("saveWebloApp() Server " + server)
 
 
                 Machine machine = Machine.findOrCreateByName(machinName)
                 machine.addApplication(app)
                 machine.addServer(server)
-                machine.save(failOnError: true)
+                machine.save(failOnError: true,flush:true)
                 log.info("saveWebloApp() Machine find or create:" + machine)
 
                 // Why equals method of server cannot be call ???
@@ -210,7 +210,7 @@ class Data {
                     app.addServer(server)
                 }
 
-                app.save(failOnError: true)
+                app.save(failOnError: true,flush:true)
                 result = result + app.name + " "
                 webloServers.add(server)
             }
@@ -225,7 +225,7 @@ class Data {
     def static saveCheck(String machineName, String fileName, String confServerName) {
         if (machineName != null && fileName != null && confServerName!= null) {
             Status check = Status.findOrCreateByMachineNameAndFileNameAndName(machineName, fileName, confServerName)
-            check.save(failOnError: true)
+            check.save(failOnError: true,flush:true)
         }
     }
 
