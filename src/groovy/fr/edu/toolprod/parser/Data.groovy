@@ -10,7 +10,6 @@ import toolprod.Status
 import toolprod.Machine
 import toolprod.Portal
 import toolprod.Server
-import toolprod.TreeNode
 
 /**
  * Data is used to save App parsed in httpd conf and the result of check method in database.
@@ -28,6 +27,12 @@ class Data {
      * Server for this httpd.conf.
      */
     private Server server;
+
+    /**
+     * Suffix for a node name.
+     * It solves problem with 2 parents with same childs (eg: wappsco1:10206 et wappsco2:10206 )
+     */
+    private String suffixNodeName = ""
 
     /**
      * Result string to show on html page when it finished.
@@ -48,12 +53,15 @@ class Data {
         boolean bResult = saveServer(serverBean)
         if (bResult) {
             for (AppBean appBean : appBeans) {
-                if ((appBean.weblos != null) && (appBean.weblos.size()>0)) {
-                    saveWebloApp(appBean)
-                } else {
-                    saveApacheApp(appBean)
+                if (appBean.name != null) {
+                    suffixNodeName = appBean.name
+                    if ((appBean.weblos != null) && (appBean.weblos.size()>0)) {
+                        saveWebloApp(appBean)
+                    } else {
+                        saveApacheApp(appBean)
+                    }
+                    addAppToServer(appBean)
                 }
-                addAppToServer(appBean)
             }
         }
         return bResult;
@@ -98,8 +106,13 @@ class Data {
 
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
-            server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
-            server.save(failOnError: true,flush:true)
+            Server searchServer = Server.findByNameAndPortNumber(machine.name, port)
+            if (searchServer == null) {
+                server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
+                server.save(failOnError: true,flush:true)
+            } else {
+                server = searchServer
+            }
         } else {
             server = Server.saveServer(serverBean)
         }
@@ -142,7 +155,7 @@ class Data {
         }
 
         log.info("saveApacheApp() save tree")
-        TreeNodeData treeNodeData = new TreeNodeData()
+        TreeNodeData treeNodeData = new TreeNodeData(suffixNodeName)
         treeNodeData.saveApacheTree(myApp, appBean, server)
         result = result + appBean.name + " "
 
@@ -211,13 +224,12 @@ class Data {
                 }
 
                 app.save(failOnError: true,flush:true)
-                result = result + app.name + " "
                 webloServers.add(server)
             }
         }
 
         log.info("saveWebloApp() save tree")
-        TreeNodeData treeNodeData = new TreeNodeData()
+        TreeNodeData treeNodeData = new TreeNodeData(suffixNodeName)
         treeNodeData.saveWebloTree(app, appBean, server, webloServers)
         result = result + appBean.name + " "
     }

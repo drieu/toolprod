@@ -35,7 +35,7 @@ class AppRetailController {
             data += "\nvar zNodes = [\n"
             data += createTree(myApp.node)
             data += "\n];"
-
+            log.info(data)
         }
 //        Use to test
 //        data += "\nvar zNodes = [\n"
@@ -161,7 +161,7 @@ class AppRetailController {
         List<PrintAppBean> printAppBeans = new ArrayList<>()
         def apps = App.findAll()
         for(App app : apps) {
-            log.info("getAppBeans() : Application : " + app.toString())
+            log.debug("getAppBeans() : Application : " + app.toString())
             AppBean appBean = new AppBean()
             appBean.name = app.name
             appBean.description = app.description
@@ -189,7 +189,7 @@ class AppRetailController {
                     printAppBeans.add(printAppBean)
                 }
             } else {
-                log.info("Ajout " + printAppBean.name)
+                log.debug("Ajout " + printAppBean.name)
                 printAppBeans.add(printAppBean)
             }
         }

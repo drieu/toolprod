@@ -14,6 +14,20 @@ class TreeNodeData {
     private static final log = LogFactory.getLog(this)
 
     /**
+     * Suffix for a node name.
+     * It solves problem with 2 parents with same childs (eg: wappsco1:10206 et wappsco2:10206 )
+     */
+    private String suffixNodeName = ""
+
+    TreeNodeData(String suffix) {
+        log.info("TreeNodeData():" + suffix)
+        if ( suffix != null ) {
+            if (!suffix.isEmpty()) {
+                suffixNodeName = suffix
+            }
+        }
+    }
+/**
      * Create a parent node for an App.(e.g : source_[application name].
      *
      * @param myApp
@@ -94,11 +108,11 @@ class TreeNodeData {
      * @return
      */
     def saveServerChild(TreeNode childNode, Server server) {
-        log.info("saveApacheServerChild(childNode, server) ===> Save Server child :" + server?.toString() + " under node:" + childNode?.nodeData?.name)
+        log.info("saveApacheServerChild(childNode, server) ===> Save under node:" + childNode?.nodeData?.name + " Server child : " + server?.toString())
         TreeNode resultNode = TreeNode.findByNameAndPort(server.name, server.portNumber.toString())
         if (resultNode == null) {
             resultNode = childNode.addChild(server)
-            resultNode.name = server.name
+            resultNode.name = server.name + suffixNodeName
             resultNode.port = server.portNumber
             resultNode.save(failOnError: true, flush:true)
         }
@@ -119,7 +133,7 @@ class TreeNodeData {
         if (resultNode == null) {
             resultNode = treeNodeParent.addChild(serverChild)
             resultNode.parent = treeNodeParent
-            resultNode.name = serverChild.name
+            resultNode.name = serverChild.name + suffixNodeName
             resultNode.port = serverChild.portNumber
             resultNode.save(failOnError: true, flush:true)
         }
@@ -140,7 +154,7 @@ class TreeNodeData {
         if (resultNode == null) {
             resultNode = treeNodeParent.addChild(serverChild)
             resultNode.parent = treeNodeParent
-            resultNode.name = serverChild.name
+            resultNode.name = serverChild.name + suffixNodeName
             resultNode.port = serverChild.portNumber
             resultNode.save(failOnError: true, flush:true)
         }
@@ -148,18 +162,17 @@ class TreeNodeData {
     }
 
     def saveApacheTree(App myApp, AppBean appBean, Server server) {
-        TreeNodeData treeNodeData = new TreeNodeData()
-        TreeNode treeNodeParent = treeNodeData.createParentNodeForApp(myApp, appBean.name)
+        TreeNode treeNodeParent = this.createParentNodeForApp(myApp, appBean.name)
 
         if (treeNodeParent.isLeaf()) {
             log.info("saveApacheTree() Child does not exists for treeNodeParent with name:" + treeNodeParent?.nodeData?.name + " and  port:" + treeNodeParent?.nodeData?.name)
             TreeNode childNode
             if (appBean.appServer != null) {//If appBean.appServer != null, it is a link to an other apache
-                childNode = treeNodeData.saveApacheServerChild(treeNodeParent, appBean)
+                childNode = this.saveApacheServerChild(treeNodeParent, appBean)
             } else {
                 childNode = treeNodeParent
             }
-            treeNodeData.saveServerChild(childNode, server)
+            this.saveServerChild(childNode, server)
             myApp.node.save(failOnError: true, flush:true)
             myApp.save(failOnError: true, flush:true)
 
@@ -168,7 +181,7 @@ class TreeNodeData {
             TreeNode node
             if (appBean.appServer == null ) {
                 log.debug("saveApacheTree() appBean.appServer == null => we are in local server")
-                treeNodeData.saveServerChild(treeNodeParent, server)    // we are on the local server
+                this.saveServerChild(treeNodeParent, server)    // we are on the local server
             } else {
                 if (appBean.appPort == null) {
                     appBean.appPort = 80
@@ -183,28 +196,28 @@ class TreeNodeData {
                 }
                 Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
                 if ( searchServer != null ) {
-                    TreeNode sNode = treeNodeData.searchNode(searchServer)
+                    TreeNode sNode = this.searchNode(searchServer)
                     if ( sNode != null ) {
                         log.info("Search if server still exist name:" + appBean?.appServer + " port:" + appBean?.appPort)
                         searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                         if (searchServer == null) {
                             log.debug("saveApacheTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
-                            node = treeNodeData.saveApacheServerChild(treeNodeParent, appBean)
+                            node = this.saveApacheServerChild(treeNodeParent, appBean)
 
                         } else {
                             log.debug("saveApacheTree() searchServer still exists")
-                            node = treeNodeData.searchNode(searchServer)
+                            node = this.searchNode(searchServer)
                         }
                         sNode.parent = node
                         sNode.save(failOnError: true, flush:true)
                     } else {
                         TreeNode childNode
                         if (appBean.appServer != null) {//If appBean.appServer != null, it is a link to an other apache
-                            childNode = treeNodeData.saveApacheServerChild(treeNodeParent, appBean)
+                            childNode = this.saveApacheServerChild(treeNodeParent, appBean)
                         } else {
                             childNode = treeNodeParent
                         }
-                        treeNodeData.saveServerChild(childNode, server)
+                        this.saveServerChild(childNode, server)
                         myApp.node.save(failOnError: true, flush:true)
                         myApp.save(failOnError: true, flush:true)
                     }
@@ -214,13 +227,13 @@ class TreeNodeData {
                     searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                     if (searchServer == null) {
                         log.debug("saveApacheTree() no searchServer found.Save it under treeNodeParent")
-                        node = treeNodeData.saveApacheServerChild(treeNodeParent, appBean)
+                        node = this.saveApacheServerChild(treeNodeParent, appBean)
 
                     } else {
                         log.debug("saveApacheTree() searchServer still exists")
-                        node = treeNodeData.searchNode(searchServer)
+                        node = this.searchNode(searchServer)
                     }
-                    treeNodeData.saveServerChild(node, server)
+                    this.saveServerChild(node, server)
                 }
             }
             //treeNodeData.showNode(myApp)
@@ -228,21 +241,20 @@ class TreeNodeData {
     }
 
     def saveWebloTree(App myApp, AppBean appBean, Server server, List<Server> webloServers) {
-        TreeNodeData treeNodeData = new TreeNodeData()
-        TreeNode treeNodeParent = treeNodeData.createParentNodeForApp(myApp, appBean.name)
+        TreeNode treeNodeParent = this.createParentNodeForApp(myApp, appBean.name)
 
 
         if (treeNodeParent.isLeaf()) {
-            log.info("saveWebloTree() Child does not exists for treeNodeParent with name:" + treeNodeParent?.nodeData?.name + " and  port:" + treeNodeParent?.nodeData?.name)
+            log.info("saveWebloTree() Child does not exists for treeNodeParent with name:" + treeNodeParent?.nodeData?.name + " and  port:" + treeNodeParent?.nodeData?.portNumber)
             TreeNode childNode
             if (appBean.appServer != null) {//If appBean.appServer != null, it is a link to an other apache
-                childNode = treeNodeData.saveWeblogicServerChild(treeNodeParent, appBean)
+                childNode = this.saveWeblogicServerChild(treeNodeParent, appBean)
             } else {
                 childNode = treeNodeParent
             }
-            TreeNode webloNode = treeNodeData.saveServerChild(childNode, server)
+            TreeNode webloNode = this.saveServerChild(childNode, server)
             for (Server webloServer : webloServers) {
-                treeNodeData.saveServerChild(webloNode, webloServer)
+                this.saveServerChild(webloNode, webloServer)
             }
             myApp.node.save(failOnError: true, flush:true)
             myApp.save(failOnError: true, flush:true)
@@ -251,9 +263,9 @@ class TreeNodeData {
             log.info("saveWebloTree() Childs exist.Need to search where to add the node ... TODO")
             TreeNode node
             if (appBean.appServer == null ) {
-                TreeNode webloNode = treeNodeData.saveServerChild(treeNodeParent, server)    // we are on the local server ( e.g = appliloc )
+                TreeNode webloNode = this.saveServerChild(treeNodeParent, server)    // we are on the local server ( e.g = appliloc )
                 for (Server webloServer : webloServers) {
-                    treeNodeData.saveServerChild(webloNode, webloServer)
+                    this.saveServerChild(webloNode, webloServer)
                 }
             } else {
                 if (appBean.appPort == null) {
@@ -269,22 +281,22 @@ class TreeNodeData {
                 }
                 Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
                 if ( searchServer != null ) {
-                    TreeNode sNode = treeNodeData.searchNode(searchServer)
+                    TreeNode sNode = this.searchNode(searchServer)
                     if ( sNode != null ) {
 
                         searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                         if (searchServer == null) {
                             log.debug("saveWebloTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
-                            node = treeNodeData.saveServerChild(treeNodeParent, server)
+                            node = this.saveServerChild(treeNodeParent, server)
                             for (Server webloServer : webloServers) {
-                                treeNodeData.saveServerChild(node, webloServer)
+                                this.saveServerChild(node, webloServer)
                             }
 
                         } else {
                             log.debug("saveWebloTree() searchServer still exists")
-                            node = treeNodeData.searchNode(searchServer)
+                            node = this.searchNode(searchServer)
                             for (Server webloServer : webloServers) {
-                                treeNodeData.saveServerChild(node, webloServer)
+                                this.saveServerChild(node, webloServer)
                             }
                         }
                         sNode.parent = node
@@ -298,21 +310,21 @@ class TreeNodeData {
                     searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                     if (searchServer == null) {
                         log.debug("saveWebloTree() no searchServer found.Save it under treeNodeParent")
-                        node = treeNodeData.saveApacheServerChild(treeNodeParent, appBean)
+                        node = this.saveApacheServerChild(treeNodeParent, appBean)
                         for (Server webloServer : webloServers) {
-                            treeNodeData.saveServerChild(node, webloServer)
+                            this.saveServerChild(node, webloServer)
                         }
                     } else {
                         log.debug("saveWebloTree() searchServer still exists")
-                        node = treeNodeData.searchNode(searchServer)
+                        node = this.searchNode(searchServer)
                         for (Server webloServer : webloServers) {
-                            treeNodeData.saveServerChild(node, webloServer)
+                            this.saveServerChild(node, webloServer)
                         }
                     }
-                    treeNodeData.saveServerChild(node, server)
+                    this.saveServerChild(node, server)
                 }
             }
-            treeNodeData.showNode(myApp)
+            this.showNode(myApp)
         }
     }
 }
