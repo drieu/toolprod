@@ -94,6 +94,8 @@ class HttpdParser {
             boolean bLocationMatchTag = false; // identify begin and end of xml Match tag Location
 
             String name = EMPTY
+            String WebLogicHost = EMPTY
+            String WebLogicPort = EMPTY
             List<String> weblos = new ArrayList<>()
 
 
@@ -122,6 +124,11 @@ class HttpdParser {
                         }
                         appBeans.add(appBean);
                     }
+                } else if (( !strLine.startsWith("#") && strLine.contains("WebLogicHost"))) { // If WebLogicHost
+                    WebLogicHost = XmlParser.parseWebLogicHost(strLine)
+
+                } else if (( !strLine.startsWith("#") && strLine.contains("WebLogicPort"))) { // If WebLogicPort
+                    WebLogicPort = XmlParser.parseWebLogicPort(strLine)
 
                 } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
                     def params = strLine.tokenize()
@@ -186,21 +193,39 @@ class HttpdParser {
                     for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
                         weblos.add(str);
                     }
-                    for(String str : parseLocationHostAndPort(strLine)) { // If WebLogicHost and WebLogicPort
+                    if ((WebLogicHost != null) && !WebLogicHost.isEmpty() && (WebLogicPort != null) && !WebLogicPort.isEmpty()) {
+                        String str = ""
+                        if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
+                            str = WebLogicHost + ":" + WebLogicPort
+                        } else {
+                            str = WebLogicHost + ":80" // TODO default
+                        }
                         weblos.add(str)
+                        WebLogicHost = EMPTY
+                        WebLogicPort = EMPTY
                     }
+
                     log.debug("parse() weblos:" + weblos?.toString())
                 }
 
 
                 if (bLocationTag) {
-
+                    log.info("Location Tag:" + WebLogicHost + ":" + WebLogicPort)
                     for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
                         weblos.add(str);
                     }
-                    for(String str : parseLocationHostAndPort(strLine)) { // If WebLogicHost and WebLogicPort
+                    if ((WebLogicHost != null) && !WebLogicHost.isEmpty() && (WebLogicPort != null) && !WebLogicPort.isEmpty()) {
+                        String str = ""
+                        if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
+                            str = WebLogicHost + ":" + WebLogicPort
+                        } else {
+                            str = WebLogicHost + ":80" // TODO default
+                        }
                         weblos.add(str)
+                        WebLogicHost = EMPTY
+                        WebLogicPort = EMPTY
                     }
+
                     log.debug("parse() weblos:" + weblos?.toString())
                 }
             }
