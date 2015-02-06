@@ -155,8 +155,8 @@ class Data {
         }
 
         log.info("saveApacheApp() save tree")
-        TreeNodeData treeNodeData = new TreeNodeData(suffixNodeName)
-        treeNodeData.saveApacheTree(myApp, appBean, server)
+        TreeNodeData treeNodeData = new ApacheTreeNodeData(suffixNodeName)
+        treeNodeData.saveTree(myApp, appBean, server)
         result = result + appBean.name + " "
 
     }
@@ -196,41 +196,41 @@ class Data {
                 String machinName = params.get(0)
                 String portTest = params.get(1)
 
-                Server server = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName, portTest.toInteger(),Server.TYPE.WEBLOGIC, machinName)
-                if (!server.linkToApps.contains(appBean.name)) {
-                    server.addToLinkApps(appBean.name)
+                Server webloServer = Server.findOrCreateByNameAndPortNumberAndServerTypeAndMachineHostName(machinName, portTest.toInteger(),Server.TYPE.WEBLOGIC, machinName)
+                if (!webloServer.linkToApps.contains(appBean.name)) {
+                    webloServer.addToLinkApps(appBean.name)
                 }
-                server.save(failOnError: true,flush:true)
-                log.info("saveWebloApp() Server " + server)
+                webloServer.save(failOnError: true,flush:true)
+                log.info("saveWebloApp() Server " + webloServer)
 
 
                 Machine machine = Machine.findOrCreateByName(machinName)
                 machine.addApplication(app)
-                machine.addServer(server)
+                machine.addServer(webloServer)
                 machine.save(failOnError: true,flush:true)
                 log.info("saveWebloApp() Machine find or create:" + machine)
 
-                // Why equals method of server cannot be call ???
+                // Why equals method of webloServer cannot be call ???
                 boolean bFind = false
                 for (Server serv : app.servers) {
-                    if (serv.name.equals(server.name) && serv.portNumber.equals(server.portNumber)) {
+                    if (serv.name.equals(webloServer.name) && serv.portNumber.equals(webloServer.portNumber)) {
                         bFind = true
                         break
                     }
                 }
                 if (!bFind) {
-                    log.info("saveWebloApp() add server to the App list.")
-                    app.addServer(server)
+                    log.info("saveWebloApp() add webloServer to the App list.")
+                    app.addServer(webloServer)
                 }
 
                 app.save(failOnError: true,flush:true)
-                webloServers.add(server)
+                webloServers.add(webloServer)
             }
         }
 
         log.info("saveWebloApp() save tree")
-        TreeNodeData treeNodeData = new TreeNodeData(suffixNodeName)
-        treeNodeData.saveWebloTree(app, appBean, server, webloServers)
+        TreeNodeData treeNodeData = new WeblogicTreeNodeData(suffixNodeName, webloServers)
+        treeNodeData.saveTree(app, appBean, server)
         result = result + appBean.name + " "
     }
 

@@ -45,11 +45,10 @@ class AppBean {
      */
     List<String> weblos = new ArrayList<>()
 
-
-//    TreeNode node = new TreeNode()
-
-
     String appServer
+
+
+
     String appPort
 
 
@@ -61,6 +60,7 @@ class AppBean {
 
     private static final String DEFAUL_SERVER_PORT = "http://notdefined.com"
 
+    private static final String DEFAULT_PORT = "80"
 
     AppBean() {
         this.name = DEFAUL_APPNAME
@@ -88,7 +88,26 @@ class AppBean {
         this.serverUrl = url
     }
 
+    /**
+     * Getter
+     * @return
+     */
+    String getAppPort() {
+        return appPort
+    }
 
+    /**
+     * Set app port and if not set a DEFAULT_PORT
+     * @param appPort
+     */
+    void setAppPort(String port) {
+        this.appPort = port
+        if (port == null) {
+            appPort = DEFAULT_PORT
+        } else if (appPort.isEmpty()) {
+            appPort = DEFAULT_PORT
+        }
+    }
 
     @Override
     public java.lang.String toString() {

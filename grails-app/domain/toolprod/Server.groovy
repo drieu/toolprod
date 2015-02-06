@@ -13,9 +13,8 @@ class Server implements Comparable{
      */
     String name
 
-    /**
-     * Listen in apache conf.
-     */
+
+
     Integer portNumber
 
     /**
@@ -42,6 +41,8 @@ class Server implements Comparable{
     }
 
     private static final log = LogFactory.getLog(this)
+
+    private static final int DEFAULT_PORT = 80
 
     Server(String name, String portNumber, String machineHostName) {
         this.name = name
@@ -99,6 +100,17 @@ class Server implements Comparable{
             }
         }
         return 1
+    }
+
+    /**
+     * Listen in apache conf.
+     */
+    Integer getPortNumber() {
+        int portDefault = this.portNumber
+        if (this.portNumber == null) {
+            portDefault = DEFAULT_PORT
+        }
+        return portDefault
     }
 /**
      * Add an application to linkapps
