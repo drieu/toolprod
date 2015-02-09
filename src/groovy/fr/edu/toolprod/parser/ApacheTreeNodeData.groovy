@@ -97,17 +97,18 @@ class ApacheTreeNodeData extends TreeNodeData {
                 int portDefault = server.getPortNumber()
                 Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
                 if ( searchServer != null ) {
-                    TreeNode sNode = this.searchNode(searchServer)
+                    TreeNode sNode = this.searchNode(server, searchServer, appBean.name)
                     if ( sNode != null ) {
                         log.info("Search if server still exist name:" + appBean?.appServer + " port:" + appBean?.appPort)
-                        searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
-                        if (searchServer == null) {
+                        Server searchAppBeanServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
+                        if (searchAppBeanServer == null) {
                             log.debug("saveApacheTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
                             node = this.saveServerChild(treeNodeParent, appBean)
 
                         } else {
                             log.debug("saveApacheTree() searchServer still exists")
-                            node = this.searchNode(searchServer)
+                            // TODO create server with appBean.appServer and appBean.appPort.toInteger()
+                            node = this.searchNode(server, searchAppBeanServer, appBean.name)
                         }
                         sNode.parent = node
                         sNode.save(failOnError: true, flush:true)
@@ -132,7 +133,7 @@ class ApacheTreeNodeData extends TreeNodeData {
 
                     } else {
                         log.debug("saveApacheTree() searchServer still exists")
-                        node = this.searchNode(searchServer)
+                        node = this.searchNode(server, searchServer, appBean.name)
                     }
                     this.saveServerChild(node, server)
                 }

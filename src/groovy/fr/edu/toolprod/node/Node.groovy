@@ -32,7 +32,7 @@ class Node {
         TreeNode treeNodeParent = null
         if ( (nodeParentName != null) && (nodeParentName.isEmpty() == false)) {
 
-            log.debug("createParentNodeForApp() search if parent with name: " + nodeParentName + "exists")
+            log.debug("createParentNodeForApp() search if parent with name: " + nodeParentName + " exists")
             treeNodeParent = TreeNode.findByName(nodeParentName)
             if (treeNodeParent == null) {
                 treeNodeParent = saveSourceNode(nodeParentName)
@@ -40,7 +40,7 @@ class Node {
                 myApp.save(failOnError: true, flush:true)
                 log.info("createParentNodeForApp() create parent: " + nodeParentName)
             } else {
-                log.info("createParentNodeForApp() parent node " + nodeParentName + "still exists")
+                log.info("createParentNodeForApp() parent node " + nodeParentName + " still exists")
             }
         } else {
             log.warn("createParentNodeForApp() Bad node parent name ( null or empty) ")
@@ -124,11 +124,28 @@ class Node {
      * @param searchServer
      * @return null if not found.
      */
-    public TreeNode searchNode(Server searchServer) {
+    public TreeNode searchNode(Server server, Server searchServer, String applicationName) {
         TreeNode resultNode = null
         if (searchServer != null) {
-            log.info("searchNode() Search node for  :" + searchServer.toString())
-            resultNode = TreeNode.findByNodeData(searchServer)
+            def n = TreeNode.createCriteria()
+            String strSearch = applicationName + "_%" + searchServer.name + "%"
+            log.info("searchNode() Search node for  :" + strSearch)
+            List<TreeNode> results  = n.list {
+                like("name", strSearch)
+                and{
+                    like("name", "%" + server.name + "%" )
+                }
+            }
+            if (results.size() == 1 ) {
+                resultNode = results.get(0)
+            }
+            if (results.size() > 1) {
+                for(TreeNode node : results) {
+                    log.warn("searchNode() found node :" + node.name)
+                }
+                log.warn("Severeal node found.resultNode is set explicitly to null !")
+                resultNode = null
+            }
         } else {
             log.warn("searchNode() : searchServer is null !")
         }
@@ -166,8 +183,9 @@ class Node {
      */
     String buildNodeName(String suffixNodeName, String parentName, String childName)   {
         String name =  childName
+        final String separator = "__"
         if ((suffixNodeName != null) && (parentName != null) && (childName!=null)) {
-            name = suffixNodeName + "_" + parentName + "_" + childName
+            name = suffixNodeName + separator + parentName + separator + childName
         } else {
             log.warn("buildNodeName() : a paramaeter is null suffixNodeName:" + suffixNodeName)
             log.warn("buildNodeName() : a paramaeter is null parentName:" + parentName)

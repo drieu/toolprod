@@ -120,9 +120,9 @@ class WeblogicTreeNodeData extends TreeNodeData {
 
                 Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
                 if ( searchServer != null ) {
-                    TreeNode sNode = this.searchNode(searchServer)
+                    TreeNode sNode = this.searchNode(server, searchServer, appBean.name)
                     if ( sNode != null ) {
-                        node = saveChildNodeForServer(treeNodeParent, server, appBean.appServer, appBean.appPort)
+                        node = saveChildNodeForServer(treeNodeParent, server, appBean)
                         saveWeblogicServerChild(node, webloServers)
                         sNode.parent = node
                         sNode.save(failOnError: true, flush:true)
@@ -131,7 +131,7 @@ class WeblogicTreeNodeData extends TreeNodeData {
                     }
 
                 } else {
-                    node = saveChildNodeForAppBean(treeNodeParent, appBean)
+                    node = saveChildNodeForAppBean(treeNodeParent, appBean, server)
                     saveWeblogicServerChild(node, webloServers)
                     this.saveServerChild(node, server)
                 }
@@ -146,7 +146,7 @@ class WeblogicTreeNodeData extends TreeNodeData {
      * @param appBean
      * @return
      */
-    public TreeNode saveChildNodeForAppBean(TreeNode treeNodeParent, AppBean appBean) {
+    public TreeNode saveChildNodeForAppBean(TreeNode treeNodeParent, AppBean appBean, Server server) {
         TreeNode node = null
         if (appBean == null) {
             log.warn("saveChildNodeForAppBean() appBean is null.")
@@ -163,7 +163,7 @@ class WeblogicTreeNodeData extends TreeNodeData {
             node = this.saveServerChild(treeNodeParent, appBean)
         } else {
             log.info("saveChildNodeForAppBean() searchServer still exists")
-            node = this.searchNode(searchServer)
+            node = this.searchNode(server, searchServer, appBean.name)
         }
         return node
     }
@@ -176,15 +176,15 @@ class WeblogicTreeNodeData extends TreeNodeData {
      * @param appPort
      * @return
      */
-    public TreeNode saveChildNodeForServer(TreeNode treeNodeParent, Server serv, String appServer, String appPort) {
+    public TreeNode saveChildNodeForServer(TreeNode treeNodeParent, Server serv, AppBean appBean) {
         TreeNode node = null
-        Server searchServer = Server.findByNameAndPortNumber(appServer, appPort.toInteger())
+        Server searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
         if (searchServer == null) {
-            log.debug("saveWebloTree() no searchServer found with name=" + appServer + " port:" +  appPort + ".Save it under treeNodeParent")
+            log.debug("saveWebloTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
             node = this.saveServerChild(treeNodeParent, serv)
         } else {
             log.debug("saveWebloTree() searchServer still exists")
-            node = this.searchNode(searchServer)
+            node = this.searchNode(serv, searchServer, appBean.name)
         }
         return node
     }
