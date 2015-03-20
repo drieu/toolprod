@@ -23,8 +23,9 @@
         </div>
         <div class="panel-body">
             <ul class="nav nav-pills nav-stacked">
-                <li><g:link controller="admin" action="initData">Etape 1 : Initialisation des données (portails )</g:link></li>
-                <li><g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link></li>
+                <li><g:link controller="admin" action="initData">Etape 1 : Initialisation des données</g:link></li>
+                <li><g:link controller="admin" action="initPortals">Etape 2 : Initialisation des portails</g:link></li>
+                <li><g:link controller="admin" action="init">Etape 3 : Import de fichiers Httpd.conf</g:link></li>
             </ul>
         </div>
     </div>
@@ -41,6 +42,5 @@
     </div>
 </div>
 
-<r:layoutResources/>
 </body>
 </html>

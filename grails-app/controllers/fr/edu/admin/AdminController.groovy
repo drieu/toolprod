@@ -1,5 +1,6 @@
 package fr.edu.admin
 
+import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
 import fr.edu.toolprod.parser.HttpdParser
 import org.apache.commons.logging.LogFactory
@@ -8,6 +9,7 @@ import toolprod.Machine
 import toolprod.MachineGroup
 import toolprod.Portal
 import toolprod.Server
+import toolprod.Vip
 
 /**
  * Admin Controller.
@@ -20,7 +22,7 @@ class AdminController {
     }
 
     /**
-     * Initialize datas like portals, machine Group.
+     * Initialize datas Step 1.
      */
     def initData() {
         log.info("initData()")
@@ -69,6 +71,32 @@ class AdminController {
         def portals = Portal.findAll()
         def machinesGroups = MachineGroup.findAll()
         return [ portals: portals, machinesGroups: machinesGroups ]
+    }
+
+    def initPortals() {
+        log.info("initPortals()")
+        boolean bResult = false
+        if (request instanceof MultipartHttpServletRequest) {
+            def message = ""
+            request.getFiles("files[]").each { file ->
+                log.info("initPortals() file to parse :" + file.originalFilename)
+                if (!file.originalFilename.isEmpty()) {
+                    BigIpParser configParser = new BigIpParser(file.inputStream)
+                    configParser.parse()
+                } else {
+                    message = "File is empty !"
+                }
+            }
+            flash.clear()
+            if (bResult) {
+                flash.message = "SUCCESS"
+            } else {
+                flash.error = "FAILED : " + message
+            }
+
+        }
+        def portals = Vip.findAll()
+        return [ portals: portals]
     }
 
     /**

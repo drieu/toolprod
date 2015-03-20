@@ -103,7 +103,7 @@ class AppRetailController {
     public String createTree(TreeNode node) {
        String data = ""
        if (node != null) {
-           data += "{name:'" + node?.nodeData?.name + "_" + node?.nodeData?.portNumber + "',open:true"
+           data += "{name:'" + getRealParentName(node?.nodeData?.name, node?.nodeData?.portNumber) + "',open:true"
 
            if (node.getChildren().size() != 0) {
                data += ", children:["
@@ -135,6 +135,18 @@ class AppRetailController {
        }
 
        return data
+    }
+
+    public String getRealParentName(String name, Integer portNumber) {
+       String result = "?"
+       if (name != null) {
+          if (name.contains("source_")) {
+              result = name.substring("source_".size(), name.length())
+          } else {
+              result = name + "_" + portNumber.toString()
+          }
+       }
+       return result
     }
 
     /**
@@ -221,6 +233,86 @@ class AppRetailController {
         log.info("AppRetailController:listing() render()")
         return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
     }
+
+    /**
+     * List Vip, Server and app
+     * @return
+     */
+    def viplisting() {
+        String data
+        def choice = params.choice
+        Vip vip = getVip(choice)
+        if (vip != null) {
+            //def servers = Server.findAllByNameAndPortNumber("web1.ac-limoges.fr", "8008")
+            def servers = vip.servers
+
+            data += "\nvar zNodes = [\n"
+            for (Server server : servers) {
+                List<TreeNode> nodes = TreeNode.findAllByNodeData(server)
+                for(TreeNode node : nodes) {
+                    TreeNode parent = this.getParent(node)
+                    if (parent != null) {
+                        log.info(parent.name)
+                        data += createTree(parent)
+                        data += ","
+                    }
+                }
+            }
+            data += "\n];"
+            log.info(data)
+        }
+        List<String> portalNames = Vip.executeQuery("select name from Vip")
+
+
+        log.info("names:" + portalNames.toString())
+        return [data : data, portals: portalNames, vip: vip]
+    }
+
+    public TreeNode getParent(TreeNode node) {
+        TreeNode result = node
+        if (result != null) {
+            if (result.parent != null) {
+                result = getParent(result.parent)
+            }
+        }
+        return result
+    }
+
+    def getVip(String choice) {
+        log.info("getVip()")
+        // Save VIP
+        Vip vip = Vip.findByName("webclasseur")
+        if ( vip == null ) {
+            log.info("add vip()")
+            vip = new Vip()
+            vip.name = "webclasseur"
+            vip.technicalName = "webclasseur.ac-limoges.fr_ssl"
+            Server serv = Server.findByNameAndPortNumber("web1.ac-limoges.fr", "8062")
+            if (serv == null) {
+                serv = new Server()
+                serv.name = "web1.ac-limoges.fr"
+                serv.portNumber = 8062
+                serv.machineHostName = "web1.ac-limoges.fr"
+                serv.serverType = Server.TYPE.APACHE
+                serv.save(failOnError: true, flush:true)
+            }
+            vip.servers.add(serv)
+            Server serv2 = Server.findByNameAndPortNumber("web2.ac-limoges.fr", "8062")
+            if (serv2 == null) {
+                serv2 = new Server()
+                serv2.name = "web2.ac-limoges.fr"
+                serv2.portNumber = 8062
+                serv2.machineHostName = "web2.ac-limoges.fr"
+                serv2.serverType = Server.TYPE.APACHE
+                serv2.save(failOnError: true, flush:true)
+            }
+            vip.servers.add(serv2)
+
+            vip.save(failOnError: true, flush:true)
+        }
+        vip
+    }
+
 
     def getPrintAppBean(AppBean appBean) {
         PrintAppBean printAppBean = new PrintAppBean()

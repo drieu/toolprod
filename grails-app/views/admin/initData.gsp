@@ -41,8 +41,10 @@
             </form>
 
         </g:uploadForm>
+        <g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link>
     </div>
     </div>
+
     <br/>
     <div class="well well-lg">Les données en base ne sont ni effacées ni mises à jour.Si elles n'existent pas, elles sont créees.</div>
     <br/>

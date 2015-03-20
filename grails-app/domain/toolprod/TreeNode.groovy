@@ -101,6 +101,25 @@ class TreeNode  {
     }
 
 
-
+    public static String getNodesPath(Server server) {
+        String result = ""
+        List<TreeNode> nodes = TreeNode.findAllByNodeData(server)
+        for(TreeNode node : nodes) {
+            if (node != null) {
+                result += node.nodeData?.name
+                boolean bParent = true
+                TreeNode parent = node.parent
+                while(bParent == true) {
+                    result += "->" + parent?.nodeData?.name
+                    if (parent != null) {
+                        parent = parent.parent
+                    } else {
+                        bParent = false
+                    }
+                }
+            }
+        }
+        return result;
+    }
 
 }
