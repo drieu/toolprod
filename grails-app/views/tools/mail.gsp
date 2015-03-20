@@ -22,18 +22,18 @@
         </div>
         <div class="panel-body">
             <form role="form">
-                <div class="form-group">
+                <div class="form-inline">
                     <label for="rne">RNE ( avec le 0 devant ! )</label>
                     <input type="text" class="form-control" id="rne" name="rne" placeholder="....087XXX" value="">
                 </div>
                 <br/>
-                <div class="form-group">
-                    <label for="rne">Mot de passe</label>
+                <div class="form-inline">
+                    <label for="pwd">Mot de passe</label>
                     <input type="text" class="form-control" id="pwd" name="pwd" placeholder="****" value="">
                 </div>
                 <br/>
                 <select name="type" class="form-control">
-                    <option selected>Choix du type de boîte</option>
+                    <option value="NONE" selected>Choix du type de boîte</option>
                     <g:each in="${toolprod.MailType.findAll()}" var="type">
                         <option value="${type.shortNameType}">${type?.fullNameType}</option>
                     </g:each>
@@ -67,7 +67,7 @@
                 </tr>
                 <tr>
                     <td>Fichier LDAP</td>
-                    <td><g:link action="downloadUID" params="[uid: uid, rne: rne, type: type, mail: mail]">Fichier LDAP</g:link></td>
+                    <td><g:link action="downloadUID" params="[uid: uid, rne: rne, type: type, mail: mail, pwd: pwd]">Fichier LDAP</g:link></td>
                 </tr>
             </table>
             <br/>

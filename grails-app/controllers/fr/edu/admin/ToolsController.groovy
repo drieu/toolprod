@@ -103,14 +103,12 @@ class ToolsController {
      * Generate mail name automatically
      */
     def mail() {
+        log.info("mail()")
         def types = new ArrayList<String>()
 
         String rne = params.get("rne")
         String type = params.get("type")
         String pwd = params.get("pwd")
-
-        log.info("Type:" + type)
-        log.info("RNE:" + rne)
 
         if (type == null) {
             type = "TYPE"
@@ -122,6 +120,10 @@ class ToolsController {
         String uid = type + rne
         String mail = type + "." + rne + "@ac-limoges.fr"
 
+        log.info("Type:" + type)
+        log.info("RNE:" + rne)
+        log.info("PWS:" + pwd)
+
         [ types: types, mail: mail, uid: uid, rne: rne, type: type, pwd: pwd ]
     }
 
@@ -131,6 +133,7 @@ class ToolsController {
      */
     def downloadUID() {
 
+        log.info("downloadUID()")
         String uid = params.get("uid")
         String rne = params.get("rne")
         String type = params.get("type")
@@ -243,6 +246,9 @@ class ToolsController {
         content +=  System.getProperty("line.separator")
 
         content +=  "cn: " + type + " " + rne
+        content +=  System.getProperty("line.separator")
+
+        content +=  "rne: " + rne
         content +=  System.getProperty("line.separator")
 
         content += "iplanet-am-modifiable-by: cn=top-level admin role,o=gouv,c=fr"
