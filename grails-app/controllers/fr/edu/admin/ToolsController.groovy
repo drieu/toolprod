@@ -133,19 +133,7 @@ class ToolsController {
         log.info("RNE:" + rne)
         log.info("PWS:" + pwd)
 
-        //TODO : LDAP
-//        log.info("Connecting to LDAP ...")
-//        LdapConnection connection = new LdapNetworkConnection( "ldap-m7.ac-limoges.fr", 389 );
-//        connection.bind( "cn=Directory Manager", "P1n0r1mix" );
-//        EntryCursor cursor = connection.search( "ou=personnels EN, ou=ac-limoges, ou=education, o=gouv, c=fr", "(&(objectclass=*)(mail=damien.rieu@ac-limoges.fr))", SearchScope.ONELEVEL, "*" );
-//        while ( cursor.next() )
-//        {
-//            DefaultEntry entry = cursor.get()
-//            log.info("ENTRY:" + entry.get("mail"))
-//        }
-//        connection.unBind()
-//        connection.close()
-//        log.info("Disconnect to LDAP ...")
+
 
         [ types: types, mail: mail, uid: uid, rne: rne, type: type, pwd: pwd ]
     }
@@ -286,41 +274,80 @@ class ToolsController {
         render(file: file, contentType: 'text/plain', fileName: fileName)
     }
 
-
+    /**
+     * Call in mail.gsp to chek if a mail exists in LDAP
+     * @return JSON data.
+     */
     def ajaxCheckMailInLDAP = {
-        boolean bCheck = true
-        def mailType
         log.info("ajaxCheckMailInLDAP()")
+
+        def mailType
+        boolean bCheck = true
+        String mail = ""
+        def data = [:]
+
+        data.put("id", "1")
+
         if (params.id == null) {
             bCheck = false
+            log.warn("ajaxCheckMailInLDAP() params.id is null !")
         }
 
         if (params.rne == null) {
             bCheck = false
+            log.warn("ajaxCheckMailInLDAP() params.rne is null !")
+
         }
         if (bCheck) {
             mailType = MailType.findById(params.id)
-            def rne = params.rne
+            String rne = params.rne
             if (mailType != null) {
                 log.debug("ajaxCheckMailInLDAP() rne:" + rne)
                 log.debug("ajaxCheckMailInLDAP() parameter :" + mailType.shortNameType)
-                String mail = mailType.shortNameType + rne + "@"
-                if (checkMail(mail) ) {
+                if (!rne.isEmpty()) {
+                    mail = mailType.shortNameType + "." + rne + "@ac-limoges.fr" //TODO
+                    if (checkMail(mail)) {
+                        data.put("text", "KO")
 
+                    } else {
+                        data.put("text", "OK")
+
+                    }
+                } else {
+                    log.warn("rne must not be empty : can't chek mail !")
+                    data.put("text", "EMPTY")
                 }
-
             }
         }
-        def data = [:]
-        data.put("id", "1")
-        data.put("text", "KO")
-        log.info("ajaxCheckMailInLDAP() END")
+        data.put("mail", mail)
+        log.info("ajaxCheckMailInLDAP() END" + mail)
         render data as JSON
     }
 
     boolean checkMail(String mail) {
         boolean check = false
-
+        if (!mail.isEmpty()) {
+            log.info("Connecting to LDAP ...")
+            Attribute result = null;
+            LdapConnection connection = new LdapNetworkConnection( "ldap-m7.ac-limoges.fr", 389 );
+            connection.bind( "cn=Directory Manager", "P1n0r1mix" );
+            String searchStr = "(|(mail=*" + mail + "*)(mailAlternateAddress=*" + mail + "*)(mailEquivalentAddress=*" + mail + "*))";
+            log.info("Search mail :" + searchStr)
+            EntryCursor cursor = connection.search( "ou=fonctionnelles, ou=ac-limoges, ou=education, o=gouv, c=fr", searchStr, SearchScope.ONELEVEL, "*" );
+            while ( cursor.next() )
+            {
+                DefaultEntry entry = cursor.get()
+                log.info("ENTRY:" + entry.get("mailAlternateAddress"))
+                result = entry.get("mail")
+                if (result != null) {
+                    log.info("Found result in ldap :" + result)
+                    check = true;
+                }
+            }
+            connection.unBind()
+            connection.close()
+            log.info("Disconnect to LDAP ...")
+        }
         return check
     }
 

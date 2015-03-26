@@ -54,7 +54,7 @@
                                         var rneVal = document.getElementById('rne').text;
 
                                     </script>
-                                    <g:select optionKey="id" optionValue="fullNameType" name="shortNameType" id="selecttype" from="${toolprod.MailType.list()}"
+                                    <g:select noSelection="['0':'Choisir un type de boîte']" optionKey="id" optionValue="fullNameType" name="shortNameType" id="selecttype" from="${toolprod.MailType.list()}"
                                     onchange="${remoteFunction(
                                             controller:'tools',
                                             action:'ajaxCheckMailInLDAP',
@@ -68,14 +68,17 @@
                                         %{--</g:each>--}%
                                     %{--</select>--}%
                                 </div>
-                                <div class="col-md-5"></div>
+                                <div class="col-md-5">
+                                    <span id="create_status_ok" class="label label-success" style="visibility: hidden">Vérification dans le LDAP OK !</span>
+                                    <span id="create_status_ko" class="label label-danger" style="visibility: hidden">Mail déjà présent dans le LDAP !</span>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col-md-3"></div>
                                 <div class="col-md-5">
-                                    <button type="submit" class="btn btn-info">Génération</button>
+                                    <button id="btnSubmit" type="submit" class="btn btn-info" disabled="true">Génération</button>
                                 </div>
                             </div>
                         </div>
@@ -143,20 +146,28 @@
 </body>
 </html>
 <g:javascript>
-
     function checkLdapMail(data) {
-        alert(data.text);
-//        var response = '{"result":true,"count":1}';
-//        var val = JSON.parse(response);
-//        console.log("VAL:" + val.result);
-//        var results = data;
-//        for (var i=0; i < results.length; i++) {
-//            var message = results[i];
-//            var status = results[i];
-//            alert("message:" + message);
-//            alert("status:" + status);
-//        }
-        alert("end");
+        document.getElementById('btnSubmit').disabled='true';
+        document.getElementById('create_status_ko').style.visibility='hidden';
+        document.getElementById('create_status_ok').style.visibility='hidden';
 
+        if (data.text == "KO") {
+            document.getElementById('create_status_ko').style.visibility='visible';
+            document.getElementById('create_status_ko').textContent= data.mail.toString() + " existe deja dans le LDAP !";
+            document.getElementById('btnSubmit').disabled='true';
+        }
+        if (data.text == "OK") {
+            document.getElementById('create_status_ok').style.visibility='visible';
+            document.getElementById('btnSubmit').disabled='false';
+        }
+
+        if (data.text == "EMPTY") {
+            document.getElementById('create_status_ko').style.visibility='visible';
+            document.getElementById('create_status_ko').textContent= "le rne est vide !";
+            document.getElementById('btnSubmit').disabled='true';
+        }
+
+        document.getElementById('selecttype').value=0;
+        console.log("checkLdapMail() : end");
     }
 </g:javascript>
