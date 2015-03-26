@@ -1,9 +1,18 @@
 package fr.edu.admin
 
 import fr.edu.toolprod.parser.HttpdParser
+import grails.converters.JSON
+import org.apache.directory.api.ldap.model.cursor.EntryCursor
+import org.apache.directory.api.ldap.model.entry.Attribute
+import org.apache.directory.api.ldap.model.message.SearchScope
+import org.apache.directory.api.ldap.model.schema.AttributeType
+import org.apache.directory.api.util.SequencedHashMap
+import org.apache.directory.ldap.client.api.LdapConnection
+import org.apache.directory.ldap.client.api.LdapNetworkConnection
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import toolprod.MailType
 import toolprod.Status
+import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 
 class ToolsController {
 
@@ -123,6 +132,20 @@ class ToolsController {
         log.info("Type:" + type)
         log.info("RNE:" + rne)
         log.info("PWS:" + pwd)
+
+        //TODO : LDAP
+//        log.info("Connecting to LDAP ...")
+//        LdapConnection connection = new LdapNetworkConnection( "ldap-m7.ac-limoges.fr", 389 );
+//        connection.bind( "cn=Directory Manager", "P1n0r1mix" );
+//        EntryCursor cursor = connection.search( "ou=personnels EN, ou=ac-limoges, ou=education, o=gouv, c=fr", "(&(objectclass=*)(mail=damien.rieu@ac-limoges.fr))", SearchScope.ONELEVEL, "*" );
+//        while ( cursor.next() )
+//        {
+//            DefaultEntry entry = cursor.get()
+//            log.info("ENTRY:" + entry.get("mail"))
+//        }
+//        connection.unBind()
+//        connection.close()
+//        log.info("Disconnect to LDAP ...")
 
         [ types: types, mail: mail, uid: uid, rne: rne, type: type, pwd: pwd ]
     }
@@ -261,6 +284,44 @@ class ToolsController {
         //file.write("iplanet-am-modifiable-by: cn=top-level admin role,o=gouv,c=fr" + System.getProperty("line.separator") + "iplanet-am-user-login-status: active")
 
         render(file: file, contentType: 'text/plain', fileName: fileName)
+    }
+
+
+    def ajaxCheckMailInLDAP = {
+        boolean bCheck = true
+        def mailType
+        log.info("ajaxCheckMailInLDAP()")
+        if (params.id == null) {
+            bCheck = false
+        }
+
+        if (params.rne == null) {
+            bCheck = false
+        }
+        if (bCheck) {
+            mailType = MailType.findById(params.id)
+            def rne = params.rne
+            if (mailType != null) {
+                log.debug("ajaxCheckMailInLDAP() rne:" + rne)
+                log.debug("ajaxCheckMailInLDAP() parameter :" + mailType.shortNameType)
+                String mail = mailType.shortNameType + rne + "@"
+                if (checkMail(mail) ) {
+
+                }
+
+            }
+        }
+        def data = [:]
+        data.put("id", "1")
+        data.put("text", "KO")
+        log.info("ajaxCheckMailInLDAP() END")
+        render data as JSON
+    }
+
+    boolean checkMail(String mail) {
+        boolean check = false
+
+        return check
     }
 
 }
