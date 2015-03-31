@@ -280,24 +280,23 @@ class ToolsController {
      */
     def ajaxCheckMailInLDAP = {
         log.info("ajaxCheckMailInLDAP()")
-
         def mailType
         boolean bCheck = true
         String mail = ""
-        def data = [:]
 
+        // Init JSON data
+        def data = [:]
         data.put("id", "1")
 
         if (params.id == null) {
             bCheck = false
             log.warn("ajaxCheckMailInLDAP() params.id is null !")
         }
-
         if (params.rne == null) {
             bCheck = false
             log.warn("ajaxCheckMailInLDAP() params.rne is null !")
-
         }
+
         if (bCheck) {
             mailType = MailType.findById(params.id)
             String rne = params.rne
@@ -324,6 +323,11 @@ class ToolsController {
         render data as JSON
     }
 
+    /**
+     * Check mail by executing a query in ldap.
+     * @param mail
+     * @return
+     */
     boolean checkMail(String mail) {
         boolean check = false
         if (!mail.isEmpty()) {
@@ -346,6 +350,9 @@ class ToolsController {
             }
             connection.unBind()
             connection.close()
+            if (check) {
+                log.info("Nothing found in LDAP for mail:" + result)
+            }
             log.info("Disconnect to LDAP ...")
         }
         return check
