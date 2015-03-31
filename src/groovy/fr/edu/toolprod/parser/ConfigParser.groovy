@@ -1,6 +1,7 @@
 package fr.edu.toolprod.parser
 
 import org.apache.commons.logging.LogFactory
+import toolprod.Ldap
 import toolprod.MailType
 
 /**
@@ -38,6 +39,11 @@ class ConfigParser {
         result = ""
         sportals = new ArrayList<>()
         try {
+            String ldapUser = ""
+            String ldapPwd = ""
+            String ldapHost = ""
+            String ldapPort = ""
+
             while ((line = br.readLine()) != null) {
                  if (line.startsWith("portals=")) {
                      result = line
@@ -48,6 +54,32 @@ class ConfigParser {
                  }
                 if (line.startsWith("mail_type"))  {
                     parseMailType(line)
+                }
+                if (line.startsWith("ldap_user"))  {
+                    ldapUser = parseLdap(line)
+                }
+                if (line.startsWith("ldap_pwd"))  {
+                    ldapPwd = parseLdap(line)
+                }
+                if (line.startsWith("ldap_host"))  {
+                    ldapHost = parseLdap(line)
+                }
+                if (line.startsWith("ldap_port"))  {
+                    ldapPort = parseLdap(line)
+                }
+
+            }
+            // Save ldap config in database.
+            if ( !ldapHost.isEmpty()) {
+                Ldap ldap = Ldap.findByName("M7")
+                if (ldap == null) {
+                    ldap = new Ldap()
+                    ldap.name = "M7"
+                    ldap.host = ldapHost
+                    ldap.port = ldapPort
+                    ldap.user = ldapUser
+                    ldap.pwd = ldapPwd
+                    ldap.save()
                 }
             }
             bResult = true
@@ -63,6 +95,15 @@ class ConfigParser {
         }
         log.debug("parse() result=" + result)
         return bResult
+    }
+
+    public parseLdap(String line) {
+        String result = ""
+        int posEq = line.indexOf('=')
+        if ( posEq > 0 ) {
+            result = line.substring(posEq + 1, line.length())
+        }
+        return result
     }
 
     /**
@@ -83,10 +124,13 @@ class ConfigParser {
                     def fullNameType = value.substring(0, pos)
                     def shortNameType = value.substring( pos + 1, value.length())
                     if ( !fullNameType.isEmpty() && !shortNameType.isEmpty()) {
-                        MailType mailType = new MailType()
-                        mailType.fullNameType = fullNameType
-                        mailType.shortNameType = shortNameType
-                        mailType.save(failOnError: true, flush:true)
+                        MailType mailType = MailType.findByFullNameType(fullNameType)
+                        if (mailType == null) {
+                            mailType = new MailType()
+                            mailType.fullNameType = fullNameType
+                            mailType.shortNameType = shortNameType
+                            mailType.save(failOnError: true, flush:true)
+                        }
                     }
                 }
             }

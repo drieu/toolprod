@@ -10,6 +10,7 @@ import org.apache.directory.api.util.SequencedHashMap
 import org.apache.directory.ldap.client.api.LdapConnection
 import org.apache.directory.ldap.client.api.LdapNetworkConnection
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import toolprod.Ldap
 import toolprod.MailType
 import toolprod.Status
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
@@ -116,7 +117,7 @@ class ToolsController {
         def types = new ArrayList<String>()
 
         String rne = params.get("rne")
-        String type = params.get("type")
+        String type = params.get("shortNameType")
         String pwd = params.get("pwd")
 
         if (type == null) {
@@ -298,7 +299,7 @@ class ToolsController {
         }
 
         if (bCheck) {
-            mailType = MailType.findById(params.id)
+            mailType = MailType.findByShortNameType(params.id)
             String rne = params.rne
             if (mailType != null) {
                 log.debug("ajaxCheckMailInLDAP() rne:" + rne)
@@ -332,28 +333,33 @@ class ToolsController {
         boolean check = false
         if (!mail.isEmpty()) {
             log.info("Connecting to LDAP ...")
-            Attribute result = null;
-            LdapConnection connection = new LdapNetworkConnection( "ldap-m7.ac-limoges.fr", 389 );
-            connection.bind( "cn=Directory Manager", "P1n0r1mix" );
-            String searchStr = "(|(mail=*" + mail + "*)(mailAlternateAddress=*" + mail + "*)(mailEquivalentAddress=*" + mail + "*))";
-            log.info("Search mail :" + searchStr)
-            EntryCursor cursor = connection.search( "ou=fonctionnelles, ou=ac-limoges, ou=education, o=gouv, c=fr", searchStr, SearchScope.ONELEVEL, "*" );
-            while ( cursor.next() )
-            {
-                DefaultEntry entry = cursor.get()
-                log.info("ENTRY:" + entry.get("mailAlternateAddress"))
-                result = entry.get("mail")
-                if (result != null) {
-                    log.info("Found result in ldap :" + result)
-                    check = true;
+            toolprod.Ldap ldap = toolprod.Ldap.findByName("M7")
+            if (ldap != null) {
+                Attribute result = null;
+                LdapConnection connection = new LdapNetworkConnection( ldap.host, Integer.valueOf(ldap.port) );
+                //LdapConnection connection = new LdapNetworkConnection( "ldap-m7.ac-limoges.fr", 389 );
+                connection.bind( ldap.user, ldap.pwd );
+                //connection.bind( "cn=Directory Manager", "P1n0r1mix" );
+                String searchStr = "(|(mail=*" + mail + "*)(mailAlternateAddress=*" + mail + "*)(mailEquivalentAddress=*" + mail + "*))";
+                log.info("Search mail :" + searchStr)
+                EntryCursor cursor = connection.search( "ou=fonctionnelles, ou=ac-limoges, ou=education, o=gouv, c=fr", searchStr, SearchScope.ONELEVEL, "*" );
+                while ( cursor.next() )
+                {
+                    DefaultEntry entry = cursor.get()
+                    log.info("ENTRY:" + entry.get("mailAlternateAddress"))
+                    result = entry.get("mail")
+                    if (result != null) {
+                        log.info("Found result in ldap :" + result)
+                        check = true;
+                    }
                 }
+                connection.unBind()
+                connection.close()
+                if (check) {
+                    log.info("Nothing found in LDAP for mail:" + result)
+                }
+                log.info("Disconnect to LDAP ...")
             }
-            connection.unBind()
-            connection.close()
-            if (check) {
-                log.info("Nothing found in LDAP for mail:" + result)
-            }
-            log.info("Disconnect to LDAP ...")
         }
         return check
     }

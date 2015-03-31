@@ -68,7 +68,7 @@
                     <div class="row">
                         <label for="pwd" class="col-md-3">Type</label>
                         <div class="col-md-3">
-                            <g:select noSelection="['0':'Choisir un type de boîte']" optionKey="id" optionValue="fullNameType" name="shortNameType" id="selecttype" from="${toolprod.MailType.list()}"
+                            <g:select noSelection="['0':'Choisir un type de boîte']" optionKey="shortNameType" optionValue="fullNameType" name="shortNameType"  id="selecttype" from="${toolprod.MailType.list()}"
                             onchange="
                             cleanMsg();
                             ${remoteFunction(
@@ -165,7 +165,6 @@
     function checkLdapMail(data) {
         console.log("checkLdapMail()");
 
-        document.getElementById('selecttype').value=0;
         document.getElementById('create_status_ko').style.display='none';
         document.getElementById('create_status_ok').style.display='none';
         document.getElementById('create_status_info').style.display='block';
@@ -174,6 +173,7 @@
             document.getElementById('create_status_info').style.display='none';
             document.getElementById('create_status_ko').style.display='block';
             document.getElementById('create_status_ko').textContent= data.mail.toString() + " existe deja dans le LDAP !";
+            document.getElementById('selecttype').value=0;
         }
         if (data.text == "OK") {
             document.getElementById('create_status_info').style.display='none';
@@ -185,6 +185,7 @@
             document.getElementById('create_status_info').style.display='none';
             document.getElementById('create_status_ko').style.display='block';
             document.getElementById('create_status_ko').textContent= "le rne est vide !";
+            document.getElementById('selecttype').value=0;
 
         }
         console.log("checkLdapMail() : end");
