@@ -130,11 +130,9 @@ class ToolsController {
         String uid = type + rne
         String mail = type + "." + rne + "@ac-limoges.fr"
 
-        log.info("Type:" + type)
-        log.info("RNE:" + rne)
-        log.info("PWS:" + pwd)
-
-
+        log.debug("mail() Type:" + type)
+        log.debug("mail() RNE:" + rne)
+        log.debug("mail() PWS:" + pwd)
 
         [ types: types, mail: mail, uid: uid, rne: rne, type: type, pwd: pwd ]
     }
