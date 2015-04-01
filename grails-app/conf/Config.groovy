@@ -155,3 +155,8 @@ plugin.crash.config = [
         'crash.auth.simple.username':'admin',
         'crash.auth.simple.password':'admin'
 ]
+
+
+cacheManager {
+    shared = true
+}

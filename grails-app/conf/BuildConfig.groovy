@@ -54,11 +54,11 @@ grails.project.dependency.resolution = {
 
     plugins {
         // plugins for the build system only
-        build ":tomcat:7.0.52.1"
+        build ":tomcat:7.0.55.2"
 
         // plugins for the compile step
-        compile ":scaffolding:2.1.0"
-        compile ':cache:1.1.3'
+        compile ":scaffolding:2.1.2"
+        compile ':cache:1.1.8'
         compile ":crash:1.3.0-cr7"
 //       compile ":export:1.6"  // Pb with Grails 2.4.4
         compile ":profiler:0.5"
@@ -66,7 +66,7 @@ grails.project.dependency.resolution = {
 
 
         // plugins needed at runtime but not for compilation
-        runtime ":hibernate:3.6.10.14" // or ":hibernate4:4.1.11.4"
+        runtime ":hibernate:3.6.10.19" // or ":hibernate4:4.1.11.4"
         runtime ":database-migration:1.4.0"
         compile ":asset-pipeline:2.1.0"
         runtime ":jquery:1.11.1"
