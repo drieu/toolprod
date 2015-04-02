@@ -26,6 +26,7 @@ class AdminController {
      */
     def initData() {
         log.info("initData()")
+        flash.clear()
         boolean bResult = false
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
@@ -60,7 +61,7 @@ class AdminController {
                     message = "File is empty !"
                 }
             }
-            flash.clear()
+
             if (bResult) {
                 flash.message = "SUCCESS"
             } else {

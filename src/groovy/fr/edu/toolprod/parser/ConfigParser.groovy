@@ -30,44 +30,53 @@ class ConfigParser {
     }
 
     /**
-     * Parse file initialize in constructor
+     * Parse config file initialize in constructor.
      */
     def parse() {
         String line
         boolean bResult = false
         br = new BufferedReader(new InputStreamReader(inputStream))
-        result = ""
+        result = EMPTY
         sportals = new ArrayList<>()
         try {
-            String ldapUser = ""
-            String ldapPwd = ""
-            String ldapHost = ""
-            String ldapPort = ""
+            String ldapUser = EMPTY
+            String ldapPwd = EMPTY
+            String ldapHost = EMPTY
+            String ldapPort = EMPTY
 
             while ((line = br.readLine()) != null) {
                  if (line.startsWith("portals=")) {
                      result = line
                      parsePortal(line)
-                 }
-                 if (line.startsWith("group_"))  {
+                     bResult = true
+                 } else if (line.startsWith("group_"))  {
                      parseGroup(line)
-                 }
-                if (line.startsWith("mail_type"))  {
-                    parseMailType(line)
-                }
-                if (line.startsWith("ldap_user"))  {
-                    ldapUser = parseLdap(line)
-                }
-                if (line.startsWith("ldap_pwd"))  {
-                    ldapPwd = parseLdap(line)
-                }
-                if (line.startsWith("ldap_host"))  {
-                    ldapHost = parseLdap(line)
-                }
-                if (line.startsWith("ldap_port"))  {
-                    ldapPort = parseLdap(line)
-                }
+                     bResult = true
 
+                 } else if (line.startsWith("mail_type"))  {
+                    parseMailType(line)
+                    bResult = true
+
+                 } else if (line.startsWith("ldap_user"))  {
+                    ldapUser = parseLdap(line)
+                    bResult = true
+
+                 } else if (line.startsWith("ldap_pwd"))  {
+                    ldapPwd = parseLdap(line)
+                    bResult = true
+
+                 } else if (line.startsWith("ldap_host"))  {
+                    ldapHost = parseLdap(line)
+                     bResult = true
+
+                 } else if (line.startsWith("ldap_port"))  {
+                    ldapPort = parseLdap(line)
+                    bResult = true
+
+                 }
+            }
+            if (!bResult) {
+               result = "Nothing to parse for file."
             }
             // Save ldap config in database.
             if ( !ldapHost.isEmpty()) {
@@ -82,7 +91,6 @@ class ConfigParser {
                     ldap.save()
                 }
             }
-            bResult = true
         } catch (IOException e) {
             result += "Impossible de parser le fichier !<br/>"
             log.error("Failed to parse file : " + e.printStackTrace())
@@ -98,7 +106,7 @@ class ConfigParser {
     }
 
     public parseLdap(String line) {
-        String result = ""
+        String result = EMPTY
         int posEq = line.indexOf('=')
         if ( posEq > 0 ) {
             result = line.substring(posEq + 1, line.length())
@@ -195,7 +203,7 @@ class ConfigParser {
      * @return String result EMPTY if there is no error or a message.
      */
     def close() {
-        String result = ""
+        String result = EMPTY
         if (inputStream != null) {
             try {
                 inputStream.close();

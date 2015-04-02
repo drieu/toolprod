@@ -44,11 +44,10 @@
         <g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link>
     </div>
     </div>
+    <br/>
 
-    <br/>
-    <div class="well well-lg">Les données en base ne sont ni effacées ni mises à jour.Si elles n'existent pas, elles sont créees.</div>
-    <br/>
-    <div class="panel panel-default">
+    <g:if test="${machinesGroups.size() != 0}">
+    <div class="panel panel-info">
         <div class="panel-heading">
             <h3 class="panel-title">Données chargées en base</h3>
         </div>
@@ -91,6 +90,7 @@
 
         </div>
     </div>
+    </g:if>
 </div>
 </body>
 </html>
