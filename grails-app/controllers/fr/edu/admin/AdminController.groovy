@@ -109,7 +109,7 @@ class AdminController {
         List<String> portalsChoice = params.list('portalsChoice')
         log.debug("init() portal choice :" + portalsChoice.toString())
         def portals = Portal.findAll()
-
+        flash.clear()
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
             boolean bResult = true

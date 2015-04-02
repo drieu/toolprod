@@ -40,8 +40,10 @@ class TreeNode  {
         if (elementsIndex == null) {
             elementsIndex = new LinkedList<TreeNode>();
         }
+        log.info("addChild() elementsIndex:" + elementsIndex)
+
         this.children.add(childNode);
-        this.registerChildForSearch(childNode);
+        //this.registerChildForSearch(childNode);
         return childNode;
     }
 
@@ -52,10 +54,19 @@ class TreeNode  {
             return parent.getLevel() + 1;
     }
 
+    /**
+     * @unused too heavy !
+     * @param node
+     */
     private void registerChildForSearch(TreeNode node) {
+        log.info("registerChildForSearch() :" + elementsIndex)
+        if (elementsIndex == null) {
+            elementsIndex = new LinkedList<TreeNode>();
+        }
         elementsIndex.add(node);
-        if (parent != null)
+        if (parent != null) {
             parent.registerChildForSearch(node);
+        }
     }
 
     public TreeNode findTreeNode(Server server) {
