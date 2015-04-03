@@ -61,13 +61,6 @@
                         <th>Nom</th>
                     </tr>
                 </thead>
-                <g:each in="${portals}" var="portal">
-                    <g:if test="${portal != null}" >
-                        <tr>
-                            <td>${portal?.name}</td>
-                        </tr>
-                    </g:if>
-                </g:each>
             </table>
             <br/>
             <table class="table table-hover table-striped">

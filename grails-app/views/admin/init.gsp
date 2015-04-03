@@ -39,14 +39,6 @@
                         <label for="machinename">Nom de la machine</label>
                         <input type="text" class="form-control" id="machinename" name="machinename" placeholder="....ac-limoges.fr" value="">
                     </div>
-                    <div class="form-group">
-                        <label for="machinename">Portails</label>
-                        <select name='portalsChoice' multiple class="form-control">
-                            <g:each in="${portals}" var="portal">
-                                <option>${portal.name}</option>
-                            </g:each>
-                        </select>
-                    </div>
                     <button type="submit" class="btn btn-info">Submit</button>
                 </form>
             </g:uploadForm>

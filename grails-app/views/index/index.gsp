@@ -14,12 +14,10 @@
 </head>
 
 <body>
-<div class="container">
-    <g:applyLayout name="menu" />
+    <div class="container">
+        <g:applyLayout name="menu" />
 
-    <div class="row">
-
-
+        <div class="row">
                     <blockquote>
                         <h1>Bienvenue sur Toolprod</h1>
                         <footer>Une boîte à outil pour la production</footer>
@@ -34,40 +32,6 @@
                         </ul>
                     </div>
                     <br/>
-
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Erreurs dans les fichiers Apache  <span class="badge">${count}</span></h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <caption>
-                                    Etat des fichiers de configuration Apache
-                                </caption>
-                                <thead>
-                                <tr>
-                                    <th>Machine</th>
-                                    <th>Fichier à vérifier</th>
-                                    <th>ServerName</th>
-                                    <th>Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                        <g:each in="${toolprod.Status.findAll()}" var="check">
-                                            <tr>
-                                                <td>${check?.machineName}</td>
-                                                <td>${check?.fileName}</td>
-                                                <td>${check?.name}</td>
-                                                <td>
-                                                    <span class="label label-warning">WARNING</span>
-                                                </td>
-                                            </tr>
-                                        </g:each>
-                                        </tbody>
-                            </table>
-                        </div>
-                    </div>
             </div>
         </div>
     </div>

@@ -37,8 +37,6 @@ class HttpdParser {
 
     private String closeResult = EMPTY
 
-    private List<String> selectedPortals
-
     String getResult() {
         return result
     }
@@ -49,15 +47,11 @@ class HttpdParser {
      * @param machineName : Machine name
      * @param portalsChoice : List of portail where application will be shown
      */
-    HttpdParser(def f, String machineName, List<String> portalsChoice) {
+    HttpdParser(def f, String machineName) {
         file= f;
         defineMachine(machineName);
         if (machine == null) {
             throw new IllegalArgumentException("Machine must exist !")
-        }
-        selectedPortals = new ArrayList<>()
-        if (portalsChoice != null ) {
-            selectedPortals = portalsChoice
         }
     }
 
@@ -117,11 +111,6 @@ class HttpdParser {
                 } else if (strLine.startsWith(PROXY_PASS + SPACE)) { // If ProxyPass
                     AppBean appBean = XmlParser.parseProxyPass(strLine, file.originalFilename)
                     if (appBean != null) {
-                        for (String choice : selectedPortals) {
-                            if (!appBean.portals.contains(choice))  {
-                                appBean.portals.add(choice)
-                            }
-                        }
                         appBeans.add(appBean);
                     }
                 } else if (( !strLine.startsWith("#") && strLine.contains("WebLogicHost"))) { // If WebLogicHost
@@ -247,12 +236,6 @@ class HttpdParser {
             log.info("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
             appBean.name = getNameFromFileName();
-            for (String choice : selectedPortals) {
-                if (!appBean.portals.contains(choice))  {
-                    appBean.portals.add(choice)
-                }
-            }
-//            appBean.node.parent = new TreeNode(new ServerBean(appBean.appServer, appBean.appPort, appBean.appServer))
             appBeans.add(appBean)
         }
 
@@ -278,11 +261,6 @@ class HttpdParser {
     def getAppBean(String appName, ServerBean serverBean) {
         AppBean appBean = new AppBean(name:appName);
         appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, appName);
-        for (String choice : selectedPortals) {
-            if (!appBean.portals.contains(choice))  {
-                appBean.portals.add(choice)
-            }
-        }
         return appBean
     }
 

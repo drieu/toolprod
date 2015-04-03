@@ -13,16 +13,27 @@ class ConfigParser {
 
     private InputStream inputStream
 
-    private static final String EMPTY = ""
-
-    String result = ""
-
-    private String closeResult = EMPTY
-
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
 
-    public List<String> sportals;
+    private static final String EMPTY = ""
 
+    /**
+     * Store the string result for parsing (e.g: Nothing to parse for this file).
+     */
+    String result = EMPTY
+
+    /**
+     * Store the string result for close..
+     */
+    private String closeResult = EMPTY
+
+    /**
+     * Config file contains groups and machines for these groups ( group_web=machine1, machine2 ...).
+     * This map store the result of parsing group and machine.
+     */
     Map<String, List<String>> machineByGroup = new HashMap<>()
 
     ConfigParser(InputStream input) {
@@ -37,7 +48,6 @@ class ConfigParser {
         boolean bResult = false
         br = new BufferedReader(new InputStreamReader(inputStream))
         result = EMPTY
-        sportals = new ArrayList<>()
         try {
             String ldapUser = EMPTY
             String ldapPwd = EMPTY
@@ -45,11 +55,7 @@ class ConfigParser {
             String ldapPort = EMPTY
 
             while ((line = br.readLine()) != null) {
-                 if (line.startsWith("portals=")) {
-                     result = line
-                     parsePortal(line)
-                     bResult = true
-                 } else if (line.startsWith("group_"))  {
+                 if (line.startsWith("group_"))  {
                      parseGroup(line)
                      bResult = true
 
@@ -105,6 +111,11 @@ class ConfigParser {
         return bResult
     }
 
+    /**
+     * Parse ldap line in config file.
+     * @param line ( e.g : ldap_user=myuser )
+     * @return value after =
+     */
     public parseLdap(String line) {
         String result = EMPTY
         int posEq = line.indexOf('=')
@@ -176,25 +187,6 @@ class ConfigParser {
                 }
             }
             result=line
-        }
-    }
-
-
-    /**
-     * Parse portals string.
-     * @param line e.g:portals=portal1,portal2
-     * @return
-     */
-    public parsePortal(String line) {
-        sportals = new ArrayList<>()
-        if (line != null && !line.isEmpty()) {
-            log.debug("parsePortal() line=" + line)
-            String str = line.substring("portals=".size(), line.size())
-            def lst = str.tokenize(",")
-            for ( String p in lst) {
-                log.debug("parsePortal() portal:" + p)
-                sportals.add(p)
-            }
         }
     }
 

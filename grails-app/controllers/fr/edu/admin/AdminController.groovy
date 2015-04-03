@@ -37,9 +37,6 @@ class AdminController {
                     bResult = configParser.parse()
                     message = configParser.result
                     if (bResult) {
-                        for(String p : configParser.sportals) {
-                            Portal.findOrSaveByName(p)
-                        }
                         Map<String, List<String>> machineByGroup = configParser.machineByGroup
                         for (String groupName : machineByGroup.keySet()) {
 
@@ -63,15 +60,14 @@ class AdminController {
             }
 
             if (bResult) {
-                flash.message = "SUCCESS"
+                flash.message = "import successful."
             } else {
                 flash.error = "FAILED : " + message
             }
         }
 
-        def portals = Portal.findAll()
         def machinesGroups = MachineGroup.findAll()
-        return [ portals: portals, machinesGroups: machinesGroups ]
+        return [ machinesGroups: machinesGroups ]
     }
 
     def initPortals() {
@@ -101,14 +97,11 @@ class AdminController {
     }
 
     /**
-     * Method which call httpd parser.
+     * Init data step 3 : Method which call httpd parser.
      * @return
      */
     def init() {
         log.info("init()")
-        List<String> portalsChoice = params.list('portalsChoice')
-        log.debug("init() portal choice :" + portalsChoice.toString())
-        def portals = Portal.findAll()
         flash.clear()
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
@@ -119,7 +112,7 @@ class AdminController {
                 def machineName = request.getParameterValues("machinename")
                 log.info("Name of machine : " + machineName[0])
                 if((machineName != null) && (file != null) && (!file.isEmpty())) {
-                    HttpdParser parser = new HttpdParser(file, machineName[0], portalsChoice);
+                    HttpdParser parser = new HttpdParser(file, machineName[0]);
                     if (!parser.parse()) {
                         bResult = false
                     }
@@ -136,9 +129,6 @@ class AdminController {
                 flash.error = "FAILED : " + message
             }
         }
-
-
-        return [ portals:portals ]
     }
 
     /**
