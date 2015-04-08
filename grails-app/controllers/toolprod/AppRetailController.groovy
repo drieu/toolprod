@@ -164,74 +164,105 @@ class AppRetailController {
     def listing() {
 
         log.info("listing()")
-        def portalChoice = params.choice
-        if (portalChoice != null) {
-            backupChoice = portalChoice
-        }
+//        def portalChoice = params.choice
+//        if (portalChoice != null) {
+//            backupChoice = portalChoice
+//        }
+//
+//        List<AppBean> appBeans = new ArrayList<>()
+//        List<PrintAppBean> printAppBeans = new ArrayList<>()
+//        def apps = App.findAll()
+//        for(App app : apps) {
+//            log.debug("getAppBeans() : Application : " + app.toString())
+//            AppBean appBean = new AppBean()
+//            appBean.name = app.name
+//            appBean.description = app.description
+//            appBean.serverUrls = app.urls
+//            appBean.portals = new ArrayList<>()
+//
+//            for(Portal portal : app.portals) {
+//                if (portal != null) {
+//                    if (portal.name != null) {
+//                        if (portalChoice != null) {
+//                            if (portal.name.equals(portalChoice)) {
+//                                log.info("getAppBeans Add : name:" + appBean.name + " portail:" + portalChoice)
+//                                appBean.portals.add(portal.name)
+//                            }
+//                        } else {
+//                            appBean.portals.add(portal.name)
+//                        }
+//                    }
+//                }
+//            }
+//            appBeans.add(appBean)
+//            PrintAppBean printAppBean = getPrintAppBean()
+//            if (backupChoice != null) {
+//                if (appBean.portals.contains(backupChoice)) {
+//                    printAppBeans.add(printAppBean)
+//                }
+//            } else {
+//                log.debug("Ajout " + printAppBean.name)
+//                printAppBeans.add(printAppBean)
+//            }
+//        }
+//
+//        if(!params.max) {
+//            params.max = 10
+//        }
+//
+//        if ((params.extension != null)) {
+//            def format=params.extension
+//            if ("xls".equals(params.extension)) {
+//                format="excel"
+//            }
+//            if(format && format != "html"){
+//                response.contentType = grailsApplication.config.grails.mime.types[format]
+//                response.setHeader("Content-disposition", "attachment; filename=check.${params.extension}")
+//                List fields = ["name", "urls", "portals"]
+//                Map labels = ["name": "Nom", "urls": "url(s)", "portals":"Portail"]
+//
+//                Map formatters = new HashMap()
+//                Map parameters = new HashMap()
+//                log.info("SIZE : " + printAppBeans.size())
+//                exportService.export(format, response.outputStream, printAppBeans, fields, labels, formatters, parameters)
+//
+//            }
+//        }
+//
+//        def portals = Portal.findAll().unique{ it.name }
+//        log.info("AppRetailController:listing() render()")
 
-        List<AppBean> appBeans = new ArrayList<>()
-        List<PrintAppBean> printAppBeans = new ArrayList<>()
-        def apps = App.findAll()
-        for(App app : apps) {
-            log.debug("getAppBeans() : Application : " + app.toString())
-            AppBean appBean = new AppBean()
-            appBean.name = app.name
-            appBean.description = app.description
-            appBean.serverUrls = app.urls
-            appBean.portals = new ArrayList<>()
-
-            for(Portal portal : app.portals) {
-                if (portal != null) {
-                    if (portal.name != null) {
-                        if (portalChoice != null) {
-                            if (portal.name.equals(portalChoice)) {
-                                log.info("getAppBeans Add : name:" + appBean.name + " portail:" + portalChoice)
-                                appBean.portals.add(portal.name)
-                            }
-                        } else {
-                            appBean.portals.add(portal.name)
-                        }
-                    }
-                }
+        def data = "\nvar dataSet = [\n"
+        for(App p : App.findAll()) {
+            String link = "<a href=/toolprod/appRetail/app?name=" + p.name + ">" + p.name + "</a>"
+            String servs = ""
+            for(Server serv:p.servers) {
+                servs += serv.name + " "
             }
-            appBeans.add(appBean)
-            PrintAppBean printAppBean = getPrintAppBean()
-            if (backupChoice != null) {
-                if (appBean.portals.contains(backupChoice)) {
-                    printAppBeans.add(printAppBean)
-                }
-            } else {
-                log.debug("Ajout " + printAppBean.name)
-                printAppBeans.add(printAppBean)
+            String portals = ""
+            String vips = ""
+            for( String portal : p.portals) {
+                vips += p.portals.toString()
             }
+
+            data += "['" + link + "','" + vips + "','" + servs + "'],"
         }
+        data += "\n];"
+        log.info(data)
+        def count = App.findAll().size()
+        //return [appBeans:appBeans, portals:portals, portalChoice:portalChoice, data:data]
+        return [count:count, data:data]
+    }
 
-        if(!params.max) {
-            params.max = 10
-        }
-
-        if ((params.extension != null)) {
-            def format=params.extension
-            if ("xls".equals(params.extension)) {
-                format="excel"
-            }
-            if(format && format != "html"){
-                response.contentType = grailsApplication.config.grails.mime.types[format]
-                response.setHeader("Content-disposition", "attachment; filename=check.${params.extension}")
-                List fields = ["name", "urls", "portals"]
-                Map labels = ["name": "Nom", "urls": "url(s)", "portals":"Portail"]
-
-                Map formatters = new HashMap()
-                Map parameters = new HashMap()
-                log.info("SIZE : " + printAppBeans.size())
-                exportService.export(format, response.outputStream, printAppBeans, fields, labels, formatters, parameters)
-
-            }
-        }
-
-        def portals = Portal.findAll().unique{ it.name }
-        log.info("AppRetailController:listing() render()")
-        return [appBeans:appBeans, portals:portals, portalChoice:portalChoice]
+    def ajaxApps() {
+//        def results = App.findAll().toArray();
+//        render(contentType: "text/json") {
+//            results = array {
+//                App.list().each {user->
+//                    result "${user.id}" : "${user.name}"
+//                }
+//            }
+//        }
     }
 
     /**
