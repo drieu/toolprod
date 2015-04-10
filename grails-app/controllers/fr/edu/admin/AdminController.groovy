@@ -79,7 +79,7 @@ class AdminController {
                 log.info("initPortals() file to parse :" + file.originalFilename)
                 if (!file.originalFilename.isEmpty()) {
                     BigIpParser configParser = new BigIpParser(file.inputStream)
-                    configParser.parse()
+                    bResult = configParser.parse()
                 } else {
                     message = "File is empty !"
                 }

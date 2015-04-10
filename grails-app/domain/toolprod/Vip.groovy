@@ -11,6 +11,11 @@ class Vip {
     String name
 
     /**
+     * http,ssl
+     */
+    String type
+
+    /**
      * technical name found in bigip.conf
      */
     String technicalName

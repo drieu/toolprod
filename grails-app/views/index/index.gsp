@@ -1,4 +1,4 @@
-<%@ page import="toolprod.IndexController" %>
+<%@ page import="toolprod.Vip; toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -23,17 +23,73 @@
                         <footer>Une boîte à outil pour la production</footer>
                     </blockquote>
                     <br/>
-                    <div class="well well-lg">
-                        Pour le moment, cet outil permet de :
-                        <ul>
-                            <li>Répertoriez les applications existantes</li>
-                            <li>Répertoriez les machines, les serveurs apache et weblogic pour chaque application</li>
-                            <li>Faire un contrôle simple des fichiers Apache</li>
-                        </ul>
-                    </div>
+                    %{--<div class="well well-lg">--}%
+                        %{--Pour le moment, cet outil permet de :--}%
+                        %{--<ul>--}%
+                            %{--<li>Répertoriez les applications existantes</li>--}%
+                            %{--<li>Répertoriez les machines, les serveurs apache et weblogic pour chaque application</li>--}%
+                            %{--<li>Faire un contrôle simple des fichiers Apache</li>--}%
+                        %{--</ul>--}%
+                    %{--</div>--}%
                     <br/>
+        </div>
+        <div class="row">
+            <h3>Liste des VIP </h3>
+            <div class="panel-group" id="accordion">
+                <% def panel = "panel-info" %>
+                <g:each in="${Vip.findAll()}" var="vip">
+                        <g:if test="${panel=='panel-info'}">
+                            <% panel = "panel-success" %>
+                        </g:if>
+                        <g:else>
+                            <% panel = "panel-info" %>
+                        </g:else>
+
+                        <div class="panel ${panel}">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse${vip?.name}_${vip?.type}">
+                                        ${vip?.name} </small>
+                                    </a>
+                                    &nbsp;&nbsp&nbsp<small>( nom technique : ${vip.technicalName} )</small>
+                                </h4>
+                            </div>
+                            <div id="collapse${vip?.name}_${vip?.type}" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Nom</th>
+                                                <th>Port</th>
+                                                <th>Applications</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <g:each in="${vip.servers}" var="server">
+                                                <tr>
+                                                    <td><a href="<g:createLink controller="webServer" action="getWebServer" params="[name:server?.machineHostName, type:'apache', port: server?.portNumber]" />">
+                                                        <span class="glyphicon glyphicon-search" aria-hidden="true">
+
+                                                    </span></a>
+                                                    </td>
+                                                    <td>
+                                                       ${server?.name}
+                                                    </td>
+                                                    <td>${server?.portNumber}</td>
+                                                    <td>${server?.linkToApps.toString()}</td>
+                                                </tr>
+                                            </g:each>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </g:each>
+
             </div>
         </div>
+
     </div>
 
 </body>

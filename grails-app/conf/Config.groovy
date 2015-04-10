@@ -102,7 +102,6 @@ environments {
     }
     test {
         grails.logging.jul.usebridge = false
-        grails.host = "172.30.209.14"
         // Set level for all application artifacts
         log4j = {
             info "grails.app"

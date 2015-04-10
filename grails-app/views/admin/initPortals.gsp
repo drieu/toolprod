@@ -16,9 +16,9 @@
 <div class="container">
     <g:applyLayout name="menu" />
 
-    <div class="panel panel-success">
+    <div class="panel panel-info">
         <div class="panel-heading">
-            <h3 class="panel-title">Import de fichier de configuration des données</h3>
+            <h3 class="panel-title">Import du fichier de VIP</h3>
         </div>
         <div class="panel-body">
             <g:if test="${flash.error}">
@@ -29,13 +29,13 @@
             </g:if>
 
 
-            <g:uploadForm action="initData" controller="admin">
+            <g:uploadForm action="initPortals" controller="admin">
 
                 <form role="form">
                     <div class="form-group">
                         <label for="files">Choix du fichier à parser</label>
                         <input type="file" id="files" name="files[]" multiple>
-                        <p class="help-block">Vous devez choisir un fichier de config</p>
+                        <p class="help-block">Vous devez choisir le fichier bigip.conf</p>
                     </div>
                     <button type="submit" class="btn btn-info">Submit</button>
                 </form>
@@ -55,17 +55,17 @@
         <div class="panel-body">
             <table class="table table-hover table-striped">
                 <caption>
-                    Liste des Portails en base
+                    Liste des Vip en base
                 </caption>
                 <thead>
                 <tr>
                     <th>Nom</th>
                 </tr>
                 </thead>
-                <g:each in="${portals}" var="portal">
-                    <g:if test="${portal != null}" >
+                <g:each in="${toolprod.Vip.findAll()}" var="vip">
+                    <g:if test="${vip != null}" >
                         <tr>
-                            <td>${portal?.name}</td>
+                            <td>${vip?.name}</td>
                         </tr>
                     </g:if>
                 </g:each>

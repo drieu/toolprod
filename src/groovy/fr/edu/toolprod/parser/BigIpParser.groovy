@@ -25,6 +25,7 @@ class BigIpParser extends Parser{
     private static final log = LogFactory.getLog(this)
 
 
+    private BufferedReader br;
     /**
      * Constructor.
      * @param input
@@ -44,34 +45,61 @@ class BigIpParser extends Parser{
         result = EMPTY
         String fullVipName = EMPTY
         String shortVipName = EMPTY
+        String type = EMPTY
         Map<String,List<String>> map = new HashMap<>()
         try {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("ltm pool")) {
                     fullVipName = extractFullVipName(line)
-                    shortVipName = extractShortVipName(fullVipName)
+                    shortVipName = extractShortVipName(line)
+                    if (line.contains("_ssl")) {
+                        type="ssl"
+                    }
+                    if (line.contains("_http")) {
+                        type="http"
+                    }
                 }
                 if ( (line.trim()).startsWith("/LB-PUBLIC/")) {
                     String serverName = extractServerName(line)
                     String serverPort = extractServerPort(line)
+                    if (serverPort.isEmpty()) {
+                        serverPort = 80
+                    }
+                    log.info("line:" + line)
+                    log.info("Server name:" + serverName)
+                    log.info("Server port:" + serverPort)
+                    log.info("fullVipName:" + fullVipName)
+                    log.info("shortVipName:" + shortVipName)
+                    Vip vip = Vip.findByTechnicalName(fullVipName)
+                    if (vip == null) {
+                        log.info("Create new VIP ...")
+                        vip = new Vip()
+                        vip.name = shortVipName
+                        vip.technicalName = fullVipName
+                        vip.type = type
+                        vip.save(failOnError: true)
+                    }
+
                     Server server = Server.findByNameAndPortNumber(serverName, serverPort.toInteger())
                     if (server == null) {
                         server = new Server()
                         server.name = serverName
                         server.portNumber = serverPort.toInteger()
                         server.machineHostName = serverName
+                        server.serverType = Server.TYPE.APACHE
+                        server.save(failOnError: true)
                     }
-                    Vip vip = Vip.findByTechnicalName(fullVipName)
-                    if (vip == null) {
-                        vip = new Vip()
-                        vip.name = shortVipName
-                        vip.technicalName = fullVipName
-                    }
-                    List<Server> servers = vip.servers
+
                     if (vip.servers == null) {
                         vip.servers = new ArrayList<>()
                     }
-                    servers.add(server)
+                    if (!vip.servers.contains(server)) {
+                        vip.servers.add(server)
+                        vip.save(failOnError: true)
+                    }
+
+
+
 
                 }
             }
@@ -91,16 +119,20 @@ class BigIpParser extends Parser{
     }
 
     /**
-     * Extract server port
+     * Extract server port ( WARN { at the end )
      * @param line e.g : /LB-PUBLIC/webX:8028 {
      * @return
      */
     def extractServerPort(String line) {
         String result = EMPTY
+        if ( line == null) {
+            return EMPTY
+        }
         int pos = line.indexOf(":")
         int slashPos = line.indexOf("{")
         if (pos >0 && slashPos>0) {
             result = line.substring(pos + 1, slashPos)
+            result = result.trim()
         }
         return result
     }
@@ -113,17 +145,26 @@ class BigIpParser extends Parser{
      */
     def extractServerName(String line) {
         String result = EMPTY
+        if (line == null) {
+            return EMPTY
+        }
+        log.info("extractServerName() line:" + line)
         int pos = line.indexOf("/")
-        if (pos > 0) {
-            result = result.substring(pos + 1)
-            pos = line.indexOf("/")
+        if (pos >= 0) {
+            result = line.substring(pos + 1)
+            pos = result.indexOf("/")
             if (pos > 0) {
                 result = result.substring(pos + 1)
-                pos = line.indexOf(":")
+                pos = result.indexOf(":")
+
                 if (pos > 0) {
                     result = result.substring(0, pos)
+                    result = result + ".ac-limoges.fr"
+                } else {
+                    result = EMPTY
                 }
-                result = result + ".ac-limoges.fr"
+            } else {
+                result = EMPTY
             }
         }
         result
@@ -132,16 +173,21 @@ class BigIpParser extends Parser{
 
     /**
      * Extract short vip name.
-     * @param line e.g :pool-appli.ac-limoges.fr_ssl_
+     * @param line e.g : ltm pool /LB-PUBLIC/pool-appli.ac-limoges.... {
      * return appli
      */
     def extractShortVipName(String line) {
         String result = EMPTY
+        if (line == null) {
+            return EMPTY
+        }
         if (line != null) {
-            int dashPos = line.indexOf("-")
-            if (dashPos > 0) {
-                result = result.substring(dashPos + 1)
-                int pointPos = line.indexOf(".")
+            int dashPos = line.indexOf("pool-")
+            int size = "pool-".length()
+            int pos = dashPos + size
+            if (dashPos > 0 && pos < line.length()) {
+                result = line.substring(pos)
+                int pointPos = result.indexOf(".")
                 if (pointPos > 0) {
                     result = result.substring(0, pointPos)
                 }
@@ -153,10 +199,13 @@ class BigIpParser extends Parser{
     /**
      * Extract VIP NAME
      * @param line e.g : ltm pool /LB-PUBLIC/pool-appli.ac-limoges.fr_ssl_grpid_13 {
-     * @return appli.ac-limoges.fr_ssl
+     * @return e.g : appli.ac-limoges.fr_ssl
      */
     def extractFullVipName(String line) {
         String result = EMPTY
+        if (line == null) {
+            return EMPTY
+        }
         if (line != null) {
             int slashPos = line.indexOf('/')
             if (slashPos > 0) {
@@ -167,7 +216,11 @@ class BigIpParser extends Parser{
                     int posGrid = result.indexOf("_grpid")
                     if (posGrid > 0) {
                         result = result.substring(0, posGrid)
+                    } else {
+                        result = EMPTY
                     }
+                } else {
+                    result = EMPTY
                 }
             }
         }

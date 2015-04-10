@@ -42,28 +42,25 @@
         <div class="col-md-9">
             <g:if test="${selectServer != null}">
                 <div class="row">
-                    <div class="panel panel-warning">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Serveur web</h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom</th>
-                                    <th>Port</th>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <td></td>
-                                    <td>${selectServer?.name}</td>
-                                    <td>${selectServer?.portNumber}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+                    <h1>${selectServer?.name}:${selectServer?.portNumber} </h1>
+                    <br/>
+                    <table class="table table-hover table-striped">
+                        <tbody>
+                            <tr>
+                                <td>Serveur web</td>
+                                <td>${selectServer?.name}:${selectServer?.portNumber}</td>
+                            </tr>
+                            <tr>
+                                <td>Type</td>
+                                <td>${selectServer?.serverType}</td>
+                            </tr>
+                            <tr>
+                                <td>Machine</td>
+                                <td>${selectServer?.machineHostName}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br/>
                 </div>
 
                 <div class="row">
