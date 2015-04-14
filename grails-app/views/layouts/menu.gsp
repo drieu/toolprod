@@ -20,7 +20,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Machines <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <g:each in="${MachineGroup.findAll()}" var="machineGroup">
-                            <li><a href="/toolprod/machine/group?group=${machineGroup.groupName}"">Machine ${machineGroup.groupName}</a></li>
+                            <li><a href="/toolprod/machine/group?group=${machineGroup.groupName}">Machine ${machineGroup.groupName}</a></li>
                         </g:each>
                         <li class="divider"></li>
                         <li><a href="/toolprod/machine/list">Toutes les machines</a></li>
@@ -30,6 +30,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Serveurs <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="/toolprod/webServer/apache">Serveurs apache</a></li>
+                        <li><a href="/toolprod/webServer/apacheOnMachine">Serveurs apache par machine</a></li>
                         <li class="divider"></li>
                         <li><a href="/toolprod/webServer/weblogic">Serveur weblogic</a></li>
                     </ul>

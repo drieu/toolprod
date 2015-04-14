@@ -1,4 +1,4 @@
-<%@ page import="toolprod.IndexController" %>
+<%@ page import="toolprod.MachineGroup; toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,45 +17,34 @@
 <div class="container">
     <g:applyLayout name="menu" />
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-xs-12">
 
-            <g:each in="${machineGroups}" var="machineGroup">
-                <g:if test="${machineGroup.groupName.equals(selectedMachineGroup)}">
                     <a href="#" class="list-group-item active">
-                        Machines ${machineGroup.groupName}
+                        Machines ${selectedMachineGroup}
                     </a>
+                    <% int cpt =0; %>
                     <g:each in="${machines}" var="machine">
-                        <g:each in="${machineGroup.regex}" var="regex">
-                            <g:if test="${machine.name.contains(regex)}">
-                                <a href="<g:createLink action="getMachineApps" params="[machine:machine.name,group:machineGroup.groupName]" />" class="list-group-item">
-                                    ${machine.name}
-                                </a>
-                            </g:if>
-                        </g:each>
+                        <g:form name="form-id_${cpt}" action="getMachineApps" method="POST">
+                            <g:hiddenField name="machine" value="${machine.name}" />
+                            <g:hiddenField name="group" value="${selectedMachineGroup}" />
+                            <li class="list-group-item" >
+                                <a href="#" onclick="document.getElementById('form-id_${cpt}').submit();"> ${machine.name} </a>
+                            </li>
+                        </g:form>
+                        <% cpt =cpt + 1; %>
                     </g:each>
                     <br/>
-                </g:if>
-            </g:each>
         </div>
+    </div>
+    <div class="row">
 
-        <div class="col-md-9">
+        <div class="col-xs-12">
 
             <g:if test="${machine != null}">
-                <div class="row">
                     <h1>${machine?.name}</h1>
-                <br/>
-                <br/>
-                <p class="text-left">
-                <dl class="dl-horizontal">
-                    <dt>Détails </dt>
 
-                ${machine?.ipAddress}</dd>
-                                    </dl>
-                                </p>
-                            </div>
-                <div class="row">
                     <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -63,36 +52,54 @@
                                     </a>
                                 </h4>
                             </div>
-                            <div id="collapseOne" class="panel-collapse collapse">
+                            <div id="collapseOne" class="panel-collapse collapse in">
                                 <div class="panel-body">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nom</th>
-                                            <th>Liste des applications</th>
-                                            <th>Port</th>
-                                            <th>type</th>
-                                        </tr>
-                                        </thead>
-                                        <g:each in="${machineServers}" var="mServ">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped table-condensed">
+                                            <thead>
                                             <tr>
-                                                <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name, type:mServ?.serverType.toString(), port:mServ?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                                <td>${mServ?.name}</td>
-                                                <td><small>
-                                                    <%
-                                                        String result = "";
-                                                        for(String str : mServ?.linkToApps) {
-                                                            result += str;
-                                                            result += " ";
-                                                        }
-                                                        print(result + " ")
-                                                    %></small></td>
-                                                <td>${mServ?.portNumber}</td>
-                                                <td>${mServ?.serverType}</td>
+                                                <th>#</th>
+                                                <th>Nom</th>
+                                                <th>Port</th>
+                                                <th>Liste des applications</th>
+                                                <th>type</th>
                                             </tr>
-                                        </g:each>
-                                    </table>
+                                            </thead>
+                                            <g:each in="${machineServers}" var="mServ">
+                                                <tr>
+                                                    <td>
+                                                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name, type:mServ?.serverType.toString(), port:mServ?.portNumber]" />">
+                                                            <g:if test="${mServ?.serverType.toString() == 'APACHE'}">
+                                                                <asset:image src="apache_icon.jpg" width="32" height="32"/>
+                                                            </g:if>
+                                                            <g:elseif test="${mServ?.serverType.toString() == 'WEBLOGIC'}">
+                                                                <asset:image src="weblogic.jpg" width="32" height="32"/>
+                                                            </g:elseif>
+                                                            <g:else>
+                                                                <span class="glyphicon glyphicon-zoom-in"></span>
+                                                            </g:else>
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name, type:mServ?.serverType.toString(), port:mServ?.portNumber]" />">
+                                                            ${mServ?.name}
+                                                        </a>
+                                                    </td>
+                                                    <td>${mServ?.portNumber}</td>
+                                                    <td><small>
+                                                        <%
+                                                            String result = "";
+                                                            for(String str : mServ?.linkToApps) {
+                                                                result += str;
+                                                                result += " ";
+                                                            }
+                                                            print(result + " ")
+                                                        %></small></td>
+                                                    <td>${mServ?.serverType}</td>
+                                                </tr>
+                                            </g:each>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,7 +111,7 @@
                                     </a>
                                 </h4>
                             </div>
-                            <div id="collapseTwo" class="panel-collapse collapse in">
+                            <div id="collapseTwo" class="panel-collapse collapse">
                                 <div class="panel-body">
                                     <table class="table table-hover table-striped">
                                         <thead>
@@ -159,7 +166,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </g:if>
         </div>
     </div>
