@@ -23,7 +23,7 @@
                             <li><a href="/toolprod/machine/group?group=${machineGroup.groupName}">Machine ${machineGroup.groupName}</a></li>
                         </g:each>
                         <li class="divider"></li>
-                        <li><a href="/toolprod/machine/list">Toutes les machines</a></li>
+                        <li><a href="/toolprod/machine/group?group=ALL">Toutes les machines</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
