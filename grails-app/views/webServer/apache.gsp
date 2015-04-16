@@ -17,53 +17,55 @@
     <g:applyLayout name="menu"/>
 
     <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
+           <table class="table table-hover">
+               <tr>
+                   <th>Machine(s)</th>
+                   <th>Port(s)</th>
+               </tr>
                 <g:each in="${map.keySet()}" var="servername">
 
                     <g:if test="${!((String)servername).startsWith('source_')}">
-
-                            <a href="#" class="list-group-item list-group-item-warning">
+                           <tr>
+                               <td>
                                 ${servername}
-                            </a>
-                            <g:each in="${map.get(servername)}" var="portNumber">
-                                <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
-                                    ${portNumber}
-                                </a>
-                            </g:each>
-
+                               </td>
+                               <td>
+                                    <g:each in="${map.get(servername)}" var="portNumber">
+                                        <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
+                                            ${portNumber}
+                                        </a>
+                                    </g:each>
+                               </td>
+                           </tr>
 
                     </g:if>
                 </g:each>
-           </div>
+           </table>
             <br/>
-        </div>
+    </div>
+    <div class="row">
 
-        <div class="col-md-9">
             <g:if test="${selectServer != null}">
-                <div class="row">
                     <h1>${selectServer?.name}:${selectServer?.portNumber} </h1>
                     <br/>
-                    <table class="table table-hover table-striped">
+                    <table class="table table-hover">
                         <tbody>
-                            <tr>
+                            <tr scope="row">
                                 <td>Serveur web</td>
                                 <td>${selectServer?.name}:${selectServer?.portNumber}</td>
                             </tr>
-                            <tr>
+                            <tr scope="row">
                                 <td>Type</td>
                                 <td>${selectServer?.serverType}</td>
                             </tr>
-                            <tr>
+                            <tr scope="row">
                                 <td>Machine</td>
                                 <td>${selectServer?.machineHostName}</td>
                             </tr>
                         </tbody>
                     </table>
                     <br/>
-                </div>
 
-                <div class="row">
                     <div class="panel panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title">Liste des applications référencées</h3>
@@ -86,8 +88,6 @@
                             </table>
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="panel panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title">Liste des modules</h3>
@@ -110,12 +110,10 @@
                             </table>
                         </div>
                     </div>
-                </div>
             </g:if>
             <g:else>
                 <div class="well well-lg">Merci de choisir un serveur apache dans la liste !</div>
             </g:else>
-        </div>
     </div>
 </div>
 </body>

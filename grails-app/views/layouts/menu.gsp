@@ -30,7 +30,6 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Serveurs <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="/toolprod/webServer/apache">Serveurs apache</a></li>
-                        <li><a href="/toolprod/webServer/apacheOnMachine">Serveurs apache par machine</a></li>
                         <li class="divider"></li>
                         <li><a href="/toolprod/webServer/weblogic">Serveur weblogic</a></li>
                     </ul>
@@ -39,7 +38,7 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Applications<b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <li><a href="/toolprod/appRetail/listing">Liste des applications</a></li>
-                        <li><a href="/toolprod/appRetail/viplisting">Liste des applications 2</a></li>
+                        <li><a href="/toolprod/appRetail/viplisting">Imprimer</a></li>
                         %{--<li><a href="/toolprod/appRetail/status">Status</a></li>--}%
                     </ul>
                 </li>

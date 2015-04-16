@@ -62,6 +62,7 @@ grails.project.dependency.resolution = {
         compile ":crash:1.3.0-cr7"
 //       compile ":export:1.6"  // Pb with Grails 2.4.4
         compile ":profiler:0.5"
+        compile ":rendering:1.0.0"
 
 
 

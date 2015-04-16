@@ -21,6 +21,8 @@ class AppRetailController {
      */
     def backupChoice
 
+    def pdfRenderingService
+
     /**
      * Show details for an application
      * @return
@@ -270,33 +272,6 @@ class AppRetailController {
      * @return
      */
     def viplisting() {
-        String data
-        def choice = params.choice
-        Vip vip = getVip(choice)
-        if (vip != null) {
-            //def servers = Server.findAllByNameAndPortNumber("web1.ac-limoges.fr", "8008")
-            def servers = vip.servers
-
-            data += "\nvar zNodes = [\n"
-            for (Server server : servers) {
-                List<TreeNode> nodes = TreeNode.findAllByNodeData(server)
-                for(TreeNode node : nodes) {
-                    TreeNode parent = this.getParent(node)
-                    if (parent != null) {
-                        log.info(parent.name)
-                        data += createTree(parent)
-                        data += ","
-                    }
-                }
-            }
-            data += "\n];"
-            log.info(data)
-        }
-        List<String> portalNames = Vip.executeQuery("select name from Vip")
-
-
-        log.info("names:" + portalNames.toString())
-        return [data : data, portals: portalNames, vip: vip]
     }
 
     public TreeNode getParent(TreeNode node) {
@@ -366,5 +341,7 @@ class AppRetailController {
         return printAppBean
     }
 
-
+//    def renderFormPDF(){
+//        renderPdf (template:'download', model:[items:items])
+//    }
 }

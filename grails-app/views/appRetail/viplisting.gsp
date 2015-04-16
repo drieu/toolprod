@@ -1,4 +1,4 @@
-<%@ page import="toolprod.TreeNode" %>
+<%@ page import="toolprod.Vip; toolprod.TreeNode" %>
 
 <!DOCTYPE html>
 <html>
@@ -12,52 +12,49 @@
     <asset:javascript src="application.js"/>
     <asset:stylesheet href="bootstrap/bootstrap.css"/>
     <asset:javascript src="bootstrap/bootstrap.js"/>
-    <asset:stylesheet href="ztree/zTreeStyle.css"/>
-    <asset:javascript src="ztree/jquery.ztree.all-3.5.min.js"/>
-
-    <SCRIPT LANGUAGE="JavaScript">
-        ${raw(data)}
-        var zTreeObj;
-        // zTree configuration information, refer to API documentation (setting details)
-        var setting = {
-        };
-        $(document).ready(function(){
-            zTreeObj = $.fn.zTree.init($("#treeApp"), setting, zNodes);
-        });
-    </SCRIPT>
 </head>
 
 <body>
 <div class="container">
     <g:applyLayout name="menu"/>
-    <div class="dropdown">
-        <button class="btn btn-default dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown">
-            Choix du portail
-            <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-            <g:each in="${portals}" var="portal">
-                    <li role="presentation"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/viplisting/?choice=${portal}">${portal}</a></li>
-            </g:each>
-        </ul>
+
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    Choix d'une VIP <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <g:each in="${Vip.findAll()}" var="vip">
+                        <li><a href="#">${vip?.name}</a></li>
+                    </g:each>
+                </ul>
+            </div>
+        </div>
     </div>
-    <table class="table table-hover table-striped">
-        <caption>
-            Liste des groupes de machines
-        </caption>
-        <thead>
-        <tr>
-            <th>Serveur</th>
-        </tr>
-        </thead>
-        <g:each in="${vip?.servers}" var="server">
-                <tr>
-                    <td>${server?.name}:${server?.portNumber}</td>
-                    <td></td>
-                </tr>
-        </g:each>
-    </table>
-    <ul id="treeApp" class="ztree"></ul>
+    <br/>
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    Choix d'un serveur web <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <g:each in="${toolprod.Server.findByNameIlike("web%")}" var="server">
+                        <li><a href="#">${server?.name}</a></li>
+                    </g:each>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-3">
+
+        </div>
+        <div class="col-xs-9">
+            <button type="button" class="btn btn-danger">Imprimer</button>
+        </div>
+    </div>
 </div>
 </body>
 </html>

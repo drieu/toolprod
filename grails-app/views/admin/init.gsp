@@ -42,6 +42,7 @@
                     <button type="submit" class="btn btn-info">Submit</button>
                 </form>
             </g:uploadForm>
+            <g:link controller="admin" action="initPortals">Etape 3 : Initialisation des portails</g:link>
         </div>
     </div>
 </div>

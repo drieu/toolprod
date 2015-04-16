@@ -41,7 +41,7 @@
             </form>
 
         </g:uploadForm>
-        <g:link controller="admin" action="initPortals">Etape 2 : Import du fichier bigip.conf</g:link>
+        <g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link>
     </div>
     </div>
     <br/>

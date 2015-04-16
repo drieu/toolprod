@@ -12,85 +12,108 @@
     <asset:stylesheet href="mybootstrap.css"/>
     <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
-
 <body>
 <div class="container">
-    <g:applyLayout name="menu" />
+    <g:applyLayout name="menu"/>
 
     <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <g:each in="${map.keySet()}" var="servername">
+        <table class="table table-hover">
+            <tr>
+                <th>Machine(s)</th>
+                <th>Port(s)</th>
+            </tr>
+            <g:each in="${map.keySet()}" var="servername">
 
-                    <g:if test="${!((String)servername).startsWith('source_')}">
-
-                        <a href="#" class="list-group-item list-group-item-success">
+                <g:if test="${!((String)servername).startsWith('source_')}">
+                    <tr>
+                        <td>
                             ${servername}
-                        </a>
-                        <g:each in="${map.get(servername)}" var="portNumber">
-                            <a href="<g:createLink action="getWebServer" params="[name:servername, type:'weblogic', port: portNumber]" />">
-                                ${portNumber}
-                            </a>
+                        </td>
+                        <td>
+                            <g:each in="${map.get(servername)}" var="portNumber">
+                                <a href="<g:createLink action="getWebServer" params="[name:servername, type:'weblogic', port: portNumber]" />">
+                                    ${portNumber}
+                                </a>
+                            </g:each>
+                        </td>
+                    </tr>
+
+                </g:if>
+            </g:each>
+        </table>
+        <br/>
+    </div>
+    <div class="row">
+
+        <g:if test="${selectServer != null}">
+            <h1>${selectServer?.name}:${selectServer?.portNumber} </h1>
+            <br/>
+            <table class="table table-hover">
+                <tbody>
+                <tr scope="row">
+                    <td>Serveur web</td>
+                    <td>${selectServer?.name}:${selectServer?.portNumber}</td>
+                </tr>
+                <tr scope="row">
+                    <td>Type</td>
+                    <td>${selectServer?.serverType}</td>
+                </tr>
+                <tr scope="row">
+                    <td>Machine</td>
+                    <td>${selectServer?.machineHostName}</td>
+                </tr>
+                </tbody>
+            </table>
+            <br/>
+
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Liste des applications référencées</h3>
+                </div>
+
+                <div class="panel-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom de l'application</th>
+                        </tr>
+                        </thead>
+                        <g:each in="${selectServer?.linkToApps}" var="linkAppName">
+                            <tr>
+                                <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                <td>${linkAppName}</td>
+                            </tr>
                         </g:each>
-
-
-                    </g:if>
-                </g:each>
+                    </table>
+                </div>
             </div>
-        </div>
-        <div class="col-md-9">
-            <g:if test="${selectServer != null}">
-                <div class="row">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Serveur web</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom</th>
-                                    <th>Port</th>
-                                </tr>
-                                </thead>
-                                <tr>
-                                    <td></td>
-                                    <td>${selectServer?.name}</td>
-                                    <td>${selectServer?.portNumber}</td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Liste des modules</h3>
                 </div>
-                <div class="row">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Liste des applications référencées</h3>
-                        </div>
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom de l'application</th>
-                                </tr>
-                                </thead>
-                                <g:each in="${selectServer?.linkToApps}" var="linkAppName">
-                                    <tr>
-                                        <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                        <td>${linkAppName}</td>
-                                    </tr>
-                                </g:each>
-                            </table>
-                        </div>
-                    </div>
+
+                <div class="panel-body">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom du modules</th>
+                        </tr>
+                        </thead>
+                        <g:each in="${selectServer?.modules}" var="module">
+                            <tr>
+                                <td></td>
+                                <td>${module}</td>
+                            </tr>
+                        </g:each>
+                    </table>
                 </div>
-            </g:if>
-            <g:else>
-                <div class="well well-lg">Merci de choisir un serveur weblogic dans la liste !</div>
-            </g:else>
-        </div>
+            </div>
+        </g:if>
+        <g:else>
+            <div class="well well-lg">Merci de choisir un serveur weblogic dans la liste !</div>
+        </g:else>
     </div>
 </div>
 </body>

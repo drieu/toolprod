@@ -64,12 +64,6 @@ class WebServerController {
         return [servers: servers, type: type, selectServer: selectServer, map:map]
     }
 
-    def apacheOnMachine() {
-
-        def servers = Server.findAll("from Server as s where s.machineHostName='web1.ac-limoges.fr'")
-        return [servers:servers]
-    }
-
     /**
      * Show weblogic page.
      * @return
