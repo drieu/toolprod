@@ -20,11 +20,6 @@
     <asset:stylesheet href="ztree/zTreeStyle.css"/>
     <asset:javascript src="ztree/jquery.ztree.all-3.5.min.js"/>
 
-    %{--<g:javascript library='jquery'/>--}%
-    %{--<g:javascript library='bootstrap'/>--}%
-    %{--<g:javascript library='application'/>--}%
-    %{--<g:javascript library='ztree'/>--}%
-    %{--<r:layoutResources/>--}%
 
     <SCRIPT LANGUAGE="JavaScript">
         ${raw(data)}
@@ -32,13 +27,6 @@
         // zTree configuration information, refer to API documentation (setting details)
         var setting = {
         };
-        // zTree data attributes, refer to the API documentation (treeNode data details)
-//        var zNodes = [
-//            {name:"test1", open:true, children:[
-//                {name:"test1_1"}, {name:"test1_2"}]},
-//            {name:"test2", open:true, children:[
-//                {name:"test2_1"}, {name:"test2_2"}]}
-//        ];
         $(document).ready(function(){
             zTreeObj = $.fn.zTree.init($("#treeApp"), setting, zNodes);
         });
@@ -49,51 +37,86 @@
 <div class="container">
     <g:applyLayout name="menu"/>
     <g:if test="${app != null}">
+        <div class="row">
         <h1>Application : ${app?.name}</h1>
         <br/>
         <pre>Description : <small>${app?.description}</small></pre>
         <br/>
-        <dl class="dl-horizontal">
-            <dt>URL</dt>
-            <dd>
-                <g:each in="${app?.urls}">
-                      <a href="${it}">${it}</a>&nbsp;<br/>
+            <ol class="breadcrumb">
+                <li><span class="label label-success">ARENA</span></li>
+                <g:each in="${app?.arenaPath}" var="path">
+                    <li><em><var>${path}</var></em></li>
                 </g:each>
-            </dd>
-        </dl>
-        <dl class="dl-horizontal">
-            <dt>Serveur APACHE</dt>
-            <dd>
-                <g:each in="${app?.servers}" var="server">
-                    <g:if test="${server?.serverType?.toString() == "APACHE"}">
-                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
-                    </g:if>
-                </g:each>
-            </dd>
-        </dl>
-        <br/>
-        <dl class="dl-horizontal">
-            <dt>Serveur WEBLOGIC</dt>
-            <dd>
-                <g:each in="${app?.servers}" var="server">
-                    <g:if test="${server?.serverType?.toString() == "WEBLOGIC"}">
-                        <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}</br>
-                    </g:if>
-                </g:each>
-            </dd>
-        </dl>
-
-        <br/>
-
-        %{--<g:render template="/appRetail/machineTree" model="[nodes:app?.node]"/>--}%
-        %{--<div id="jstree_demo">--}%
-        %{--</div>--}%
+             </ol>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <th>Listes des URL(s)</th>
+                </thead>
+                <tbody>
+                    <g:each in="${app?.urls}">
+                        <tr>
+                            <td>
+                            <a href="${it}">${it}</a>&nbsp;<br/>
+                            </td>
+                        </tr>
+                    </g:each>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <br/>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                <th>Listes des serveurs APACHE</th>
+                </thead>
+                <tbody>
+                    <g:each in="${app?.servers}" var="server">
+                        <g:if test="${server?.serverType?.toString() == "APACHE"}">
+                            <tr>
+                                <td>
+                                    <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}
+                                </td>
+                            </tr>
+                        </g:if>
+                    </g:each>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+                <table class="table table-hover">
+                    <thead>
+                        <th>Listes des serveurs WEBLOGIC</th>
+                    </thead>
+                    <tbody>
+                    <g:each in="${app?.servers}" var="server">
+                        <g:if test="${server?.serverType?.toString() == "WEBLOGIC"}">
+                            <tr>
+                                <td>
+                                    <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}
+                                </td>
+                            </tr>
+                        </g:if>
+                    </g:each>
+                    </tbody>
+                </table>
+        </div>
+        <div class="row">
+            <br/>
+        </div>
+        <div class="row">
+            <pre>
+                <ul id="treeApp" class="ztree"></ul>
+            </pre>
+        </div>
     </g:if>
     <g:else>
         <div class="well well-lg">Pas d'application !</div>
     </g:else>
 
-    <ul id="treeApp" class="ztree"></ul>
 </div>
 </body>
 </html>

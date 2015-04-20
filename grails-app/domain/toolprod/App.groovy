@@ -30,6 +30,10 @@ class App {
      */
     List<Portal> portals = []
 
+    /**
+     * Save ARENA path
+     */
+    LinkedHashSet<String> arenaPath = new LinkedHashSet<>()
 
     TreeNode node
 

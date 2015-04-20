@@ -1,8 +1,10 @@
 package fr.edu.admin
 
+import fr.edu.toolprod.parser.ArenaParser
 import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
 import fr.edu.toolprod.parser.HttpdParser
+import fr.edu.toolprod.parser.Parser
 import org.apache.commons.logging.LogFactory
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import toolprod.Machine
@@ -122,6 +124,28 @@ class AdminController {
                     log.debug("init() machineName:" + machineName)
                     message += 'Import failed because file is null or is empty'
                 }
+            }
+            if (bResult) {
+                flash.message = "SUCCESS : " + message
+            } else {
+                flash.error = "FAILED : " + message
+            }
+        }
+    }
+
+    /**
+     * Init data from the ARENA xml files
+     */
+    def initFromArena() {
+        log.info("initFromArena()")
+        flash.clear()
+        if (request instanceof MultipartHttpServletRequest) {
+            def message = ""
+            boolean bResult = true
+            request.getFiles("files[]").each { file ->
+                log.debug("init() file to parse:" + file.originalFilename)
+                Parser parser = new ArenaParser(file.inputStream)
+                parser.parse()
             }
             if (bResult) {
                 flash.message = "SUCCESS : " + message

@@ -41,7 +41,7 @@
                 </form>
 
             </g:uploadForm>
-            <g:link controller="admin" action="init">Etape 3 : Import de fichiers Httpd.conf</g:link>
+            <g:link controller="admin" action="initFromArena">Etape 4 : Initialisation à partir du fichier XML ARENA</g:link>
         </div>
     </div>
 

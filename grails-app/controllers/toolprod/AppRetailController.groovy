@@ -341,7 +341,9 @@ class AppRetailController {
         return printAppBean
     }
 
-//    def renderFormPDF(){
-//        renderPdf (template:'download', model:[items:items])
-//    }
+    def renderFormPDF(){
+        def file = new File("test.png")
+        file.write("hello")
+        renderPng(template: "/appRetail/report", model: [imageBytes: file.bytes])
+    }
 }
