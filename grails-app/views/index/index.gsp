@@ -68,7 +68,7 @@
                                         <tbody>
                                             <g:each in="${vip.servers}" var="server">
                                                 <tr>
-                                                    <td><a href="<g:createLink controller="webServer" action="getWebServer" params="[name:server?.machineHostName, type:'apache', port: server?.portNumber]" />">
+                                                    <td><a href="<g:createLink controller="webServer" action="getWebServerByMachineName" params="[name:server?.machineHostName, type:'apache', port: server?.portNumber]" />">
                                                         <span class="glyphicon glyphicon-search" aria-hidden="true">
 
                                                     </span></a>

@@ -61,46 +61,44 @@ class BigIpParser extends Parser{
                 }
                 if ( (line.trim()).startsWith("/LB-PUBLIC/")) {
                     String serverName = extractServerName(line)
-                    String serverPort = extractServerPort(line)
-                    if (serverPort.isEmpty()) {
-                        serverPort = 80
+                    if ( !serverName.isEmpty()) {
+                        String serverPort = extractServerPort(line)
+                        if (serverPort.isEmpty()) {
+                            serverPort = 80
+                        }
+                        log.info("line:" + line)
+                        log.info("Server name:" + serverName)
+                        log.info("Server port:" + serverPort)
+                        log.info("fullVipName:" + fullVipName)
+                        log.info("shortVipName:" + shortVipName)
+                        Vip vip = Vip.findByTechnicalName(fullVipName)
+                        if (vip == null) {
+                            log.info("Create new VIP ...")
+                            vip = new Vip()
+                            vip.name = shortVipName
+                            vip.technicalName = fullVipName
+                            vip.type = type
+                            vip.save(failOnError: true)
+                        }
+
+                        Server server = Server.findByNameAndPortNumber(serverName, serverPort.toInteger())
+                        if (server == null) {
+                            server = new Server()
+                            server.name = serverName
+                            server.portNumber = serverPort.toInteger()
+                            server.machineHostName = serverName
+                            server.serverType = Server.TYPE.APACHE
+                            server.save(failOnError: true)
+                        }
+
+                        if (vip.servers == null) {
+                            vip.servers = new ArrayList<>()
+                        }
+                        if (!vip.servers.contains(server)) {
+                            vip.servers.add(server)
+                            vip.save(failOnError: true)
+                        }
                     }
-                    log.info("line:" + line)
-                    log.info("Server name:" + serverName)
-                    log.info("Server port:" + serverPort)
-                    log.info("fullVipName:" + fullVipName)
-                    log.info("shortVipName:" + shortVipName)
-                    Vip vip = Vip.findByTechnicalName(fullVipName)
-                    if (vip == null) {
-                        log.info("Create new VIP ...")
-                        vip = new Vip()
-                        vip.name = shortVipName
-                        vip.technicalName = fullVipName
-                        vip.type = type
-                        vip.save(failOnError: true)
-                    }
-
-                    Server server = Server.findByNameAndPortNumber(serverName, serverPort.toInteger())
-                    if (server == null) {
-                        server = new Server()
-                        server.name = serverName
-                        server.portNumber = serverPort.toInteger()
-                        server.machineHostName = serverName
-                        server.serverType = Server.TYPE.APACHE
-                        server.save(failOnError: true)
-                    }
-
-                    if (vip.servers == null) {
-                        vip.servers = new ArrayList<>()
-                    }
-                    if (!vip.servers.contains(server)) {
-                        vip.servers.add(server)
-                        vip.save(failOnError: true)
-                    }
-
-
-
-
                 }
             }
             bResult = true

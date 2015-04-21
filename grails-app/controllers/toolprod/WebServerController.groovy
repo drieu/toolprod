@@ -44,6 +44,12 @@ class WebServerController {
             selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
             log.info("WebServerController:apache() linkapps :" + selectServer.linkToApps)
 
+        } else { //use by index.gsp because we search the server by machine name
+            param = params.get("machineName")
+            if (param != null) {
+                selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
+                log.info("WebServerController:apache() linkapps (machineName case ):" + selectServer.linkToApps)
+            }
         }
 
         Map<String, List<String>> map = new TreeMap<>()
@@ -125,5 +131,16 @@ class WebServerController {
         }
         type = type.toLowerCase()
         redirect(action:type, params: [name : name, port : port])
+    }
+
+    def getWebServerByMachineName() {
+        def name = params.get(NAME_PARAM)
+        String type = params.get(TYPE_PARAM)
+        String port = params.get(PORT_PARAM)
+        if (type == null) {
+            type = EMPTY_PARAM;
+        }
+        type = type.toLowerCase()
+        redirect(action:type, params: [machineName : name, port : port])
     }
 }

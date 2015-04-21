@@ -17,30 +17,46 @@
     <g:applyLayout name="menu"/>
 
     <div class="row">
-           <table class="table table-hover">
-               <tr>
-                   <th>Machine(s)</th>
-                   <th>Port(s)</th>
-               </tr>
-                <g:each in="${map.keySet()}" var="servername">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                    Liste des serveurs web&nbsp;&nbsp;<span class="badge">${map?.size()}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>Merci de cliquer pour voir la liste !</small>
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                               <table class="table table-hover">
+                                   <tr class="info">
+                                       <th>Machine(s)</th>
+                                       <th>Port(s)</th>
+                                   </tr>
+                                    <g:each in="${map.keySet()}" var="servername">
 
-                    <g:if test="${!((String)servername).startsWith('source_')}">
-                           <tr>
-                               <td>
-                                ${servername}
-                               </td>
-                               <td>
-                                    <g:each in="${map.get(servername)}" var="portNumber">
-                                        <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
-                                            ${portNumber}
-                                        </a>
+                                        <g:if test="${!((String)servername).startsWith('source_')}">
+                                               <tr>
+                                                   <td>
+                                                    ${servername}
+                                                   </td>
+                                                   <td>
+                                                        <g:each in="${map.get(servername)}" var="portNumber">
+                                                            <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
+                                                                ${portNumber}
+                                                            </a>
+                                                        </g:each>
+                                                   </td>
+                                               </tr>
+
+                                        </g:if>
                                     </g:each>
-                               </td>
-                           </tr>
-
-                    </g:if>
-                </g:each>
-           </table>
+                               </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <br/>
     </div>
     <div class="row">

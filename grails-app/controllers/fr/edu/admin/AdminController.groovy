@@ -74,6 +74,7 @@ class AdminController {
 
     def initPortals() {
         log.info("initPortals()")
+        flash.clear()
         boolean bResult = false
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
