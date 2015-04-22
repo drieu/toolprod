@@ -56,14 +56,14 @@ class ArenaParser extends Parser{
                 if (line.startsWith("<Data>")) {
                     String parseResult = extractData(line)
                     if( !parseResult.isEmpty()) {
-                        log.info("parseResult:" + parseResult)
+                        //log.info("parseResult:" + parseResult)
                         if (parseResult.startsWith("/") && !parseResult.startsWith("/redirectionhub/")) {
                             parseResult = parseResult.substring(1, parseResult.length())
                             int pos = parseResult.indexOf("/")
                             if (pos > 0) {
                                 parseResult = parseResult.substring(0, pos)
                             }
-                            log.info("parse() found appName in xml file appName:" + parseResult)
+                            //log.info("parse() found appName in xml file appName:" + parseResult)
                             arenaBean.appName = parseResult
                         } else if(parseResult.startsWith("/redirectionhub/")) { ///redirectionhub/redirect.jsp?applicationname=itsm7pro
                             int pos = parseResult.indexOf("applicationname=")
@@ -73,20 +73,28 @@ class ArenaParser extends Parser{
                                 log.info("parse() found appName in xml file appName:" + parseResult)
                             }
                         } else {
-                            arenaBean.arenaPath.add(parseResult)
+                            arenaBean.arenaPath = arenaBean.arenaPath + "/"
+                            arenaBean.arenaPath = arenaBean.arenaPath + parseResult
                         }
                     }
                 }
 
                 if ( line.startsWith("</Row>")) {
                     if (arenaBean != null) {
-                        log.info("parse() search for application :" + arenaBean.appName)
-                        App app = App.findByName(arenaBean.appName)
-                        if (app != null) {
-                            log.info("Save ARENA path for application :" + arenaBean.appName)
-                            app.arenaPath = arenaBean.arenaPath
-                            app.description = arenaBean.arenaPath.last()
-                            app.save()
+                        if (arenaBean.appName != null) {
+                            log.info("parse() search for application :" + arenaBean.appName)
+                            App app = App.findByName(arenaBean.appName)
+                            if (app != null) {
+                                log.info("Save ARENA path for application :" + arenaBean?.arenaPath)
+
+                                String path = arenaBean.arenaPath
+                                app.arenaPath = path
+                                int pos = path.lastIndexOf("/")
+                                String desc = path.substring(pos + 1, path.length())
+                                app.description = desc
+                                app.save(failOnError: true)
+                            }
+                            log.info("parse() search for application END")
                         }
                     } else {
                         log.error("parse() arenaBean is null at </Row> !")

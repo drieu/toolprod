@@ -95,12 +95,12 @@ class ApacheTreeNodeData extends TreeNodeData {
                     appBean.setAppPort(DEFAULT_PORT)
                 }
                 int portDefault = server.getPortNumber()
-                Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
+                Server searchServer = Server.findByMachineHostNameAndPortNumber(server.machineHostName, portDefault)
                 if ( searchServer != null ) {
                     TreeNode sNode = this.searchNode(server, searchServer, appBean.name)
                     if ( sNode != null ) {
                         log.info("Search if server still exist name:" + appBean?.appServer + " port:" + appBean?.appPort)
-                        Server searchAppBeanServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
+                        Server searchAppBeanServer = Server.findByMachineHostNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                         if (searchAppBeanServer == null) {
                             log.debug("saveApacheTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
                             node = this.saveServerChild(treeNodeParent, appBean)
@@ -126,7 +126,7 @@ class ApacheTreeNodeData extends TreeNodeData {
                 } else {
 
                     log.debug("saveApacheTree() Search searchServer in nodes with appServer:" + appBean.appServer + " and appBean.appPort:" + appBean.appPort)
-                    searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
+                    searchServer = Server.findByMachineHostNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
                     if (searchServer == null) {
                         log.debug("saveApacheTree() no searchServer found.Save it under treeNodeParent")
                         node = this.saveServerChild(treeNodeParent, appBean)

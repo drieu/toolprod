@@ -47,8 +47,8 @@ class WebServerController {
         } else { //use by index.gsp because we search the server by machine name
             param = params.get("machineName")
             if (param != null) {
-                selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
-                log.info("WebServerController:apache() linkapps (machineName case ):" + selectServer.linkToApps)
+                selectServer = Server.findByMachineHostNameAndPortNumber(param, port.toInteger());
+                log.info("WebServerController:apache() linkapps (machineName case ):" + selectServer?.linkToApps)
             }
         }
 

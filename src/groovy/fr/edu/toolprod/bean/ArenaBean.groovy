@@ -13,6 +13,6 @@ class ArenaBean {
     /**
      * Path in Arena portal
      */
-    LinkedHashSet<String> arenaPath = new LinkedHashSet<>()
+    String arenaPath = ""
 
 }

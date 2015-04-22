@@ -135,7 +135,7 @@ class Server implements Comparable{
             throw new IllegalArgumentException("Can't save a Server with a null serverBean !")
         }
         log.info("saveServer() Save serverBean:" + serverBean)
-        Server server = Server.findByNameAndPortNumber(serverBean.name, serverBean.portNumber)
+        Server server = Server.findByMachineHostNameAndPortNumber(serverBean.machineHostName, serverBean.portNumber)
         if (server == null) {
             server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber.toInteger(), serverType: Server.TYPE.APACHE)
             server.modules = serverBean.modules;

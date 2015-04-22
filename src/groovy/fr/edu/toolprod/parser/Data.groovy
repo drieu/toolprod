@@ -106,7 +106,7 @@ class Data {
 
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
-            Server searchServer = Server.findByNameAndPortNumber(machine.name, port)
+            Server searchServer = Server.findByMachineHostNameAndPortNumber(machine.name, port)
             if (searchServer == null) {
                 server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
                 server.save(failOnError: true,flush:true)

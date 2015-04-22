@@ -33,7 +33,7 @@ class App {
     /**
      * Save ARENA path
      */
-    LinkedHashSet<String> arenaPath = new LinkedHashSet<>()
+    String arenaPath
 
     TreeNode node
 
@@ -56,6 +56,7 @@ class App {
         name(blank:false)
         description(size:0..400)
         node(nullable: true)
+        arenaPath(nullable: true, size:0..200)
     }
 
     def addServer(Server server) {

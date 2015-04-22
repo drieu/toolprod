@@ -81,7 +81,7 @@ class BigIpParser extends Parser{
                             vip.save(failOnError: true)
                         }
 
-                        Server server = Server.findByNameAndPortNumber(serverName, serverPort.toInteger())
+                        Server server = Server.findByMachineHostNameAndPortNumber(serverName, serverPort.toInteger())
                         if (server == null) {
                             server = new Server()
                             server.name = serverName

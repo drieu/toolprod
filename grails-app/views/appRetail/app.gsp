@@ -38,16 +38,22 @@
     <g:applyLayout name="menu"/>
     <g:if test="${app != null}">
         <div class="row">
-        <h1>Application : ${app?.name}</h1>
-        <br/>
-        <pre>Description : <small>${app?.description}</small></pre>
-        <br/>
-            <ol class="breadcrumb">
-                <li><span class="label label-success">ARENA</span></li>
-                <g:each in="${app?.arenaPath}" var="path">
-                    <li><em><var>${path}</var></em></li>
-                </g:each>
-             </ol>
+            <h1>Application : ${app?.name}</h1>
+            <br/>
+            <pre>Description : <small>${app?.description}</small></pre>
+            <br/>
+            <table class="table table-hover">
+                <thead>
+                <th>Chemin dans ARENA</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            ${app?.arenaPath}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
         <div class="row">
             <table class="table table-hover">

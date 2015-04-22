@@ -118,7 +118,7 @@ class WeblogicTreeNodeData extends TreeNodeData {
                 }
                 int portDefault = server.getPortNumber()
 
-                Server searchServer = Server.findByNameAndPortNumber(server.name, portDefault)
+                Server searchServer = Server.findByMachineHostNameAndPortNumber(server.machineHostName, portDefault)
                 if ( searchServer != null ) {
                     TreeNode sNode = this.searchNode(server, searchServer, appBean.name)
                     if ( sNode != null ) {
@@ -157,7 +157,7 @@ class WeblogicTreeNodeData extends TreeNodeData {
         String appPort = appBean.appPort
 
         log.info("saveChildNodeForAppBean() Search searchServer in nodes with appServer:" + appServer + " and appBean.appPort:" + appPort)
-        Server searchServer = Server.findByNameAndPortNumber(appServer, appPort.toInteger())
+        Server searchServer = Server.findByMachineHostNameAndPortNumber(appServer, appPort.toInteger())
         if (searchServer == null) {
             log.info("saveChildNodeForAppBean() no searchServer found.Save it under treeNodeParent")
             node = this.saveServerChild(treeNodeParent, appBean)
@@ -178,7 +178,7 @@ class WeblogicTreeNodeData extends TreeNodeData {
      */
     public TreeNode saveChildNodeForServer(TreeNode treeNodeParent, Server serv, AppBean appBean) {
         TreeNode node = null
-        Server searchServer = Server.findByNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
+        Server searchServer = Server.findByMachineHostNameAndPortNumber(appBean.appServer, appBean.appPort.toInteger())
         if (searchServer == null) {
             log.debug("saveWebloTree() no searchServer found with name=" + appBean.appServer + " port:" +  appBean.appPort + ".Save it under treeNodeParent")
             node = this.saveServerChild(treeNodeParent, serv)
