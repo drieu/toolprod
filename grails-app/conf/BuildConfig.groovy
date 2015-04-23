@@ -50,6 +50,8 @@ grails.project.dependency.resolution = {
         runtime 'mysql:mysql-connector-java:5.1.24'
         compile 'com.google.code.gson:gson:2.3.1'
         compile "org.apache.directory.api:api-all:1.0.0-M28"
+        compile "org.apache.pdfbox:pdfbox:1.8.9"
+
     }
 
     plugins {

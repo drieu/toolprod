@@ -9,6 +9,11 @@ import fr.edu.toolprod.gson.GSONBean
 import fr.edu.toolprod.gson.GSONParser
 import grails.converters.JSON
 import org.apache.commons.lang.StringEscapeUtils
+import org.apache.pdfbox.pdmodel.PDDocument
+import org.apache.pdfbox.pdmodel.PDPage
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
+import org.apache.pdfbox.pdmodel.font.PDFont
+import org.apache.pdfbox.pdmodel.font.PDType1Font
 
 class AppRetailController {
 
@@ -342,8 +347,160 @@ class AppRetailController {
     }
 
     def renderFormPDF(){
-        def file = new File("test.png")
-        file.write("hello")
-        renderPng(template: "/appRetail/report", model: [imageBytes: file.bytes])
+
+        List<App> apps = new ArrayList<>()
+        String title = ""
+        String param = params.get("serverSelect")
+        if (param == null) {
+            log.info("Find all app")
+            title= "Liste de toutes les applications"
+            apps = App.findAll()
+        } else {
+            log.info("Find all app for machineHostName:" + param)
+
+            List<Server> servers = Server.findAllByMachineHostName(param)
+            for(Server server : servers) {
+                log.info("Server name :" + server?.name)
+                for(String name : server.linkToApps) {
+                    App app = App.findByName(name)
+                    if (app != null) {
+                        apps.add(app)
+                    } else {
+                        log.error("Nothing found for " + name)
+                    }
+                }
+            }
+            title= "Liste de toutes les applications sur " + param
+            title += " (" + apps.size() + ")"
+        }
+
+
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        PDPageContentStream contentStream;
+
+        int pageNumber = apps.size()/30 + 1
+        log.info("Page number :" + pageNumber)
+
+        int countApp = 0
+        for (int i=1; i<=pageNumber; i++) {
+            log.info("countApp :" + countApp)
+            page = new PDPage();
+            contentStream = new PDPageContentStream(document, page);
+            int max = countApp + 30
+            if (max > apps.size()) {
+                max = apps.size() - 1
+            }
+            drawTable(page, contentStream, 700, 100, apps[countApp..max], title);
+            countApp = countApp + 30 + 1
+            contentStream.close();
+            document.addPage(page);
+        }
+
+        document.save("report.pdf");
+        document.close();
+        render( file:new File("report.pdf"), fileName: "report.pdf")
+    }
+
+    /**
+     * @param page
+     * @param contentStream
+     * @param y the y-coordinate of the first row
+     * @param margin the padding on left and right of table
+     * @param content a 2d array containing the table data
+     * @throws IOException
+     */
+    def drawTable(PDPage page, PDPageContentStream contentStream,
+                                 float y, float margin,
+                                 List<App> apps, String title) throws IOException {
+        final int rows = apps.size() + 1;
+        final int cols = 3;
+        final float rowHeight = 20f;
+        final float tableWidth = page.findMediaBox().getWidth()-(2*margin);
+        final float tableHeight = rowHeight * rows;
+        final float colWidth = tableWidth/(float)cols;
+        final float cellMargin=5f;
+
+        //draw the rows
+        float nexty = y ;
+        for (int i = 0; i <= rows; i++) {
+            contentStream.drawLine(margin,nexty,(float)(margin+tableWidth),nexty);
+            nexty-= rowHeight;
+        }
+
+        //draw the columns
+        float nextx = margin;
+        for (int i = 0; i <= cols; i++) {
+            contentStream.drawLine(nextx,y,nextx,(float)(y-tableHeight));
+            nextx += colWidth;
+        }
+
+        //now add the text
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD,14);
+        contentStream.beginText();
+        contentStream.moveTextPositionByAmount((float)margin+cellMargin+10,(float)(y+20));
+        contentStream.drawString(title);
+        contentStream.endText();
+
+
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD,12);
+
+        float textx = margin+cellMargin;
+        float texty = y-15;
+
+        //Define colunm title
+        contentStream.beginText();
+        contentStream.moveTextPositionByAmount(textx,texty);
+        contentStream.drawString("Nom");
+        contentStream.endText();
+        textx += colWidth;
+
+        contentStream.beginText();
+        contentStream.moveTextPositionByAmount(textx,texty);
+        contentStream.drawString("Description");
+        contentStream.endText();
+        textx += colWidth;
+
+        contentStream.beginText();
+        contentStream.moveTextPositionByAmount(textx,texty);
+        contentStream.drawString("Chemin dans ARENA");
+        contentStream.endText();
+        textx += colWidth;
+
+        texty-=rowHeight;
+        textx = margin+cellMargin;
+
+        contentStream.setFont(PDType1Font.HELVETICA,11);
+        apps.each {
+
+            contentStream.beginText();
+            contentStream.moveTextPositionByAmount(textx,texty);
+            contentStream.drawString(it.name);
+            contentStream.endText();
+            textx += colWidth;
+
+            contentStream.beginText();
+            contentStream.moveTextPositionByAmount(textx,texty);
+            String desc = it.description
+            if (desc.equals("EMPTY")) {
+                desc = ""
+            }
+            contentStream.drawString(desc);
+            contentStream.endText();
+            textx += colWidth;
+
+            contentStream.beginText();
+            contentStream.moveTextPositionByAmount(textx,texty);
+            String path = it.arenaPath
+            if (path == null) {
+                path = ""
+            }
+            contentStream.drawString(path);
+            contentStream.endText();
+            textx += colWidth;
+
+            texty-=rowHeight;
+            textx = margin+cellMargin;
+        }
     }
 }

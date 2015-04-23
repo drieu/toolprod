@@ -36,16 +36,7 @@
     <g:form name="print" action="renderFormPDF" method="POST">
         <div class="row">
             <div class="col-xs-3">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        Choix d'un serveur web <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <g:each in="${toolprod.Server.findByNameIlike("web%")}" var="server">
-                            <li><a href="#">${server?.name}</a></li>
-                        </g:each>
-                    </ul>
-                </div>
+                <g:select name="serverSelect" from="${toolprod.Server.findByMachineHostNameIlike("web%")}" optionValue="machineHostName" optionKey="machineHostName" noSelection="['Topic': 'Choisir un serveur web']" />
             </div>
         </div>
         <div class="row">
@@ -57,6 +48,21 @@
             </div>
         </div>
      </g:form>
+    <g:form name="print" action="renderFormPDF" method="POST">
+        <div class="row">
+            <div class="col-xs-3">
+                <g:select name="serverSelect" from="${toolprod.Server.findAll()}" optionValue="machineHostName" optionKey="machineHostName" noSelection="['Topic': 'Choisir une machine']" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-3">
+
+            </div>
+            <div class="col-xs-9">
+                <button type="submit" class="btn btn-danger">Imprimer</button>
+            </div>
+        </div>
+    </g:form>
 </div>
 </body>
 </html>
