@@ -277,6 +277,20 @@ class AppRetailController {
      * @return
      */
     def viplisting() {
+
+        List<String> results = new ArrayList<>()
+        def servers = Server.findAll()
+        for (Server server : servers) {
+            if (!results.contains(server.machineHostName) && !server.machineHostName.startsWith("source_")) {
+                def m = server.machineHostName =~ /web[0-9]/
+                if (m) {
+                    results.add(server.machineHostName)
+                }
+            }
+        }
+        results.sort()
+
+       [ servers: results]
     }
 
     public TreeNode getParent(TreeNode node) {
@@ -350,7 +364,7 @@ class AppRetailController {
 
         List<App> apps = new ArrayList<>()
         String title = ""
-        String param = params.get("serverSelect")
+        String param = params.get("serverSelect").toString()
         if (param == null) {
             log.info("Find all app")
             title= "Liste de toutes les applications"
@@ -375,26 +389,40 @@ class AppRetailController {
         }
 
 
+
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
         PDPageContentStream contentStream;
 
-        int pageNumber = apps.size()/30 + 1
+        int pageNumber = 1
+        final int APPNUMBER_BY_SIZE = 30
+        if (apps.size() > APPNUMBER_BY_SIZE) {
+            pageNumber = apps.size()/APPNUMBER_BY_SIZE + 1
+        }
+
         log.info("Page number :" + pageNumber)
 
         int countApp = 0
-        for (int i=1; i<=pageNumber; i++) {
-            log.info("countApp :" + countApp)
-            page = new PDPage();
-            contentStream = new PDPageContentStream(document, page);
-            int max = countApp + 30
-            if (max > apps.size()) {
-                max = apps.size() - 1
+        int max = APPNUMBER_BY_SIZE
+        if (apps.size() < APPNUMBER_BY_SIZE) {
+            max = apps.size()
+        }
+        if (apps.size() > 0) {
+            for (int i=1; i<=pageNumber; i++) {
+                log.info("countApp :" + countApp)
+                page = new PDPage();
+                contentStream = new PDPageContentStream(document, page);
+
+                max = countApp + APPNUMBER_BY_SIZE
+                if (max > apps.size()) {
+                    max = apps.size() - 1
+                }
+
+                drawTable(page, contentStream, 700, 100, apps[countApp..max], title);
+                countApp = countApp + APPNUMBER_BY_SIZE + 1
+                contentStream.close();
+                document.addPage(page);
             }
-            drawTable(page, contentStream, 700, 100, apps[countApp..max], title);
-            countApp = countApp + 30 + 1
-            contentStream.close();
-            document.addPage(page);
         }
 
         document.save("report.pdf");
