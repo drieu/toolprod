@@ -442,12 +442,12 @@ class AppRetailController {
                                  float y, float margin,
                                  List<App> apps, String title) throws IOException {
         final int rows = apps.size() + 1;
-        final int cols = 3;
-        final float rowHeight = 20f;
+        final int cols = 2;
+        final float rowHeight = 30f;
         final float tableWidth = page.findMediaBox().getWidth()-(2*margin);
         final float tableHeight = rowHeight * rows;
         final float colWidth = tableWidth/(float)cols;
-        final float cellMargin=5f;
+        final float cellMargin=4f;
 
         //draw the rows
         float nexty = y ;
@@ -489,24 +489,25 @@ class AppRetailController {
         contentStream.endText();
         textx += colWidth;
 
-        contentStream.beginText();
-        contentStream.moveTextPositionByAmount(textx,texty);
-        contentStream.drawString("Chemin dans ARENA");
-        contentStream.endText();
-        textx += colWidth;
+//        contentStream.beginText();
+//        contentStream.moveTextPositionByAmount(textx,texty);
+//        contentStream.drawString("Chemin dans ARENA");
+//        contentStream.endText();
+//        textx += colWidth;
 
         texty-=rowHeight;
         textx = margin+cellMargin;
 
-        contentStream.setFont(PDType1Font.HELVETICA,11);
         apps.each {
 
+            contentStream.setFont(PDType1Font.HELVETICA,9);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(textx,texty);
             contentStream.drawString(it.name);
             contentStream.endText();
             textx += colWidth;
 
+            contentStream.setFont(PDType1Font.HELVETICA,8);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(textx,texty);
             String desc = it.description
@@ -517,15 +518,30 @@ class AppRetailController {
             contentStream.endText();
             textx += colWidth;
 
-            contentStream.beginText();
-            contentStream.moveTextPositionByAmount(textx,texty);
-            String path = it.arenaPath
-            if (path == null) {
-                path = ""
-            }
-            contentStream.drawString(path);
-            contentStream.endText();
-            textx += colWidth;
+//            contentStream.setFont(PDType1Font.HELVETICA,6);
+//            contentStream.beginText();
+//            contentStream.moveTextPositionByAmount(textx,texty);
+//
+//            String path = it.arenaPath
+//            if (path == null) {
+//                path = ""
+//            } else {
+//                String str = ""
+//                StringTokenizer tokenizer = new StringTokenizer(path);
+//                float pos = texty
+//                while (tokenizer.hasMoreTokens())
+//                {
+//                    str = str + tokenizer.nextToken("/")
+//                    str += "\n"
+//                    contentStream.drawString(str);
+//                    pos = pos -5
+//                    contentStream.moveTextPositionByAmount(textx,(float)(pos));
+//                }
+//
+//            }
+//
+//            contentStream.endText();
+//            textx += colWidth;
 
             texty-=rowHeight;
             textx = margin+cellMargin;
