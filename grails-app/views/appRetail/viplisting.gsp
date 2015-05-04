@@ -45,7 +45,13 @@
                     <g:form name="print" action="renderFormPDF" method="POST">
                             <input type="hidden" name="select" value="vip"/>
                             <td width="25%">
-                                <g:select name="vipSelect" from="${Vip.findAll().sort()}" optionValue="name" optionKey="name" noSelection="['Topic': 'Choisir une vip']" />
+                                <select name="vipSelect">
+                                    <option value="">Choisir une VIP</option>
+                                    <g:each in="${Vip.findAll()}" var="vip">
+                                        <option value="${vip.technicalName}">${vip.name}_${vip?.type?.toUpperCase()}</option>
+                                    </g:each>
+                                </select>
+                                %{--<g:select name="vipSelect" from="${Vip.findAll()}" optionValue="name" optionKey="name" noSelection="['Topic': 'Choisir une vip']" />--}%
                             </td>
                             <td width="25%">
                                 <button type="submit" class="btn btn-success">Imprimer</button>

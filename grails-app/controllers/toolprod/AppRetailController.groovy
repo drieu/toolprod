@@ -363,7 +363,7 @@ class AppRetailController {
      * Render a pdf with a list of applications.
      */
     def renderFormPDF(){
-
+        log.info("renderFormPDF()")
         List<App> apps = new ArrayList<>()
         String title = ""
 
@@ -376,7 +376,7 @@ class AppRetailController {
 
         } else if (param.equals("vip")) {
             final String nameParam = params.get("vipSelect")
-            Vip vip= Vip.findByName(nameParam)
+            Vip vip= Vip.findByTechnicalName(nameParam)
             apps=getApps(vip.servers)
             title= "Liste de toutes les applications sur " + nameParam
 
@@ -399,8 +399,8 @@ class AppRetailController {
         if (apps.size() > APPNUMBER_BY_SIZE) {
             pageNumber = apps.size()/APPNUMBER_BY_SIZE + 1
         }
-        log.info("Apps size :" + apps.size())
-        log.info("Page number :" + pageNumber)
+        log.debug("Apps size :" + apps.size())
+        log.debug("Page number :" + pageNumber)
 
         int countApp = 0
         int max = APPNUMBER_BY_SIZE
@@ -443,11 +443,13 @@ class AppRetailController {
         List<App> apps = new ArrayList()
         if (servers != null) {
             for(Server server : servers ) {
-                log.info("Server name :" + server?.name)
+                log.debug("Server name :" + server?.name)
                 for(String name : server.linkToApps) {
                     App app = App.findByName(name)
-                    if (app != null && !apps.contains(app)) {
-                        apps.add(app)
+                    if (app != null) {
+                        if (!apps.contains(app)) {
+                            apps.add(app)
+                        }
                     } else {
                         log.error("Nothing found for " + name)
                     }
