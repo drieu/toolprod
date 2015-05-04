@@ -24,6 +24,7 @@
                 <tr height="35px">
                     <td width="25%">
                         <g:form name="print" action="renderFormPDF" method="POST">
+                            <input type="hidden" name="select" value="server"/>
                             <select name="serverSelect">
                                 <option value="">Choisir une machine web</option>
                                 <g:each in="${servers}" var="server">
@@ -40,16 +41,17 @@
                     <td></td>
                     <td></td>
                 </tr>
-                %{--<tr height="35px">--}%
-                    %{--<g:form name="print" action="renderFormPDF" method="POST">--}%
-                            %{--<td width="25%">--}%
-                                %{--<g:select name="machineSelect" from="${toolprod.Machine.findAll().sort()}" optionValue="name" optionKey="name" noSelection="['Topic': 'Choisir une machine']" />--}%
-                            %{--</td>--}%
-                            %{--<td width="25%">--}%
-                                %{--<button type="submit" class="btn btn-success">Imprimer</button>--}%
-                            %{--</td>--}%
-                    %{--</g:form>--}%
-                %{--</tr>--}%
+                <tr height="35px">
+                    <g:form name="print" action="renderFormPDF" method="POST">
+                            <input type="hidden" name="select" value="vip"/>
+                            <td width="25%">
+                                <g:select name="vipSelect" from="${Vip.findAll().sort()}" optionValue="name" optionKey="name" noSelection="['Topic': 'Choisir une vip']" />
+                            </td>
+                            <td width="25%">
+                                <button type="submit" class="btn btn-success">Imprimer</button>
+                            </td>
+                    </g:form>
+                </tr>
             </table>
         </div>
      </g:form>

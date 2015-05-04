@@ -273,8 +273,7 @@ class AppRetailController {
     }
 
     /**
-     * List Vip, Server and app
-     * @return
+     * Html print page.
      */
     def viplisting() {
 
@@ -360,36 +359,37 @@ class AppRetailController {
         return printAppBean
     }
 
+    /**
+     * Render a pdf with a list of applications.
+     */
     def renderFormPDF(){
 
         List<App> apps = new ArrayList<>()
         String title = ""
-        String param = params.get("serverSelect").toString()
+
+        String param = params.get("select").toString()
+        log.info("hidden value select is :" + param)
+
         if (param == null) {
-            log.info("Find all app")
             title= "Liste de toutes les applications"
             apps = App.findAll()
-        } else {
-            log.info("Find all app for machineHostName:" + param)
 
-            List<Server> servers = Server.findAllByMachineHostName(param)
-            for(Server server : servers) {
-                log.info("Server name :" + server?.name)
-                for(String name : server.linkToApps) {
-                    App app = App.findByName(name)
-                    if (app != null) {
-                        apps.add(app)
-                    } else {
-                        log.error("Nothing found for " + name)
-                    }
-                }
-            }
-            title= "Liste de toutes les applications sur " + param
-            title += " (" + apps.size() + ")"
+        } else if (param.equals("vip")) {
+            final String nameParam = params.get("vipSelect")
+            Vip vip= Vip.findByName(nameParam)
+            apps=getApps(vip.servers)
+            title= "Liste de toutes les applications sur " + nameParam
+
+        } else if (param.equals("server")) {
+            final String nameParam = params.get("serverSelect")
+            List<Server> servers = Server.findAllByMachineHostName(nameParam)
+            apps=getApps(servers)
+            title= "Liste de toutes les applications sur " + nameParam
+
         }
+        title += " (" + apps.size() + ")"
 
-
-
+        // Create pdf document
         PDDocument document = new PDDocument();
         PDPage page = new PDPage();
         PDPageContentStream contentStream;
@@ -399,7 +399,7 @@ class AppRetailController {
         if (apps.size() > APPNUMBER_BY_SIZE) {
             pageNumber = apps.size()/APPNUMBER_BY_SIZE + 1
         }
-
+        log.info("Apps size :" + apps.size())
         log.info("Page number :" + pageNumber)
 
         int countApp = 0
@@ -409,7 +409,6 @@ class AppRetailController {
         }
         if (apps.size() > 0) {
             for (int i=1; i<=pageNumber; i++) {
-                log.info("countApp :" + countApp)
                 page = new PDPage();
                 contentStream = new PDPageContentStream(document, page);
 
@@ -419,9 +418,14 @@ class AppRetailController {
                 }
 
                 drawTable(page, contentStream, 700, 100, apps[countApp..max], title);
-                countApp = countApp + APPNUMBER_BY_SIZE + 1
                 contentStream.close();
                 document.addPage(page);
+                int num = countApp + APPNUMBER_BY_SIZE + 1
+                if (num < apps.size()) {
+                    countApp = countApp + APPNUMBER_BY_SIZE + 1
+                } else {
+                    break;
+                }
             }
         }
 
@@ -431,6 +435,31 @@ class AppRetailController {
     }
 
     /**
+     * Get a list of App for servers
+     * @param servers
+     * @return
+     */
+    private List<App> getApps(List<Server> servers) {
+        List<App> apps = new ArrayList()
+        if (servers != null) {
+            for(Server server : servers ) {
+                log.info("Server name :" + server?.name)
+                for(String name : server.linkToApps) {
+                    App app = App.findByName(name)
+                    if (app != null && !apps.contains(app)) {
+                        apps.add(app)
+                    } else {
+                        log.error("Nothing found for " + name)
+                    }
+                }
+            }
+        }
+        return apps
+
+    }
+
+    /**
+     * Draw pdf table with list of App.
      * @param page
      * @param contentStream
      * @param y the y-coordinate of the first row
@@ -443,7 +472,7 @@ class AppRetailController {
                                  List<App> apps, String title) throws IOException {
         final int rows = apps.size() + 1;
         final int cols = 2;
-        final float rowHeight = 30f;
+        final float rowHeight = 20f;
         final float tableWidth = page.findMediaBox().getWidth()-(2*margin);
         final float tableHeight = rowHeight * rows;
         final float colWidth = tableWidth/(float)cols;
