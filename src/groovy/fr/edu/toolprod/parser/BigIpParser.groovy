@@ -1,6 +1,7 @@
 package fr.edu.toolprod.parser
 
 import org.apache.commons.logging.LogFactory
+import toolprod.App
 import toolprod.Server
 import toolprod.Vip
 
@@ -89,6 +90,13 @@ class BigIpParser extends Parser{
                             server.machineHostName = serverName
                             server.serverType = Server.TYPE.APACHE
                             server.save(failOnError: true)
+                        } else {
+                            for(String appName : server.linkToApps) {
+                                App app = App.findByName(appName)
+                                if (app != null) {
+
+                                }
+                            }
                         }
 
                         if (vip.servers == null) {

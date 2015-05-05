@@ -72,6 +72,10 @@ class AdminController {
         return [ machinesGroups: machinesGroups ]
     }
 
+    /**
+     * Show web page to init VIP.
+     * @return
+     */
     def initPortals() {
         log.info("initPortals()")
         flash.clear()
