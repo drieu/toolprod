@@ -5,11 +5,7 @@ import org.apache.commons.logging.LogFactory
 import toolprod.App
 
 /**
- * Created with IntelliJ IDEA.
- * User: drieu
- * Date: 17/04/15
- * Time: 16:58
- * To change this template use File | Settings | File Templates.
+ * Parse ARENA file and extract description, arena path ...
  */
 class ArenaParser extends Parser{
 
@@ -30,6 +26,8 @@ class ArenaParser extends Parser{
 
 
     private BufferedReader br;
+
+
     /**
      * Constructor.
      * @param input
@@ -56,7 +54,7 @@ class ArenaParser extends Parser{
                 if (line.startsWith("<Data>")) {
                     String parseResult = extractData(line)
                     if( !parseResult.isEmpty()) {
-                        //log.info("parseResult:" + parseResult)
+                        log.debug("parseResult:" + parseResult)
                         if (parseResult.startsWith("/") && !parseResult.startsWith("/redirectionhub/")) {
                             parseResult = parseResult.substring(1, parseResult.length())
                             int pos = parseResult.indexOf("/")
@@ -65,13 +63,17 @@ class ArenaParser extends Parser{
                             }
                             //log.info("parse() found appName in xml file appName:" + parseResult)
                             arenaBean.appName = parseResult
+
                         } else if(parseResult.startsWith("/redirectionhub/")) { ///redirectionhub/redirect.jsp?applicationname=itsm7pro
                             int pos = parseResult.indexOf("applicationname=")
                             if (pos > 0) {
+                                arenaBean.fimPath = parseResult
                                 parseResult = parseResult.substring(pos+"applicationname=".length(), parseResult.length())
                                 arenaBean.appName = parseResult.trim()
+
                                 log.info("parse() found appName in xml file appName:" + parseResult)
                             }
+
                         } else {
                             arenaBean.arenaPath = arenaBean.arenaPath + "/"
                             arenaBean.arenaPath = arenaBean.arenaPath + parseResult
@@ -93,7 +95,21 @@ class ArenaParser extends Parser{
                                 String desc = path.substring(pos + 1, path.length())
                                 app.description = desc
                                 app.save(failOnError: true)
+                            } else {
+                                // Save application only for FIM Application
+                                if (!arenaBean.fimPath.isEmpty()) {
+                                    app = new App()
+                                    app.name = arenaBean.appName
+                                    String path = arenaBean.arenaPath
+                                    app.arenaPath = path
+                                    int pos = path.lastIndexOf("/")
+                                    String desc = path.substring(pos + 1, path.length())
+                                    app.description = desc + " ( FIM )"
+                                    app.urls.add(arenaBean.fimPath)
+                                    app.save(failOnError: true)
+                                }
                             }
+                            result = result + " " + arenaBean.appName
                             log.info("parse() search for application END")
                         }
                     } else {

@@ -15,4 +15,9 @@ class ArenaBean {
      */
     String arenaPath = ""
 
+    /**
+     * Urls path FIM ( exemple : /redirectionhub/redirect.jsp?applicationname=... )
+     */
+    String fimPath = ""
+
 }

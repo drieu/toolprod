@@ -14,7 +14,6 @@
 
     <asset:javascript src="jquery.dataTables.min.js"/>
 
-
     <asset:javascript src="application.js"/>
     <asset:stylesheet href="bootstrap/bootstrap.css"/>
     <asset:javascript src="bootstrap/bootstrap.js"/>
@@ -48,7 +47,6 @@
                             </tr>
                         </tbody>
                     </table>
-                    %{--<export:formats />--}%
                 </div>
             </div>
         </div>
@@ -76,7 +74,7 @@
             "columns": [
                 { "title": "Nom" },
                 { "title": "Vip" },
-                { "title": "Url" }
+                { "title": "Serveurs" }
             ]
         });
     });

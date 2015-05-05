@@ -135,7 +135,7 @@ class AdminController {
     }
 
     /**
-     * Init data from the ARENA xml files
+     * Init data from the ARENA xml files .
      */
     def initFromArena() {
         log.info("initFromArena()")
@@ -147,6 +147,10 @@ class AdminController {
                 log.debug("init() file to parse:" + file.originalFilename)
                 Parser parser = new ArenaParser(file.inputStream)
                 parser.parse()
+                message = parser.result
+                if (message.isEmpty()) {
+                    message += " 0 application initialisée."
+                }
             }
             if (bResult) {
                 flash.message = "SUCCESS : " + message

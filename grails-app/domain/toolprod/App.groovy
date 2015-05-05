@@ -7,8 +7,6 @@ import org.apache.commons.logging.LogFactory
  */
 class App {
 
-    //static searchable = true
-
     /**
      * Application name.
      */
@@ -35,8 +33,10 @@ class App {
      */
     String arenaPath
 
+    /**
+     * TreeNode to store servers tree.
+     */
     TreeNode node
-
 
     /**
      * Server list.
@@ -44,9 +44,11 @@ class App {
     List<Server> servers = []
     static hasMany = [servers : Server, portals : Portal, urls : String]
 
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
 
-    private static final String  EMPTY = "";
 
     static mapping = {
         sort "name":"asc";
@@ -59,6 +61,11 @@ class App {
         arenaPath(nullable: true, size:0..200)
     }
 
+    /**
+     * Add a server to List<Server>.
+     * @throws IllegalArgumentException
+     * @param server
+     */
     def addServer(Server server) {
 
         if (server == null) {
