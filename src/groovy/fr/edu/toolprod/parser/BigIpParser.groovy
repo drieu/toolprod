@@ -94,7 +94,11 @@ class BigIpParser extends Parser{
                             for(String appName : server.linkToApps) {
                                 App app = App.findByName(appName)
                                 if (app != null) {
-
+                                   if (!app.vips.contains(vip.technicalName)) {
+                                       log.info("Update vip list for app:" + appName)
+                                       app.vips.add(vip.technicalName)
+                                       app.save(failOnError: true)
+                                   }
                                 }
                             }
                         }

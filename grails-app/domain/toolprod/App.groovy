@@ -26,7 +26,7 @@ class App {
     /**
      * Portail in which app will be shown.
      */
-    List<Portal> portals = []
+    List<String> vips = []
 
     /**
      * Save ARENA path
@@ -42,7 +42,7 @@ class App {
      * Server list.
      */
     List<Server> servers = []
-    static hasMany = [servers : Server, portals : Portal, urls : String]
+    static hasMany = [servers : Server, vips: String, urls : String]
 
     /**
      * Logger.
@@ -92,7 +92,7 @@ class App {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", urls=" + urls +
-                ", portals=" + portals +
+                ", vips=" + vips +
                 ", node=" + node +
                 ", servers=" + servers +
                 ", version=" + version +

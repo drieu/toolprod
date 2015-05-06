@@ -8,7 +8,6 @@ import org.apache.commons.logging.LogFactory
 import toolprod.App
 import toolprod.Status
 import toolprod.Machine
-import toolprod.Portal
 import toolprod.Server
 
 /**
@@ -146,13 +145,13 @@ class Data {
             myApp.addServer(server)
         }
 
-        log.debug("saveApacheApp() add portals ")
-        for (String portalName: appBean.portals) {
-            Portal portal = Portal.findByName(portalName)
-            if (portal != null && !myApp.portals.contains(portal)) {
-                myApp.portals.add(portal)
-            }
-        }
+//        log.debug("saveApacheApp() add vips ")
+//        for (String portalName: appBean.vips) {
+//            Portal portal = Portal.findByName(portalName)
+//            if (portal != null && !myApp.vips.contains(portal)) {
+//                myApp.vips.add(portal)
+//            }
+//        }
 
         log.info("saveApacheApp() save tree")
         TreeNodeData treeNodeData = new ApacheTreeNodeData(suffixNodeName)
@@ -174,15 +173,15 @@ class Data {
             app.urls.add(appBean.serverUrl)
             app.save(failOnError: true,flush:true)
         }
-        //Save portals in application
-        for (String str: appBean.portals) {
-            if (!app.portals.contains(str)) {
-                Portal portal = Portal.findByName(str)
-                if (portal != null && !app.portals.contains(portal)) {
-                    app.portals.add(portal)
-                }
-            }
-        }
+//        //Save vips in application
+//        for (String str: appBean.vips) {
+//            if (!app.vips.contains(str)) {
+//                Portal portal = Portal.findByName(str)
+//                if (portal != null && !app.vips.contains(portal)) {
+//                    app.vips.add(portal)
+//                }
+//            }
+//        }
 
         app.save(failOnError: true,flush:true)
 

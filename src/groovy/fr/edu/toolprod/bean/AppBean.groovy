@@ -36,11 +36,6 @@ class AppBean {
     String serverPort = ""
 
     /**
-     * Portal list.
-     */
-    List<String> portals = new ArrayList<>()
-
-    /**
      * Weblogic list.
      */
     List<String> weblos = new ArrayList<>()
@@ -117,7 +112,6 @@ class AppBean {
                 ", serverUrl='" + serverUrl + '\'' +
                 ", serverUrls=" + serverUrls +
                 ", serverPort='" + serverPort + '\'' +
-                ", portals=" + portals +
                 ", weblos=" + weblos +
                 ", appServer='" + appServer + '\'' +
                 ", appPort='" + appPort + '\'' +

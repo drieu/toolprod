@@ -54,17 +54,6 @@
         <div class="panel-body">
             <table class="table table-hover table-striped">
                 <caption>
-                    Liste des Portails en base
-                </caption>
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                    </tr>
-                </thead>
-            </table>
-            <br/>
-            <table class="table table-hover table-striped">
-                <caption>
                     Liste des groupes de machines
                 </caption>
                 <thead>

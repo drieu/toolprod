@@ -1,18 +1,11 @@
 package toolprod
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import fr.edu.toolprod.bean.AppBean
-import fr.edu.toolprod.bean.PrintAppBean
 import fr.edu.toolprod.bean.ServerBean
 import fr.edu.toolprod.gson.GSONBean
 import fr.edu.toolprod.gson.GSONParser
-import grails.converters.JSON
-import org.apache.commons.lang.StringEscapeUtils
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
-import org.apache.pdfbox.pdmodel.font.PDFont
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 
 class AppRetailController {
@@ -181,8 +174,13 @@ class AppRetailController {
             }
             String portals = ""
             String vips = ""
-            for( String portal : p.portals) {
-                vips += p.portals.toString()
+            for( String portal : p.vips) {
+                Vip vip = Vip.findByTechnicalName(portal)
+                if (vip != null) {
+                    String vipname = vip?.name + "_" + vip?.type
+                    vips += vipname
+                    vips += " "
+                }
             }
 
             data += "['" + link + "','" + vips + "','" + servs + "'],"
@@ -190,7 +188,7 @@ class AppRetailController {
         data += "\n];"
         log.info(data)
         def count = App.findAll().size()
-        //return [appBeans:appBeans, portals:portals, portalChoice:portalChoice, data:data]
+        //return [appBeans:appBeans, vips:vips, portalChoice:portalChoice, data:data]
         return [count:count, data:data]
     }
 
@@ -276,26 +274,26 @@ class AppRetailController {
     }
 
 
-    def getPrintAppBean(AppBean appBean) {
-        PrintAppBean printAppBean = new PrintAppBean()
-        printAppBean.name = appBean.name
-
-
-        for (String p : appBean.portals) {
-            if (p != null) {
-                printAppBean.portals += p
-                printAppBean.portals += " "
-            }
-        }
-
-        for(String url: appBean.serverUrls) {
-            if (url != null) {
-                printAppBean.urls += url
-                printAppBean.urls += "\n"
-            }
-        }
-        return printAppBean
-    }
+//    def getPrintAppBean(AppBean appBean) {
+//        PrintAppBean printAppBean = new PrintAppBean()
+//        printAppBean.name = appBean.name
+//
+//
+////        for (String p : appBean.vips) {
+////            if (p != null) {
+////                printAppBean.vips += p
+////                printAppBean.vips += " "
+////            }
+////        }
+//
+//        for(String url: appBean.serverUrls) {
+//            if (url != null) {
+//                printAppBean.urls += url
+//                printAppBean.urls += "\n"
+//            }
+//        }
+//        return printAppBean
+//    }
 
     /**
      * Render a pdf with a list of applications.
