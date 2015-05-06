@@ -110,11 +110,10 @@ environments {
     }
     production {
         grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
         // Set level for all application artifacts
         log4j = {
-            info "grails.app"
-            info "fr.edu.toolprod"
+            error "grails.app"
+            error "fr.edu.toolprod"
         }
     }
 }
