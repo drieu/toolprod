@@ -13,8 +13,9 @@ class Server implements Comparable{
      */
     String name
 
-
-
+    /**
+     * Server port number.
+     */
     Integer portNumber
 
     /**
@@ -34,31 +35,52 @@ class Server implements Comparable{
     List<String> modules = []
     static hasMany = [ linkToApps: String, modules: String]
 
+    /**
+     * TYPE of server ( apache, weblogic )
+     */
     TYPE serverType
 
     enum TYPE {
         APACHE, WEBLOGIC
     }
 
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
 
+    /**
+     *  DEFAULT_PORT.
+     */
     private static final int DEFAULT_PORT = 80
 
-    Server(String name, String portNumber, String machineHostName) {
-        this.name = name
-        if (portNumber == null) {
-            portNumber = "80"
-        } else if ( portNumber.isEmpty()) {
-            portNumber = "80"
-        }
-        this.portNumber = portNumber.toInteger()
-        this.machineHostName = machineHostName
-    }
+    /**
+     *
+     */
+    private static final String DEFAULT_IP = "127.0.0.1"
+
 
     static constraints = {
         name()
-        portNumber(defaultValue:80)
-        machineHostName(defaultValue:"127.0.0.1")
+        portNumber(defaultValue:DEFAULT_PORT)
+        machineHostName(defaultValue:DEFAULT_IP)
+    }
+
+    /**
+     * Constructor.
+     * @param name
+     * @param portNumber
+     * @param machineHostName
+     */
+    Server(String name, String portNumber, String machineHostName) {
+        this.name = name
+        if (portNumber == null) {
+            portNumber = Integer.toString(DEFAULT_PORT)
+        } else if ( portNumber.isEmpty()) {
+            portNumber = Integer.toString(DEFAULT_PORT)
+        }
+        this.portNumber = portNumber.toInteger()
+        this.machineHostName = machineHostName
     }
 
     @Override
@@ -103,7 +125,8 @@ class Server implements Comparable{
     }
 
     /**
-     * Listen in apache conf.
+     * Get port number ( Listen line in apache conf ).
+     * return DEFAULT_PORT=80 if no values set.
      */
     Integer getPortNumber() {
         int portDefault = this.portNumber
@@ -112,7 +135,8 @@ class Server implements Comparable{
         }
         return portDefault
     }
-/**
+
+    /**
      * Add an application to linkapps
      * @param appName application name.
      */
@@ -147,26 +171,4 @@ class Server implements Comparable{
         return server
     }
 
-    public static String getNodesPath() {
-        log.info("getNodesPath()")
-        String result = ""
-        List<TreeNode> nodes = TreeNode.findAllByNodeData(this)
-        for(TreeNode node : nodes) {
-
-            if (node != null) {
-                result += node.nodeData?.name
-                boolean bParent = true
-                TreeNode parent = node.parent
-                while(bParent == true) {
-                    result += "->" + parent?.nodeData?.name
-                    if (parent != null) {
-                        parent = parent.parent
-                    } else {
-                        bParent = false
-                    }
-                }
-            }
-        }
-        return result;
-    }
 }
