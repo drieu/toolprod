@@ -90,9 +90,13 @@ class ArenaParser extends Parser{
                                 log.info("Save ARENA path for application :" + arenaBean?.arenaPath)
 
                                 String path = arenaBean.arenaPath
+                                path = path.replaceAll("é","e")
+                                path = path.replaceAll("è","e")
                                 app.arenaPath = path
                                 int pos = path.lastIndexOf("/")
                                 String desc = path.substring(pos + 1, path.length())
+                                desc=desc.replaceAll("é","e")
+                                desc=desc.replaceAll("è","e")
                                 app.description = desc
                                 app.save(failOnError: true)
                             } else {
@@ -101,9 +105,13 @@ class ArenaParser extends Parser{
                                     app = new App()
                                     app.name = arenaBean.appName
                                     String path = arenaBean.arenaPath
+                                    path = path.replaceAll("é","e")
+                                    path = path.replaceAll("è","e")
                                     app.arenaPath = path
                                     int pos = path.lastIndexOf("/")
                                     String desc = path.substring(pos + 1, path.length())
+                                    desc=desc.replaceAll("é","e")
+                                    desc=desc.replaceAll("è","e")
                                     app.description = desc + " ( FIM )"
                                     app.urls.add(arenaBean.fimPath)
                                     app.save(failOnError: true)
