@@ -95,7 +95,7 @@ class HttpdParser {
 
             br = new BufferedReader(new InputStreamReader(file.inputStream))
             while ((strLine = br.readLine()) != null) {
-
+                strLine = strLine.trim()
                 if (strLine.startsWith(SERVER_NAME)) { // If ServerName
                     serverBean.name = XmlParser.parseServerName(strLine)
 
@@ -155,7 +155,6 @@ class HttpdParser {
                     }
 
                 } else if (strLine.startsWith("</Location>")) { // Location is parsed only for WebLogicCluster
-
                     if (!weblos.isEmpty()) {
                         AppBean appBean = getAppBean(name, serverBean)
                         appBean.weblos = weblos
@@ -203,6 +202,7 @@ class HttpdParser {
                     for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
                         weblos.add(str);
                     }
+
                     if ((WebLogicHost != null) && !WebLogicHost.isEmpty() && (WebLogicPort != null) && !WebLogicPort.isEmpty()) {
                         String str = ""
                         if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
@@ -210,7 +210,10 @@ class HttpdParser {
                         } else {
                             str = WebLogicHost + ":80" // TODO default
                         }
+                        log.info("Add str:" + str)
                         weblos.add(str)
+                        log.info("==>WebLogicHost:" + WebLogicHost)
+                        log.info("==>WebLogicPort:" + WebLogicPort)
                         WebLogicHost = EMPTY
                         WebLogicPort = EMPTY
                     }

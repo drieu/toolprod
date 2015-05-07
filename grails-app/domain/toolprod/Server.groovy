@@ -129,9 +129,12 @@ class Server implements Comparable{
      * return DEFAULT_PORT=80 if no values set.
      */
     Integer getPortNumber() {
-        int portDefault = this.portNumber
+
+        int portDefault
         if (this.portNumber == null) {
             portDefault = DEFAULT_PORT
+        } else {
+            portDefault = this.portNumber
         }
         return portDefault
     }
@@ -161,7 +164,7 @@ class Server implements Comparable{
         log.info("saveServer() Save serverBean:" + serverBean)
         Server server = Server.findByMachineHostNameAndPortNumber(serverBean.machineHostName, serverBean.portNumber)
         if (server == null) {
-            server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber.toInteger(), serverType: Server.TYPE.APACHE)
+            server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
             server.modules = serverBean.modules;
             server.save(failOnError: true, flush:true)
 
