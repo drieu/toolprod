@@ -16,27 +16,79 @@ import toolprod.TreeNode
  */
 class HttpdParser {
 
+/**
+ * Constants
+ */
 
     private static final String EMPTY = ""
 
-    private static final String PROXY_PASS = "ProxyPass"
+    private static final String COLON = ":"
+
+    private static final String PERIOD = "."
+
+    private static final String HASH = "#"
+
     private static final String SPACE = ' '
+
+    private static final String DEFAULT_PORT = "80"
+
+    private static final String PROXY_PASS = "ProxyPass"
+
     private static final String SERVER_MODULE = "LoadModule"
+
     private static final String SERVER_NAME = "ServerName"
+
     private static final String SERVER_PORT = "Listen"
+
+    private static final String WEBLOGIC_HOST = "WebLogicHost"
+
+    private static final String WEBLOGIC_PORT = "WebLogicPort"
+
+    private static final String LOCATION_START = "<Location"
+
+    private static final String LOCATION_END = "</Location>"
+
+    private static final String LOCATIONMATCH_START = "<LocationMatch"
+
+    private static final String LOCATIONMATCH_END = "</LocationMatch>"
+
+    private static final String VIRTUALHOST_START = "<VirtualHost"
 
     private static final log = LogFactory.getLog(this)
 
+/**
+ * Variables
+ */
+
+    /**
+     * Machine for the httpd.conf parsed.
+     */
     private Machine machine
 
+    /**
+     * httpd.conf File.
+     */
     private def file
 
+    /**
+     * Use to read file.
+     */
     private BufferedReader br;
 
-    private String result = ""
+    /**
+     * Result of parsing.
+     */
+    private String result = EMPTY
 
+    /**
+     * Result of parsing when closing file.
+     */
     private String closeResult = EMPTY
 
+    /**
+     * Getter.
+     * @return
+     */
     String getResult() {
         return result
     }
@@ -70,7 +122,7 @@ class HttpdParser {
 
     /**
      * Main method for parse a httpd file.
-     * @return bResult true if OK and false if error. ( error message is stored in result private attribute.
+     * @return bResult true if OK and false if error. ( error message is stored in result private attribute ).
      */
     def parse() {
         boolean bResult = true;
@@ -85,7 +137,6 @@ class HttpdParser {
         try {
 
             boolean bLocationTag = false; // identify begin and end of xml tag Location
-            boolean bLocationMatchTag = false; // identify begin and end of xml Match tag Location
 
             String name = EMPTY
             String WebLogicHost = EMPTY
@@ -113,26 +164,25 @@ class HttpdParser {
                     if (appBean != null) {
                         appBeans.add(appBean);
                     }
-                } else if (( !strLine.startsWith("#") && strLine.contains("WebLogicHost"))) { // If WebLogicHost
+                } else if (( !strLine.startsWith(HASH) && strLine.contains(WEBLOGIC_HOST))) { // If WebLogicHost
                     WebLogicHost = XmlParser.parseWebLogicHost(strLine)
 
-                } else if (( !strLine.startsWith("#") && strLine.contains("WebLogicPort"))) { // If WebLogicPort
+                } else if (( !strLine.startsWith(HASH) && strLine.contains(WEBLOGIC_PORT))) { // If WebLogicPort
                     WebLogicPort = XmlParser.parseWebLogicPort(strLine)
 
-                } else if ( (strLine.startsWith("<LocationMatch" + SPACE))) {// If LocationMatch
+                } else if ( (strLine.startsWith(LOCATIONMATCH_START + SPACE))) {// If LocationMatch
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)
 
-                    //extract name for Location
-                    name = XmlParser.parseLocationName(strLine)
+                    name = XmlParser.parseLocationName(strLine) //extract name for Location
                     if (name.isEmpty()) {
                         name = getNameFromFileName()
                     }
                     if (xmlStart != null) {
-                        bLocationMatchTag = true
+                        bLocationTag = true
                     }
 
-                } else if (strLine.startsWith("</LocationMatch>")) {  // LocationMatch is parsed only for WebLogicCluster
+                } else if (strLine.startsWith(LOCATIONMATCH_END)) {  // LocationMatch is parsed only for WebLogicCluster
                     if (!weblos.isEmpty()) {
                         AppBean appBean = getAppBean(name, serverBean)
                         appBean.weblos = weblos
@@ -141,12 +191,11 @@ class HttpdParser {
                     weblos = new ArrayList<>()
                     bLocationTag = false
 
-                } else if ( (strLine.startsWith("<Location" + SPACE))) { // If Location
+                } else if ( (strLine.startsWith(LOCATION_START + SPACE))) { // If Location
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)
 
-                    //extract name for Location
-                    name = XmlParser.parseLocationName(strLine)
+                    name = XmlParser.parseLocationName(strLine) //extract name for Location
                     if (name.isEmpty()) {
                         name = getNameFromFileName()
                     }
@@ -154,7 +203,7 @@ class HttpdParser {
                         bLocationTag = true
                     }
 
-                } else if (strLine.startsWith("</Location>")) { // Location is parsed only for WebLogicCluster
+                } else if (strLine.startsWith(LOCATION_END)) { // Location is parsed only for WebLogicCluster
                     if (!weblos.isEmpty()) {
                         AppBean appBean = getAppBean(name, serverBean)
                         appBean.weblos = weblos
@@ -164,10 +213,10 @@ class HttpdParser {
                     weblos = new ArrayList<>()
                     bLocationTag = false
 
-                } else if (strLine.startsWith("<VirtualHost")) {
+                } else if (strLine.startsWith(VIRTUALHOST_START)) {
                     AppBean appBean = new AppBean();
                     String strName = getNameFromFileName();
-                    int pos = strName.indexOf(".")
+                    int pos = strName.indexOf(PERIOD)
                     if (pos > 0) {
                         strName = strName.substring(pos + 1, strName.length())
                     }
@@ -176,44 +225,21 @@ class HttpdParser {
 
                 }
 
-                if (bLocationMatchTag) {
-
-                    for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
-                        weblos.add(str);
-                    }
-                    if ((WebLogicHost != null) && !WebLogicHost.isEmpty() && (WebLogicPort != null) && !WebLogicPort.isEmpty()) {
-                        String str = ""
-                        if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
-                            str = WebLogicHost + ":" + WebLogicPort
-                        } else {
-                            str = WebLogicHost + ":80" // TODO default
-                        }
-                        weblos.add(str)
-                        WebLogicHost = EMPTY
-                        WebLogicPort = EMPTY
-                    }
-
-                    log.debug("parse() weblos:" + weblos?.toString())
-                }
-
-
                 if (bLocationTag) {
-                    log.info("Location Tag:" + WebLogicHost + ":" + WebLogicPort)
+                    log.info("Location Tag:" + WebLogicHost + COLON + WebLogicPort)
                     for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
                         weblos.add(str);
                     }
 
                     if ((WebLogicHost != null) && !WebLogicHost.isEmpty() && (WebLogicPort != null) && !WebLogicPort.isEmpty()) {
-                        String str = ""
+                        String str
                         if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
-                            str = WebLogicHost + ":" + WebLogicPort
+                            str = WebLogicHost + COLON + WebLogicPort
                         } else {
-                            str = WebLogicHost + ":80" // TODO default
+                            str = WebLogicHost + COLON + DEFAULT_PORT // TODO default
                         }
-                        log.info("Add str:" + str)
+                        log.info("Add into weblos array : 'WebLogicHost:WebLogicPort' str=" + str)
                         weblos.add(str)
-                        log.info("==>WebLogicHost:" + WebLogicHost)
-                        log.info("==>WebLogicPort:" + WebLogicPort)
                         WebLogicHost = EMPTY
                         WebLogicPort = EMPTY
                     }
@@ -242,7 +268,7 @@ class HttpdParser {
             appBeans.add(appBean)
         }
 
-
+        // Save applications list.
         if (!data.save(serverBean, appBeans)) {
             bResult = false;
         }
@@ -251,6 +277,11 @@ class HttpdParser {
         return bResult
     }
 
+    /**
+     * Get the default name for an application  if it cannot be found.
+     * This will be the filename whithout httpd.conf.
+     * @return filename whithout httpd.conf.
+     */
     public String getNameFromFileName() {
         log.warn("getNameFromFileName() Name not found => Get the name in filename:" + file.originalFilename)
         //Get the name in filename
@@ -261,31 +292,18 @@ class HttpdParser {
         name
     }
 
+    /**
+     * Initialise an appBean with appName and serverBean
+     * @param appName application name.
+     * @param serverBean
+     * @return
+     */
     def getAppBean(String appName, ServerBean serverBean) {
         AppBean appBean = new AppBean(name:appName);
         appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, appName);
         return appBean
     }
 
-    def static parseLocationHostAndPort(String strLine) {
-
-        List<String> results = new ArrayList<>()
-        def weblogicHost
-        def tmpWeblogicHost = XmlParser.parseWebLogicHost(strLine)      // If WebLogicHost
-        if (!tmpWeblogicHost.isEmpty()) {
-            weblogicHost = tmpWeblogicHost
-        }
-
-        def tmpWeblogicPort = XmlParser.parseWebLogicPort(strLine)   // If WebLogicPort
-        if ((tmpWeblogicPort != null) && (weblogicHost != null)) {
-            if (!tmpWeblogicPort.isEmpty() && !weblogicHost.isEmpty()) {
-                def str = weblogicHost + ":" + tmpWeblogicPort;
-                results.add(str);
-            }
-        }
-
-        return results
-    }
 
     /**
      * Status in apache configuration if ServerName is equals to machineName
@@ -333,7 +351,7 @@ class HttpdParser {
      * @return String result EMPTY if there is no error or a message.
      */
     def close() {
-        String result = ""
+        String result = EMPTY
         if (file != null) {
             try {
                 file.inputStream.close();

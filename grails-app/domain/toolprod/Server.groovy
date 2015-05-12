@@ -55,7 +55,7 @@ class Server implements Comparable{
     private static final int DEFAULT_PORT = 80
 
     /**
-     *
+     *  DEFAULT_IP.
      */
     private static final String DEFAULT_IP = "127.0.0.1"
 

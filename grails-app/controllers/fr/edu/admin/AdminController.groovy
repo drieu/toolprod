@@ -5,12 +5,8 @@ import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
 import fr.edu.toolprod.parser.HttpdParser
 import fr.edu.toolprod.parser.Parser
-import org.apache.commons.logging.LogFactory
 import org.springframework.web.multipart.MultipartHttpServletRequest
-import toolprod.Machine
 import toolprod.MachineGroup
-import toolprod.Portal
-import toolprod.Server
 import toolprod.Vip
 
 /**

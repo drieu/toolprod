@@ -1,5 +1,8 @@
 package toolprod
 
+/**
+ * Use for ldap feature to find the link between real name ( fullNameType ) and technical name ( shortNameType ).
+ */
 class MailType {
 
     /**

@@ -1,8 +1,8 @@
 package toolprod
 
-import com.tree.TreeNodeIter
-
-
+/**
+ * Treenode used to store link between servers and applications into a tree.
+ */
 class TreeNode  {
 
     String name
