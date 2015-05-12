@@ -119,29 +119,34 @@ class Data {
     def saveServer(ServerBean serverBean) {
         boolean bResult = true
         Integer port = DEFAULT_PORT
-        log.info("ServerBean info:" + serverBean.toString());
-
-        if ( (serverBean.name == null)) {
-            log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
-            Server searchServer = Server.findByMachineHostNameAndPortNumber(machine.name, port)
-            if (searchServer == null) {
-                server = new Server(machine.name, machine.name, port, Server.TYPE.APACHE )
-                server.save(failOnError: true,flush:true)
-            } else {
-                server = searchServer
-            }
-        } else {
-            server = Server.saveServer(serverBean)
-        }
-
-        if (server == null) {
-            result += "Import du fichier impossible: Pas de serveur web Apache associé au fichier."
+        if (serverBean == null) {
+            log.error("saveServer() : cannot saveServer because serverBean is null")
             bResult = false;
+
         } else {
-            if (!machine.getServers()?.contains(server)) {
-                machine.addServer(server);
-                machine.save(failOnError: true, flush: true);
-                log.info("Save OK server " + server.name + " in machine " + machine.name);
+            log.debug("saveServer() ServerBean info:" + serverBean.toString());
+            if ( (serverBean.name == null)) {
+                log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
+                Server searchServer = Server.findByMachineHostNameAndPortNumber(machine.name, port)
+                if (searchServer == null) {
+                    server = new Server(machine.name, machine.name, port, Server.TYPE.APACHE )
+                    server.save(failOnError: true,flush:true)
+                } else {
+                    server = searchServer
+                }
+            } else {
+                server = Server.saveServer(serverBean)
+            }
+
+            if (server == null) {
+                result += "Import du fichier impossible: Pas de serveur web Apache associé au fichier."
+                bResult = false;
+            } else {
+                if (!machine.getServers()?.contains(server)) {
+                    machine.addServer(server);
+                    machine.save(failOnError: true, flush: true);
+                    log.info("Save OK server " + server.name + " in machine " + machine.name);
+                }
             }
         }
         return bResult
