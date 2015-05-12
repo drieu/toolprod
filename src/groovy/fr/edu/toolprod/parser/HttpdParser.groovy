@@ -10,9 +10,6 @@ import toolprod.TreeNode
 
 /**
  * Parse httpd.conf file.
- * User: drieu
- * Date: 27/03/14
- * Time: 09:15
  */
 class HttpdParser {
 
@@ -53,6 +50,8 @@ class HttpdParser {
     private static final String LOCATIONMATCH_END = "</LocationMatch>"
 
     private static final String VIRTUALHOST_START = "<VirtualHost"
+
+    private static final String HTTPD_FILENAME_START = "httpd.conf."
 
     private static final log = LogFactory.getLog(this)
 
@@ -236,7 +235,7 @@ class HttpdParser {
                         if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
                             str = WebLogicHost + COLON + WebLogicPort
                         } else {
-                            str = WebLogicHost + COLON + DEFAULT_PORT // TODO default
+                            str = WebLogicHost + COLON + DEFAULT_PORT
                         }
                         log.info("Add into weblos array : 'WebLogicHost:WebLogicPort' str=" + str)
                         weblos.add(str)
@@ -286,8 +285,8 @@ class HttpdParser {
         log.warn("getNameFromFileName() Name not found => Get the name in filename:" + file.originalFilename)
         //Get the name in filename
         String name = file.originalFilename
-        if (name.contains("httpd.conf.")) {
-            name = name.substring("httpd.conf.".length(), name.length())
+        if (name.contains(HTTPD_FILENAME_START)) {
+            name = name.substring(HTTPD_FILENAME_START.length(), name.length())
         }
         name
     }
