@@ -15,6 +15,24 @@ import toolprod.Server
  */
 class Data {
 
+    /**
+     * Constant
+     */
+    private static final String EMPTY = ""
+
+    private static final String SPACE = ' '
+
+    private static final String COLON = ":"
+
+
+    /**
+     * Default port for Apache server.
+     */
+    private static final int DEFAULT_PORT = 80
+
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
 
     /**
@@ -31,12 +49,12 @@ class Data {
      * Suffix for a node name.
      * It solves problem with 2 parents with same childs (eg: wappsco1:10206 et wappsco2:10206 )
      */
-    private String suffixNodeName = ""
+    private String suffixNodeName = EMPTY
 
     /**
      * Result string to show on html page when it finished.
      */
-    def result = ''
+    def result = EMPTY
 
     Data(Machine machine) {
         this.machine = machine
@@ -100,14 +118,14 @@ class Data {
      */
     def saveServer(ServerBean serverBean) {
         boolean bResult = true
-        Integer port = 80
+        Integer port = DEFAULT_PORT
         log.info("ServerBean info:" + serverBean.toString());
 
         if ( (serverBean.name == null)) {
             log.warn("No existing server name found.Create Default server APACHE with name :" + machine.name)
             Server searchServer = Server.findByMachineHostNameAndPortNumber(machine.name, port)
             if (searchServer == null) {
-                server = new Server(name:machine.name, machineHostName: machine.name, portNumber: port, serverType: Server.TYPE.APACHE )
+                server = new Server(machine.name, machine.name, port, Server.TYPE.APACHE )
                 server.save(failOnError: true,flush:true)
             } else {
                 server = searchServer
@@ -145,18 +163,10 @@ class Data {
             myApp.addServer(server)
         }
 
-//        log.debug("saveApacheApp() add vips ")
-//        for (String portalName: appBean.vips) {
-//            Portal portal = Portal.findByName(portalName)
-//            if (portal != null && !myApp.vips.contains(portal)) {
-//                myApp.vips.add(portal)
-//            }
-//        }
-
         log.info("saveApacheApp() save tree")
         TreeNodeData treeNodeData = new ApacheTreeNodeData(suffixNodeName)
         treeNodeData.saveTree(myApp, appBean, server)
-        result = result + appBean.name + " "
+        result = result + appBean.name + SPACE
 
     }
 
@@ -173,15 +183,6 @@ class Data {
             app.urls.add(appBean.serverUrl)
             app.save(failOnError: true,flush:true)
         }
-//        //Save vips in application
-//        for (String str: appBean.vips) {
-//            if (!app.vips.contains(str)) {
-//                Portal portal = Portal.findByName(str)
-//                if (portal != null && !app.vips.contains(portal)) {
-//                    app.vips.add(portal)
-//                }
-//            }
-//        }
 
         app.save(failOnError: true,flush:true)
 
@@ -189,9 +190,10 @@ class Data {
         List<Server> webloServers = new ArrayList<>()
         for(String str : appBean.weblos) {
 
-            def params = str.tokenize(":")
+            def params = str.tokenize(COLON)
             log.info(params.toString())
-            if (params.size() == 2) {
+            final int nbParam = 2 // Exemple there are 2 params in line : web...:77777
+            if (params.size() == nbParam) {
                 String machinName = params.get(0)
                 String portTest = params.get(1)
 
@@ -230,7 +232,7 @@ class Data {
         log.info("saveWebloApp() save tree")
         TreeNodeData treeNodeData = new WeblogicTreeNodeData(suffixNodeName, webloServers)
         treeNodeData.saveTree(app, appBean, server)
-        result = result + appBean.name + " "
+        result = result + appBean.name + SPACE
     }
 
     def static saveCheck(String machineName, String fileName, String confServerName) {

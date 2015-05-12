@@ -83,6 +83,23 @@ class Server implements Comparable{
         this.machineHostName = machineHostName
     }
 
+    /**
+     * Constructor.
+     * @param name
+     * @param machineHostName
+     * @param portNumber
+     * @param serverType
+     */
+    Server(String name, String machineHostName, Integer portNumber, Server.TYPE serverType ){
+        this.name = name
+        if (portNumber == null) {
+            portNumber = DEFAULT_PORT
+        }
+        this.portNumber = portNumber
+        this.serverType = serverType
+        this.machineHostName = machineHostName
+    }
+
     @Override
     public String toString() {
         return "Server{" +
@@ -162,9 +179,13 @@ class Server implements Comparable{
             throw new IllegalArgumentException("Can't save a Server with a null serverBean !")
         }
         log.info("saveServer() Save serverBean:" + serverBean)
-        Server server = Server.findByMachineHostNameAndPortNumber(serverBean.machineHostName, serverBean.portNumber)
+        Integer port = 0
+        if (serverBean.portNumber != null) {
+           port = serverBean.portNumber.toInteger()
+        }
+        Server server = findByMachineHostNameAndPortNumber(serverBean.machineHostName, port)
         if (server == null) {
-            server = new Server(name: serverBean.name,machineHostName: serverBean.machineHostName, portNumber: serverBean.portNumber, serverType: Server.TYPE.APACHE)
+            server = new Server(serverBean.name, serverBean.machineHostName, port, Server.TYPE.APACHE)
             server.modules = serverBean.modules;
             server.save(failOnError: true, flush:true)
 
