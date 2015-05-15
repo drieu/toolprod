@@ -92,7 +92,7 @@ class ApacheTreeNodeData extends TreeNodeData {
                 this.saveServerChild(treeNodeParent, server)    // we are on the local server
             } else {
                 if (appBean.getAppPort() == null) {
-                    appBean.setAppPort(DEFAULT_PORT)
+                    appBean.appPort = DEFAULT_PORT.toString()
                 }
                 int portDefault = server.getPortNumber()
                 Server searchServer = Server.findByMachineHostNameAndPortNumber(server.machineHostName, portDefault)
@@ -138,7 +138,6 @@ class ApacheTreeNodeData extends TreeNodeData {
                     this.saveServerChild(node, server)
                 }
             }
-            //showNode(myApp)
         }
     }
 }

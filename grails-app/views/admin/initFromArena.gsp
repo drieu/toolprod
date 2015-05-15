@@ -44,6 +44,32 @@
             </div>
         </div>
         <div class="well well-lg">Ce menu permet de créer des applications de type VIP</div>
+
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title">Données chargées en base</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover table-striped">
+                    <caption>
+                        Liste des applications non importées.
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                    </tr>
+                    </thead>
+                    <g:each in="${errs}" var="err">
+                        <g:if test="${err != null}" >
+                            <tr>
+                                <td>${err}</td>
+                            </tr>
+                        </g:if>
+                    </g:each>
+                </table>
+
+            </div>
+        </div>
     </div>
 </body>
 </html>

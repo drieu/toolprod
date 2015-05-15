@@ -12,19 +12,22 @@ import fr.edu.toolprod.node.Node
  */
 abstract class TreeNodeData extends Node {
 
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
+
+    /**
+     * Constant.
+     */
+    private static final String EMPTY = ""
 
     /**
      * Suffix for a node name.
      * It solves problem with 2 parents with same childs (eg: wappsco1:10206 et wappsco2:10206 )
      */
-    protected String suffixNodeName = ""
+    protected String suffixNodeName = EMPTY
 
-
-    /**
-     * List of Weblogic server for an application.
-     */
-    List<Server> webloServers = new ArrayList<>()
 
     /**
      * Constructor.
@@ -32,21 +35,6 @@ abstract class TreeNodeData extends Node {
      */
     TreeNodeData(String suffix) {
         log.info("TreeNodeData() constructor with suffix:" + suffix)
-        if ( suffix != null ) {
-            if (!suffix.isEmpty()) {
-                suffixNodeName = suffix
-            }
-        }
-    }
-
-    /**
-     * Constructor.
-     * @param suffix
-     * @param weblos
-     */
-    TreeNodeData(String suffix, List<Server> weblos) {
-        log.info("TreeNodeData() constructor with suffix:" + suffix + " and weblos:" + weblos?.toString())
-        webloServers = weblos
         if ( suffix != null ) {
             if (!suffix.isEmpty()) {
                 suffixNodeName = suffix

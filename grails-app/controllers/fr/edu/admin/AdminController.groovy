@@ -1,5 +1,6 @@
 package fr.edu.admin
 
+import fr.edu.toolprod.bean.ArenaBean
 import fr.edu.toolprod.parser.ArenaParser
 import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
@@ -139,6 +140,7 @@ class AdminController {
      */
     def initFromArena() {
         log.info("initFromArena()")
+        List<String> errs = new ArrayList<>()
         flash.clear()
         if (request instanceof MultipartHttpServletRequest) {
             def message = ""
@@ -146,7 +148,8 @@ class AdminController {
             request.getFiles("files[]").each { file ->
                 log.debug("init() file to parse:" + file.originalFilename)
                 Parser parser = new ArenaParser(file.inputStream)
-                parser.parse()
+                List<ArenaBean> arenaBeans = parser.parse()
+                errs = parser.save(arenaBeans)
                 message = parser.result
                 if (message.isEmpty()) {
                     message += " 0 application initialisée."
@@ -158,6 +161,7 @@ class AdminController {
                 flash.error = "FAILED : " + message
             }
         }
+        [errs:errs]
     }
 
     /**

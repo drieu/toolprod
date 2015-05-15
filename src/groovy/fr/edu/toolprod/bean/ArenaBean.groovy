@@ -20,4 +20,9 @@ class ArenaBean {
      */
     String fimPath = ""
 
+    /**
+     * federation.
+     */
+    String federationPath = ""
+
 }
