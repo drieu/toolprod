@@ -240,10 +240,17 @@ class Data {
         result = result + appBean.name + SPACE
     }
 
+    /**
+     * Save the status of checking Apache Configuration file.
+     * @param machineName
+     * @param fileName
+     * @param confServerName
+     * @return
+     */
     def static saveCheck(String machineName, String fileName, String confServerName) {
         if (machineName != null && fileName != null && confServerName!= null) {
             Status check = Status.findOrCreateByMachineNameAndFileNameAndName(machineName, fileName, confServerName)
-            check.save(failOnError: true,flush:true)
+            check.save(failOnError: true, flush:true)
         }
     }
 

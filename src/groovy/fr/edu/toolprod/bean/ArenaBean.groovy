@@ -5,6 +5,8 @@ package fr.edu.toolprod.bean
  */
 class ArenaBean {
 
+    private static final String EMPTY = ""
+
     /**
      * Name of application found in xml file
      */
@@ -13,16 +15,16 @@ class ArenaBean {
     /**
      * Path in Arena portal
      */
-    String arenaPath = ""
+    String arenaPath = EMPTY
 
     /**
      * Urls path FIM ( exemple : /redirectionhub/redirect.jsp?applicationname=... )
      */
-    String fimPath = ""
+    String fimPath = EMPTY
 
     /**
      * federation.
      */
-    String federationPath = ""
+    String federationPath = EMPTY
 
 }

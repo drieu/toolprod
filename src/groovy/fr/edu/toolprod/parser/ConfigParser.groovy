@@ -9,8 +9,14 @@ import toolprod.MailType
  */
 class ConfigParser {
 
+    /**
+     * BufferedReader use for parse and close method.
+     */
     private BufferedReader br;
 
+    /**
+     * inputStream use for parse and close method.
+     */
     private InputStream inputStream
 
     /**
@@ -18,7 +24,53 @@ class ConfigParser {
      */
     private static final log = LogFactory.getLog(this)
 
+    /**
+     * EMPTY.
+     */
     private static final String EMPTY = ""
+
+    /**
+     * group_  ( e.g in line group_test=titi )
+     */
+    private static final String CONFIG_GROUP = "group_"
+
+    /**
+     * mail_type ( e.g : mail_type=intendance:int,assistant:ass,cdi:cdi,magasin:mag,coordination:coo,cio:cio,bts:bts )
+     */
+    private static final String MAIL_TYPE = "mail_type"
+
+    /**
+     *  ldap_user ( e.g:ldap_user=titi )
+     */
+    private static final String LDAP_USER = "ldap_user"
+
+    /**
+     * ldap_pwd ( e.g:ldap_user=password )
+     */
+    private static final String LDAP_PWD = "ldap_pwd"
+
+    /**
+     * ldap_host
+     */
+    private static final String LDAP_HOST = "ldap_host"
+
+    /**
+     * ldap_port
+     */
+    private static final String LDAP_PORT = "ldap_port"
+
+    /**
+     * Default name for LDAP connexion.It will be store in table?
+     */
+    private static final String LDAP_NAME = "M5"
+
+    /**
+     * =
+     */
+    private static final String EQUAL = "="
+
+    private static final String COLON = ":"
+
 
     /**
      * Store the string result for parsing (e.g: Nothing to parse for this file).
@@ -36,6 +88,10 @@ class ConfigParser {
      */
     Map<String, List<String>> machineByGroup = new HashMap<>()
 
+    /**
+     * Default Constructor.
+     * @param input
+     */
     ConfigParser(InputStream input) {
         inputStream = input
     }
@@ -55,27 +111,27 @@ class ConfigParser {
             String ldapPort = EMPTY
 
             while ((line = br.readLine()) != null) {
-                 if (line.startsWith("group_"))  {
+                 if (line.startsWith(CONFIG_GROUP))  {
                      parseGroup(line)
                      bResult = true
 
-                 } else if (line.startsWith("mail_type"))  {
+                 } else if (line.startsWith(MAIL_TYPE))  {
                     parseMailType(line)
                     bResult = true
 
-                 } else if (line.startsWith("ldap_user"))  {
+                 } else if (line.startsWith(LDAP_USER))  {
                     ldapUser = parseLdap(line)
                     bResult = true
 
-                 } else if (line.startsWith("ldap_pwd"))  {
+                 } else if (line.startsWith(LDAP_PWD))  {
                     ldapPwd = parseLdap(line)
                     bResult = true
 
-                 } else if (line.startsWith("ldap_host"))  {
+                 } else if (line.startsWith(LDAP_HOST))  {
                     ldapHost = parseLdap(line)
                      bResult = true
 
-                 } else if (line.startsWith("ldap_port"))  {
+                 } else if (line.startsWith(LDAP_PORT))  {
                     ldapPort = parseLdap(line)
                     bResult = true
 
@@ -86,10 +142,10 @@ class ConfigParser {
             }
             // Save ldap config in database.
             if ( !ldapHost.isEmpty()) {
-                Ldap ldap = Ldap.findByName("M7")
+                Ldap ldap = Ldap.findByName(LDAP_NAME)
                 if (ldap == null) {
                     ldap = new Ldap()
-                    ldap.name = "M7"
+                    ldap.name = LDAP_NAME
                     ldap.host = ldapHost
                     ldap.port = ldapPort
                     ldap.user = ldapUser
@@ -116,9 +172,9 @@ class ConfigParser {
      * @param line ( e.g : ldap_user=myuser )
      * @return value after =
      */
-    public parseLdap(String line) {
+    public static parseLdap(String line) {
         String result = EMPTY
-        int posEq = line.indexOf('=')
+        int posEq = line.indexOf(EQUAL)
         if ( posEq > 0 ) {
             result = line.substring(posEq + 1, line.length())
         }
@@ -130,15 +186,15 @@ class ConfigParser {
      * @param line e.g: group_frontaux=web1,web2,web3,web4,web5,web6
      * @return
      */
-    public parseMailType(String line) {
+    public static parseMailType(String line) {
         log.debug("parseMailType() line=" + line)
 
-        int posEq = line.indexOf('=')
+        int posEq = line.indexOf(EQUAL)
         if ( posEq > 0 ) {
             def str = line.substring(posEq + 1, line.length())
             def lst = str.tokenize(",")
             for(String value : lst) {
-                int pos = value.indexOf(':')
+                int pos = value.indexOf(COLON)
                 if ( pos > 0 && (!value.isEmpty())) {
                     def fullNameType = value.substring(0, pos)
                     def shortNameType = value.substring( pos + 1, value.length())
@@ -165,7 +221,7 @@ class ConfigParser {
     public parseGroup(String line) {
 
         log.debug("parseGroup() line=" + line)
-        int posEq = line.indexOf('=')
+        int posEq = line.indexOf(EQUAL)
         if ( posEq > 0 ) {
             def strGrp = line.substring(0, posEq)
 

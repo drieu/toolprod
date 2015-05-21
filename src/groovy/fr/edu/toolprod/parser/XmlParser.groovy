@@ -5,26 +5,52 @@ import org.apache.commons.logging.LogFactory
 
 /**
  * Parse XML tag.
- * User: drieu
- * Date: 18/07/14
  */
 class XmlParser {
 
 
     private static final String SERVER_NAME = "ServerName"
 
-    private static final String SERVER_PORT = "80"
+    /**
+     * Default port for the server web
+     */
+    private static final String DEFAULT_PORT = "80"
+
     private static final String SERVER_LISTEN = "Listen"
 
-
     private static final String HTTP = "http://";
+
     private static final String HTTPS = "https://";
+
     private static final String EMPTY = ""
+
     private static final String SPACE = " "
-    private static final Character COLON = ':';
-    private static final Character SEMICOLON = ',';
-    private static final String SLASH = '/'
+
+    private static final Character COLON = ':'
+
+    private static final Character SEMICOLON = ','
+
+    private static final String SLASH = "/"
+
+    private static final String OPEN_BRACKET = "("
+
+    private static final String CLOSE_BRACKET = ")"
+
+    private static final String MORE_THAN = ">"
+
+    private static final String PIPE = "|"
+
+    private static final String HASH = "#"
+
     private static final log = LogFactory.getLog(this)
+
+    private static final String HTTPD_FILENAME_START = "httpd.conf."
+
+    private static final String WEBLOGIC_CLUSTER = "WebLogicCluster"
+
+    private static final String WEBLOGIC_HOST = "WebLogicHost"
+
+    private static final String WEBLOGIC_PORT = "WebLogicPort"
 
     /**
      * Extract server and port in ProxyPass
@@ -40,15 +66,15 @@ class XmlParser {
             final int NB_LINE_ELEMENT = 3; // Number element in ProxyPass line.
             if (params.size() == NB_LINE_ELEMENT ) {
                 def tmpApp = params.get(1);
-                String appName = XmlParser.parseAppNameInProxyPass(tmpApp);
+                String appName = parseAppNameInProxyPass(tmpApp);
                 String appUrl = params.get(2);
 
                 // extract server and port from http://webX.fr:PORT/APPLI or https://webX.fr:PORT/APPLI
                 log.debug("parseProxyPass() appurl:" + appUrl)
-                String appServer = XmlParser.parseServerFromHttpProxyPass(appUrl);
+                String appServer = parseServerFromHttpProxyPass(appUrl);
                 log.debug("parseProxyPass() appServer:" + appServer)
 
-                String appPort = XmlParser.parsePortFromHttpProxyPass(appUrl);
+                String appPort = parsePortFromHttpProxyPass(appUrl);
                 log.debug("parseProxyPass() appPort:" + appPort)
 
 
@@ -58,8 +84,8 @@ class XmlParser {
                     log.warn("parseProxyPass() Name not found => Get the name in filename:" + fileName)
                     //Get the name in filename
                     appBean.name = fileName
-                    if(appBean.name.contains("httpd.conf.")) {
-                        appBean.name = appBean.name.substring("httpd.conf.".length(),appBean.name.length())
+                    if(appBean.name.contains(HTTPD_FILENAME_START)) {
+                        appBean.name = appBean.name.substring(HTTPD_FILENAME_START.length(),appBean.name.length())
                     }
                 }
                 appBean.serverUrl = appUrl
@@ -119,7 +145,7 @@ class XmlParser {
     def static parseListen(String line) {
         String result = EMPTY
         if ((line != null) && line.startsWith(SERVER_LISTEN)) {
-            result = SERVER_PORT
+            result = DEFAULT_PORT
             def params = line.tokenize()
             if ((params != null) && (params.size()>=2)) {
                 result = params.get(1);
@@ -136,11 +162,10 @@ class XmlParser {
      */
     def static parseWebLogicPort(String line) {
         def result = EMPTY
-        if ( (line!= null) && (line.contains("WebLogicPort")) && (!line.startsWith("#"))) {
-            int pos = 0;
-            int startOfWebLogicPort = line.indexOf("WebLogicPort");
+        if ( (line!= null) && (line.contains(WEBLOGIC_PORT)) && (!line.startsWith(HASH))) {
+            int startOfWebLogicPort = line.indexOf(WEBLOGIC_PORT)
             if (startOfWebLogicPort > -1) {
-                pos = startOfWebLogicPort + "WebLogicPort".size();
+                int pos = startOfWebLogicPort + WEBLOGIC_PORT.size()
                 result = line.substring(pos, line.size())
                 result = result.trim()
             }
@@ -157,13 +182,12 @@ class XmlParser {
      */
     def static parseWebLogicHost(String line) {
         def result = EMPTY
-        if ( (line!= null) && (line.contains("WebLogicHost"))) {
+        if ( (line!= null) && (line.contains(WEBLOGIC_HOST))) {
             line = line.trim()
-            if (!line.startsWith("#")) {
-                int pos = 0;
-                int startOfWebLogicHost = line.indexOf("WebLogicHost");
+            if (!line.startsWith(HASH)) {
+                int startOfWebLogicHost = line.indexOf(WEBLOGIC_HOST);
                 if (startOfWebLogicHost > -1) {
-                    pos = startOfWebLogicHost + "WebLogicHost".size();
+                    int pos = startOfWebLogicHost + WEBLOGIC_HOST.size();
                     result = line.substring(pos, line.size())
                     result = result.trim()
                 }
@@ -172,6 +196,8 @@ class XmlParser {
         log.debug("XmlParser:parseWebLogicHost() line:" + line + " result after parsing:" + result)
         result
     }
+
+
     /**
      * Extract a line with server and port in WebLogicCluster
      * @param line (e.g: WebLogicCluster webgrh1.ac-limoges.fr:14012, webgrh2.ac-limoges.fr:14012)
@@ -180,11 +206,11 @@ class XmlParser {
     def static parseWebLogicCluster(String line) {
         List<String> weblos = new ArrayList<>()
         log.debug("parseWebLogicCluster() line:" + line)
-        if ( (line!= null) && (line.contains("WebLogicCluster"))) {
+        if ( (line!= null) && (line.contains(WEBLOGIC_CLUSTER))) {
             line = line.trim()
-            if (!line.startsWith("#")) {
+            if (!line.startsWith(HASH)) {
                 def params = line.tokenize(SEMICOLON)
-                final String weblogicClusterLine = "WebLogicCluster" + SPACE
+                final String weblogicClusterLine = WEBLOGIC_CLUSTER + SPACE
 
                 log.debug("parseWebLogicCluster() ================> params weblo for line:" + line + " params:" + params.toString())
                 for(String weblo :params) {
@@ -218,10 +244,10 @@ class XmlParser {
         String result = ""
         if ((param != null) && (param.size() > 1)) {
             result = param;
-            if (result.startsWith("/")) {
+            if (result.startsWith(SLASH)) {
                 result = result.substring(1);
             }
-            if (result.endsWith("/")) {
+            if (result.endsWith(SLASH)) {
                 result = result.substring(0, (result.length() - 1))
             }
         }
@@ -237,13 +263,12 @@ class XmlParser {
      */
     def static parseServerFromHttpProxyPass(String myUrl) {
         String result = EMPTY;
-        String strProtocol = XmlParser.parseProtocol(myUrl)
+        String strProtocol = parseProtocol(myUrl)
 
         if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON.toString()))) {
             // extract after http://
-            String str = EMPTY;
             int beginIndex = strProtocol.size();
-            str = myUrl.substring(beginIndex);
+            String str = myUrl.substring(beginIndex);
 
             log.debug("parseServerFromHttpProxyPass() str:" + str)
             int pos = str.indexOf(COLON.toString());
@@ -275,13 +300,12 @@ class XmlParser {
      * @return port e.g : PORT in http://webX.fr:PORT/APPLI
      */
     def static parsePortFromHttpProxyPass(String myUrl) {
-        String strPort = EMPTY;
+        String strPort = DEFAULT_PORT;
         String strProtocol = parseProtocol(myUrl)
         if ((myUrl != null) && (!strProtocol.isEmpty()) && (myUrl.contains(COLON.toString()))) {
             // extract after http://
-            String str = EMPTY;
             int beginIndex = HTTP.size();
-            str = myUrl.substring(beginIndex);
+            String str = myUrl.substring(beginIndex);
 
             int pos = str.indexOf(COLON.toString());
             if (pos > 0) {
@@ -297,7 +321,6 @@ class XmlParser {
         }
         return strPort;
     }
-
 
     /**
      * Extract protocol HTTP or HTTP from url.
@@ -321,18 +344,38 @@ class XmlParser {
         strProtocol
     }
 
-
-
     /**
      * Parse Name contains in <Location /NAME> line.
      * It will delete / and > in /NAME>
      * @param line e.g: <Location /NAME>
-     * @return NAME or ""
+     * @param fileName
+     * @return NAME or name from httpd.conf.name ( see getNameFromFileName )
      */
-    def static parseLocationName(String line) {
+    def static parseLocationName(String line, String filename) {
+        log.debug("ParseLocationName() line:" + line)
+        String name = parseLocation(line)
+        if (name.isEmpty()) {
+            name = getNameFromFileName(filename)
+        } else {
+            int pos = name.indexOf(SLASH)
+            if (pos > 0) {  // e.g : app/racvision => delete all after /
+                name = name.substring(0, pos)
+            }
+        }
+        log.debug("ParseLocationName() return name:" + name)
+
+        return name
+    }
+
+    /**
+     * Parse Location and return app name
+     * See parseLocationName to obtain a default name from file.
+     * @param line  e.g : <Location /NAME>
+     * @return EMPTY if error.
+     */
+    def static parseLocation(String line) {
         String name = EMPTY
         final int MIN_NB_PARAM = 2
-        log.debug("ParseLocationName() line:" + line)
         if (line != null) {
             def params = line.tokenize()
             log.debug("ParseLocationName() number of param  :" + params.size())
@@ -346,22 +389,68 @@ class XmlParser {
                 if ((location != null) && (location.contains("<Location")) && (locationName != null)) {
                     name = locationName;
                     int begin = 0;
-                    if (locationName.startsWith("/")) {
+                    if (locationName.startsWith(SLASH)) {
                         begin = 1
                     }
-                    if (locationName.endsWith(">")) {
+                    if (locationName.endsWith(MORE_THAN)) {
                         name = locationName.substring(begin, (name.length() - 1))
                     }
-                    if (lastParam.equals(">")) {
+                    if (lastParam.equals(MORE_THAN)) {
                         name = locationName.substring(begin, name.length())
                     }
+
                 }
             }
         }
-        log.debug("ParseLocationName() return name:" + name)
-
+        if (name == null) {
+            name = EMPTY
+        }
         return name
     }
 
+    /**
+     * Get name from http.conf.name file.
+     * @param filename Name of the file ( e.g : httpd.conf.name ).
+     * @return
+     */
+    public static String getNameFromFileName(String filename) {
+        log.warn("getNameFromFileName() Name not found => Get the name in filename:" + filename)
+        //Get the name in filename
+        String name = filename
+        if (name.contains(HTTPD_FILENAME_START)) {
+            name = name.substring(HTTPD_FILENAME_START.length(), name.length())
+        }
+        name
+    }
 
+    /**
+     * Parse shortUrl app in Location tag.
+     * e.g : <Location /NAME/racvision> will return racvision.
+     * e.g : app/(collecte|etablissement|racvision) will return a list : {collecte;etablissement;racvision}
+     * @param e.g : line <Location /NAME/racvision>
+     * @return  list od short url.
+     */
+    public static List<String> parseLocationPathAfterName(String line) {
+        log.debug("parseLocationPathAfterName() line:" + line)
+        List<String> shortUrls = new ArrayList<>()
+        String name = parseLocation(line)
+        if (!name.isEmpty()) {
+            int pos = name.indexOf(SLASH)
+            if (pos > 0) {  // e.g : app/racvision => delete all after /
+                name = name.substring(pos, name.length() - 1)
+                if (name.contains(OPEN_BRACKET)) {
+                    name = name.trim()  // delete space
+                    name = name.replace(OPEN_BRACKET, EMPTY)
+                    name = name.replace(CLOSE_BRACKET, EMPTY)
+                    for(String str : name.split(PIPE)) {
+                        shortUrls.add(name)
+                    }
+                } else {
+                    shortUrls.add(name)
+                }
+            }
+        }
+        log.debug("parseLocationPathAfterName() return name:" + name)
+        return shortUrls
+    }
 }

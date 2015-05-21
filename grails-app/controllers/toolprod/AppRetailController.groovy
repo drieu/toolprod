@@ -1,8 +1,5 @@
 package toolprod
 
-import fr.edu.toolprod.bean.ServerBean
-import fr.edu.toolprod.gson.GSONBean
-import fr.edu.toolprod.gson.GSONParser
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
@@ -10,16 +7,12 @@ import org.apache.pdfbox.pdmodel.font.PDType1Font
 
 class AppRetailController {
 
-    // Export service provided by Export plugin
-    def exportService
-    def grailsApplication  //inject GrailsApplication
 
-    /**
-     * We backup the choice of the user because when you click on pdf, you can't pass portal.
-     */
-    def backupChoice
+    private static final String EMPTY = ""
 
-    def pdfRenderingService
+    private static final String PARAM_NAME = "name"
+
+    private static final String PREFIX_PARENT_NODE_NAME = "source_"
 
     /**
      * Show details for an application
@@ -27,8 +20,8 @@ class AppRetailController {
      */
     def app() {
         def myApp = null
-        String data
-        def selectApp = params.get("name")
+        String data = EMPTY
+        def selectApp = params.get(PARAM_NAME)
         if (selectApp != null) {
             myApp = App.findByName((String)selectApp)
 
@@ -45,6 +38,8 @@ class AppRetailController {
         return [app:myApp, data:data]
     }
 
+/**
+    // Use to test
     public String createDataTest() {
         ServerBean serverBean
 
@@ -94,7 +89,7 @@ class AppRetailController {
         GSONParser parser = new GSONParser()
         return parser.createTree(gsonBean)
     }
-
+**/
     /**
      * Generate GSON String from a TreeNode
      * @param node
@@ -140,8 +135,8 @@ class AppRetailController {
     public String getRealParentName(String name, Integer portNumber) {
        String result = "?"
        if (name != null) {
-          if (name.contains("source_")) {
-              result = name.substring("source_".size(), name.length())
+          if (name.contains(PARAM_NAME)) {
+              result = name.substring(PARAM_NAME.size(), name.length())
           } else {
               result = name + "_" + portNumber.toString()
           }
@@ -168,12 +163,11 @@ class AppRetailController {
         def data = "\nvar dataSet = [\n"
         for(App p : App.findAll()) {
             String link = "<a href=/toolprod/appRetail/app?name=" + p.name + ">" + p.name + "</a>"
-            String servs = ""
+            String servs = EMPTY
             for(Server serv:p.servers) {
                 servs += serv.name + " "
             }
-            String portals = ""
-            String vips = ""
+            String vips = EMPTY
             for( String portal : p.vips) {
                 Vip vip = Vip.findByTechnicalName(portal)
                 if (vip != null) {
@@ -188,19 +182,7 @@ class AppRetailController {
         data += "\n];"
         log.info(data)
         def count = App.findAll().size()
-        //return [appBeans:appBeans, vips:vips, portalChoice:portalChoice, data:data]
         return [count:count, data:data]
-    }
-
-    def ajaxApps() {
-//        def results = App.findAll().toArray();
-//        render(contentType: "text/json") {
-//            results = array {
-//                App.list().each {user->
-//                    result "${user.id}" : "${user.name}"
-//                }
-//            }
-//        }
     }
 
     /**
@@ -211,7 +193,7 @@ class AppRetailController {
         List<String> results = new ArrayList<>()
         def servers = Server.findAll()
         for (Server server : servers) {
-            if (!results.contains(server.machineHostName) && !server.machineHostName.startsWith("source_")) {
+            if (!results.contains(server.machineHostName) && !server.machineHostName.startsWith(PARAM_NAME)) {
                 def m = server.machineHostName =~ /web[0-9]/
                 if (m) {
                     results.add(server.machineHostName)
@@ -232,68 +214,6 @@ class AppRetailController {
         }
         return result
     }
-
-    /**
-     * Use for test.
-     * @param choice
-     * @return
-     */
-    def getVip(String choice) {
-        log.info("getVip()")
-        // Save VIP
-        Vip vip = Vip.findByName("webclasseur")
-        if ( vip == null ) {
-            log.info("add vip()")
-            vip = new Vip()
-            vip.name = "webclasseur"
-            vip.technicalName = "webclasseur.ac-limoges.fr_ssl"
-            Server serv = Server.findByNameAndPortNumber("web1.ac-limoges.fr", "8062")
-            if (serv == null) {
-                serv = new Server()
-                serv.name = "web1.ac-limoges.fr"
-                serv.portNumber = 8062
-                serv.machineHostName = "web1.ac-limoges.fr"
-                serv.serverType = Server.TYPE.APACHE
-                serv.save(failOnError: true, flush:true)
-            }
-            vip.servers.add(serv)
-            Server serv2 = Server.findByNameAndPortNumber("web2.ac-limoges.fr", "8062")
-            if (serv2 == null) {
-                serv2 = new Server()
-                serv2.name = "web2.ac-limoges.fr"
-                serv2.portNumber = 8062
-                serv2.machineHostName = "web2.ac-limoges.fr"
-                serv2.serverType = Server.TYPE.APACHE
-                serv2.save(failOnError: true, flush:true)
-            }
-            vip.servers.add(serv2)
-
-            vip.save(failOnError: true, flush:true)
-        }
-        vip
-    }
-
-
-//    def getPrintAppBean(AppBean appBean) {
-//        PrintAppBean printAppBean = new PrintAppBean()
-//        printAppBean.name = appBean.name
-//
-//
-////        for (String p : appBean.vips) {
-////            if (p != null) {
-////                printAppBean.vips += p
-////                printAppBean.vips += " "
-////            }
-////        }
-//
-//        for(String url: appBean.serverUrls) {
-//            if (url != null) {
-//                printAppBean.urls += url
-//                printAppBean.urls += "\n"
-//            }
-//        }
-//        return printAppBean
-//    }
 
     /**
      * Render a pdf with a list of applications.
@@ -327,7 +247,7 @@ class AppRetailController {
 
         // Create pdf document
         PDDocument document = new PDDocument();
-        PDPage page = new PDPage();
+
         PDPageContentStream contentStream;
 
         int pageNumber = 1
@@ -339,11 +259,9 @@ class AppRetailController {
         log.debug("Page number :" + pageNumber)
 
         int countApp = 0
-        int max = APPNUMBER_BY_SIZE
-        if (apps.size() < APPNUMBER_BY_SIZE) {
-            max = apps.size()
-        }
         if (apps.size() > 0) {
+            int max
+            PDPage page
             for (int i=1; i<=pageNumber; i++) {
                 page = new PDPage();
                 contentStream = new PDPageContentStream(document, page);
@@ -375,7 +293,7 @@ class AppRetailController {
      * @param servers
      * @return
      */
-    private List<App> getApps(List<Server> servers) {
+    private static List<App> getApps(List<Server> servers) {
         List<App> apps = new ArrayList()
         if (servers != null) {
             for(Server server : servers ) {

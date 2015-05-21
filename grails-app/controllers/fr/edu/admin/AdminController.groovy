@@ -1,6 +1,8 @@
 package fr.edu.admin
 
+import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ArenaBean
+import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.parser.ArenaParser
 import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
@@ -116,8 +118,12 @@ class AdminController {
                 def machineName = request.getParameterValues("machinename")
                 log.info("Name of machine : " + machineName[0])
                 if((machineName != null) && (file != null) && (!file.isEmpty())) {
-                    HttpdParser parser = new HttpdParser(file, machineName[0]);
-                    if (!parser.parse()) {
+                    MultipartFileBean f = new MultipartFileBean()
+                    f.inputStream = file.inputStream
+                    f.originalFilename = file.originalFilename
+                    HttpdParser parser = new HttpdParser(f, machineName[0]);
+                    bResult = parser.parse()
+                    if (!parser.save()) {
                         bResult = false
                     }
                     message += parser.result

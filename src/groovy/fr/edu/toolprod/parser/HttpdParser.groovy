@@ -1,12 +1,10 @@
 package fr.edu.toolprod.parser
 
 import fr.edu.toolprod.bean.AppBean
+import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.bean.ServerBean
-import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.LogFactory
 import toolprod.Machine
-import toolprod.Server
-import toolprod.TreeNode
 
 /**
  * Parse httpd.conf file.
@@ -62,12 +60,25 @@ class HttpdParser {
     /**
      * Machine for the httpd.conf parsed.
      */
-    private Machine machine
+    private String machineName
+
+    ServerBean getServerBean() {
+        return serverBean
+    }
+
+    private ServerBean serverBean
 
     /**
-     * httpd.conf File.
+     * Getter use for unit test.
+     * @return
      */
-    private def file
+    List<AppBean> getAppBeans() {
+        return appBeans
+    }
+
+    private List<AppBean> appBeans
+
+    private MultipartFileBean file
 
     /**
      * Use to read file.
@@ -98,26 +109,14 @@ class HttpdParser {
      * @param machineName : Machine name
      * @param portalsChoice : List of portail where application will be shown
      */
-    HttpdParser(def f, String machineName) {
-        file= f;
-        defineMachine(machineName);
-        if (machine == null) {
-            throw new IllegalArgumentException("Machine must exist !")
+    HttpdParser(MultipartFileBean f, final String name) {
+        if (f == null) {
+            throw new IllegalArgumentException("MultipartFileBean must not be null !")
         }
+        file = f;
+        machineName = name
     }
 
-    /**
-     * Define Machine before parsing file (use in constructor).
-     * @param machineName String.
-     */
-    private def defineMachine(String machineName) {
-        if (machineName == null || machineName.isEmpty()) {
-            throw new IllegalArgumentException("MachineName must not be null !")
-        }
-        machine = Machine.findOrCreateByName(machineName)
-        machine.save(failOnError: true, flush:true)
-
-    }
 
     /**
      * Main method for parse a httpd file.
@@ -125,14 +124,12 @@ class HttpdParser {
      */
     def parse() {
         boolean bResult = true;
-        result = EMPTY;
+        result = EMPTY
 
         String strLine
-        ServerBean serverBean = new ServerBean();
-        List<AppBean> appBeans = new ArrayList<>();
-        Data data = new Data(machine);
-
-        serverBean.machineHostName = machine.name
+        serverBean = new ServerBean()
+        appBeans = new ArrayList<>()
+        serverBean.machineHostName = machineName
         try {
 
             boolean bLocationTag = false; // identify begin and end of xml tag Location
@@ -141,7 +138,7 @@ class HttpdParser {
             String WebLogicHost = EMPTY
             String WebLogicPort = EMPTY
             List<String> weblos = new ArrayList<>()
-
+            List<String> shortUrls = new ArrayList<>()
 
             br = new BufferedReader(new InputStreamReader(file.inputStream))
             while ((strLine = br.readLine()) != null) {
@@ -160,7 +157,8 @@ class HttpdParser {
 
                 } else if (strLine.startsWith(PROXY_PASS + SPACE)) { // If ProxyPass
                     AppBean appBean = XmlParser.parseProxyPass(strLine, file.originalFilename)
-                    if (appBean != null) {
+                    if ( (appBean != null)) {
+                        appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
                         appBeans.add(appBean);
                     }
                 } else if (( !strLine.startsWith(HASH) && strLine.contains(WEBLOGIC_HOST))) { // If WebLogicHost
@@ -173,10 +171,8 @@ class HttpdParser {
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)
 
-                    name = XmlParser.parseLocationName(strLine) //extract name for Location
-                    if (name.isEmpty()) {
-                        name = getNameFromFileName()
-                    }
+                    name = XmlParser.parseLocationName(strLine, file.originalFilename) //extract name for Location
+                    shortUrls = XmlParser.parseLocationPathAfterName(strLine)
                     if (xmlStart != null) {
                         bLocationTag = true
                     }
@@ -184,6 +180,7 @@ class HttpdParser {
                 } else if (strLine.startsWith(LOCATIONMATCH_END)) {  // LocationMatch is parsed only for WebLogicCluster
                     if (!weblos.isEmpty()) {
                         AppBean appBean = getAppBean(name, serverBean)
+                        appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
                         appBean.weblos = weblos
                         appBeans.add(appBean)
                     }
@@ -194,10 +191,8 @@ class HttpdParser {
                     def params = strLine.tokenize()
                     String xmlStart = params.get(0)
 
-                    name = XmlParser.parseLocationName(strLine) //extract name for Location
-                    if (name.isEmpty()) {
-                        name = getNameFromFileName()
-                    }
+                    name = XmlParser.parseLocationName(strLine, file.originalFilename) //extract name for Location
+                    shortUrls = XmlParser.parseLocationPathAfterName(strLine)
                     if (xmlStart != null) {
                         bLocationTag = true
                     }
@@ -205,6 +200,7 @@ class HttpdParser {
                 } else if (strLine.startsWith(LOCATION_END)) { // Location is parsed only for WebLogicCluster
                     if (!weblos.isEmpty()) {
                         AppBean appBean = getAppBean(name, serverBean)
+                        appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
                         appBean.weblos = weblos
                         appBeans.add(appBean);
                     }
@@ -214,12 +210,13 @@ class HttpdParser {
 
                 } else if (strLine.startsWith(VIRTUALHOST_START)) {
                     AppBean appBean = new AppBean();
-                    String strName = getNameFromFileName();
+                    String strName = XmlParser.getNameFromFileName(file.originalFilename);
                     int pos = strName.indexOf(PERIOD)
                     if (pos > 0) {
                         strName = strName.substring(pos + 1, strName.length())
                     }
                     appBean.name = strName
+                    appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
                     appBeans.add(appBean)
 
                 }
@@ -263,32 +260,28 @@ class HttpdParser {
         if(appBeans.size() == 0) {
             log.info("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
-            appBean.name = getNameFromFileName();
+            appBean.name = XmlParser.getNameFromFileName(file.originalFilename);
             appBeans.add(appBean)
         }
-
-        // Save applications list.
-        if (!data.save(serverBean, appBeans)) {
-            bResult = false;
-        }
-        result += data.result
 
         return bResult
     }
 
     /**
-     * Get the default name for an application  if it cannot be found.
-     * This will be the filename whithout httpd.conf.
-     * @return filename whithout httpd.conf.
+     * Save data.
+     * @return
      */
-    public String getNameFromFileName() {
-        log.warn("getNameFromFileName() Name not found => Get the name in filename:" + file.originalFilename)
-        //Get the name in filename
-        String name = file.originalFilename
-        if (name.contains(HTTPD_FILENAME_START)) {
-            name = name.substring(HTTPD_FILENAME_START.length(), name.length())
+    public boolean save() {
+        boolean bResult
+        if (machineName == null || machineName.isEmpty()) {
+            throw new IllegalArgumentException("MachineName must not be null !")
         }
-        name
+        Machine machine = Machine.findOrCreateByName(machineName)
+        machine.save(failOnError: true, flush:true)
+        Data data = new Data(machine)
+        result += data.result
+        bResult = data.save(serverBean, appBeans)
+        return bResult
     }
 
     /**
@@ -297,7 +290,8 @@ class HttpdParser {
      * @param serverBean
      * @return
      */
-    def getAppBean(String appName, ServerBean serverBean) {
+    def static getAppBean(String appName, ServerBean serverBean) {
+
         AppBean appBean = new AppBean(name:appName);
         appBean.setUrl(serverBean.machineHostName, serverBean.portNumber, appName);
         return appBean

@@ -1,5 +1,6 @@
 package fr.edu.admin
 
+import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.parser.HttpdParser
 import grails.converters.JSON
 import org.apache.directory.api.ldap.model.cursor.EntryCursor
@@ -20,6 +21,25 @@ class ToolsController {
     // Export service provided by Export plugin
     def exportService
     def grailsApplication  //inject GrailsApplication
+
+    /**
+     * LDAP name.
+     */
+    private static final String LDAP_NAME = "M5"
+
+
+    private static final String PARAM_UID = "uid"
+
+    private static final String PARAM_RNE = "rne"
+
+    private static final String PARAM_TYPE = "type"
+
+    private static final String PARAM_SHORTNAME_TYPE = "shortNameType"
+
+
+
+
+
 
 
     def index() {}
@@ -68,8 +88,11 @@ class ToolsController {
 
 
                     if((file != null) && (!file.isEmpty())) {
-                        HttpdParser parser = new HttpdParser(file, machineName[0], null);
-                        if (!parser.check(machineName[0], file.originalFilename)) {
+                        MultipartFileBean f = new MultipartFileBean()
+                        f.inputStream = file.inputStream
+                        f.originalFilename = file.originalFilename
+                        HttpdParser parser = new HttpdParser(f, machineName[0]);
+                        if (!parser.check(machineName[0], f.originalFilename)) {
                             bResult = false
                         }
                         message += parser.result
@@ -116,8 +139,8 @@ class ToolsController {
         log.info("mail()")
         def types = new ArrayList<String>()
 
-        String rne = params.get("rne")
-        String type = params.get("shortNameType")
+        String rne = params.get(PARAM_RNE)
+        String type = params.get(PARAM_SHORTNAME_TYPE)
         String pwd = params.get("pwd")
 
         if (type == null) {
@@ -144,9 +167,9 @@ class ToolsController {
     def downloadUID() {
 
         log.info("downloadUID()")
-        String uid = params.get("uid")
-        String rne = params.get("rne")
-        String type = params.get("type")
+        String uid = params.get(PARAM_UID)
+        String rne = params.get(PARAM_RNE)
+        String type = params.get(PARAM_TYPE)
         String mail = params.get("mail")
         String pwd = params.get("pwd")
 
@@ -331,7 +354,7 @@ class ToolsController {
         boolean check = false
         if (!mail.isEmpty()) {
             log.info("Connecting to LDAP ...")
-            toolprod.Ldap ldap = toolprod.Ldap.findByName("M7")
+            Ldap ldap = Ldap.findByName(LDAP_NAME)
             if (ldap != null) {
                 Attribute result = null;
                 LdapConnection connection = new LdapNetworkConnection( ldap.host, Integer.valueOf(ldap.port) );
@@ -343,7 +366,7 @@ class ToolsController {
                 EntryCursor cursor = connection.search( "ou=fonctionnelles, ou=ac-limoges, ou=education, o=gouv, c=fr", searchStr, SearchScope.ONELEVEL, "*" );
                 while ( cursor.next() )
                 {
-                    DefaultEntry entry = cursor.get()
+                    DefaultEntry entry = (DefaultEntry)cursor.get()
                     log.info("ENTRY:" + entry.get("mailAlternateAddress"))
                     result = entry.get("mail")
                     if (result != null) {

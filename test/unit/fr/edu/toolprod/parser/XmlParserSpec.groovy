@@ -2,9 +2,7 @@ package fr.edu.toolprod.parser
 
 import fr.edu.toolprod.bean.AppBean
 import grails.test.GrailsUnitTestCase
-/**
- * See the API for {@link grails.test.mixin.support.GrailsUnitTestMixin} for usage instructions
- */
+
 
 class XmlParserSpec extends GrailsUnitTestCase {
 
@@ -78,10 +76,6 @@ class XmlParserSpec extends GrailsUnitTestCase {
 
         weblogicPort = XmlParser.parseWebLogicPort("#   WebLogicPort 10507")
         assertEquals(weblogicPort, "")
-
-
-
-
     }
 
     /**
@@ -203,33 +197,15 @@ class XmlParserSpec extends GrailsUnitTestCase {
      * Test method to extract name in <Location NAME>
      */
     void testParseLocationName() {
-        assertEquals("Empty value should return an EMPTY value", "", XmlParser.parseLocationName(""))
-        assertEquals("Parse Bad tag for Location should return an EMPTY value", "", XmlParser.parseLocationName("<loca"))
-        assertEquals("Parse Bad tag for Location (not finished with >) should return an EMPTY value", "test", XmlParser.parseLocationName("<Location test"))
-        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location test>"))
-        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location test >"))
-        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location /test >"))
+        assertEquals("Empty value should return an EMPTY value", "", XmlParser.parseLocationName("", ""))
+        assertEquals("Parse Bad tag for Location should return an EMPTY value", "", XmlParser.parseLocationName("<loca", ""))
+        assertEquals("Parse Bad tag for Location (not finished with >) should return an EMPTY value", "test", XmlParser.parseLocationName("<Location test", ""))
+        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location test>", ""))
+        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location test >", ""))
+        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<Location /test >", ""))
 
-        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<LocationMatch test >"))
-
-
+        assertEquals("nominal case should work", "test", XmlParser.parseLocationName("<LocationMatch test >", ""))
     }
 
-
-//
-//    void testGetApacheModules() {
-//        HttpdParser parser = new HttpdParser()
-//
-//        // Null case.
-//        def modules = parser.extractLoadModule(null)
-//        assertNotNull("Module list should be empty and not null", modules)
-//        assertEquals(0, modules.size())
-//
-//        //Usual case.
-//        modules = parser.extractLoadModule("LoadModule access_module modules/mod_access.so")
-//        assertNotNull("Module list should be empty and not null", modules)
-//        assertEquals(1, modules.size())
-//        assertTrue(modules.contains("access_module"))
-//    }
 }
 
