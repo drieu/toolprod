@@ -1,6 +1,5 @@
 package fr.edu.admin
 
-import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ArenaBean
 import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.parser.ArenaParser
@@ -17,6 +16,8 @@ import toolprod.Vip
  */
 class AdminController {
 
+    private static final String EMPTY = ""
+
     def index() {
         log.info("index() Index action from AdminController !")
         redirect(action:'init')
@@ -30,7 +31,7 @@ class AdminController {
         flash.clear()
         boolean bResult = false
         if (request instanceof MultipartHttpServletRequest) {
-            def message = ""
+            def message = EMPTY
             request.getFiles("files[]").each { file ->
                 log.info("initData() file to parse :" + file.originalFilename)
                 if (!file.originalFilename.isEmpty()) {
@@ -66,9 +67,6 @@ class AdminController {
                 flash.error = "FAILED : " + message
             }
         }
-
-        def machinesGroups = MachineGroup.findAll()
-        return [ machinesGroups: machinesGroups ]
     }
 
     /**
@@ -80,7 +78,7 @@ class AdminController {
         flash.clear()
         boolean bResult = false
         if (request instanceof MultipartHttpServletRequest) {
-            def message = ""
+            def message = EMPTY
             request.getFiles("files[]").each { file ->
                 log.info("initPortals() file to parse :" + file.originalFilename)
                 if (!file.originalFilename.isEmpty()) {
@@ -110,13 +108,16 @@ class AdminController {
         log.info("init()")
         flash.clear()
         if (request instanceof MultipartHttpServletRequest) {
-            def message = ""
+            String message = EMPTY
             boolean bResult = true
+            def machineName = request.getParameterValues("machinename")
+            if (machineName != null) {
+                message = message + machineName
+                message += " ==> "
+            }
+            log.info("Name of machine : " + machineName[0])
             request.getFiles("files[]").each { file ->
                 log.debug("init() file to parse:" + file.originalFilename)
-
-                def machineName = request.getParameterValues("machinename")
-                log.info("Name of machine : " + machineName[0])
                 if((machineName != null) && (file != null) && (!file.isEmpty())) {
                     MultipartFileBean f = new MultipartFileBean()
                     f.inputStream = file.inputStream
@@ -149,7 +150,7 @@ class AdminController {
         List<String> errs = new ArrayList<>()
         flash.clear()
         if (request instanceof MultipartHttpServletRequest) {
-            def message = ""
+            def message = EMPTY
             boolean bResult = true
             request.getFiles("files[]").each { file ->
                 log.debug("init() file to parse:" + file.originalFilename)

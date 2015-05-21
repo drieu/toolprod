@@ -20,11 +20,4 @@ class ConfigParserSpec extends GrailsUnitTestCase {
         assertTrue(lst.contains('machine2'))
     }
 
-    void testParsePortal() {
-        ConfigParser configParser = new ConfigParser(null)
-        configParser.parsePortal("portals=intranet,portail,portail-otp,web,blop")
-        assertNotNull(configParser.sportals)
-        assertSame(5, configParser.sportals.size())
-        assertTrue(configParser.sportals.contains("portail-otp"))
-    }
 }

@@ -1,5 +1,6 @@
 package toolprod
 
+import org.apache.commons.logging.LogFactory
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
@@ -13,6 +14,8 @@ class AppRetailController {
     private static final String PARAM_NAME = "name"
 
     private static final String PREFIX_PARENT_NODE_NAME = "source_"
+
+    private static final log = LogFactory.getLog(this)
 
     /**
      * Show details for an application

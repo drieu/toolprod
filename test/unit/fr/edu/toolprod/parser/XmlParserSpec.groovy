@@ -176,10 +176,10 @@ class XmlParserSpec extends GrailsUnitTestCase {
      * Extract port from a bad url
      */
     void testParserPortFromHttpProxyPassWithBadValues() {
-        assertEquals("When value is null, test should return an empty value.", "", XmlParser.parsePortFromHttpProxyPass(null));
-        assertEquals("When value is empty, test should return an empty value.", "", XmlParser.parsePortFromHttpProxyPass(""));
-        assertEquals("When value is ???, test should return an empty value.", "", XmlParser.parsePortFromHttpProxyPass("???"));
-        assertEquals("When value is ???, test should return an empty value.", "", XmlParser.parsePortFromHttpProxyPass("XX:XX"));
+        assertEquals("When value is null, test should return 80.", "80", XmlParser.parsePortFromHttpProxyPass(null));
+        assertEquals("When value is empty, test should return 80.", "80", XmlParser.parsePortFromHttpProxyPass(""));
+        assertEquals("When value is ???, test should return 80.", "80", XmlParser.parsePortFromHttpProxyPass("???"));
+        assertEquals("When value is ???, test should return 80.", "80", XmlParser.parsePortFromHttpProxyPass("XX:XX"));
     }
 
     /**

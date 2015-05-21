@@ -124,7 +124,6 @@ class HttpdParser {
      */
     def parse() {
         boolean bResult = true;
-        result = EMPTY
 
         String strLine
         serverBean = new ServerBean()
@@ -251,7 +250,7 @@ class HttpdParser {
         } finally {
             closeResult = close()
             if (!closeResult.isEmpty()) {
-                result = closeResult
+                result += closeResult
                 bResult = false
             }
         }
@@ -279,8 +278,8 @@ class HttpdParser {
         Machine machine = Machine.findOrCreateByName(machineName)
         machine.save(failOnError: true, flush:true)
         Data data = new Data(machine)
-        result += data.result
         bResult = data.save(serverBean, appBeans)
+        result += data.result
         return bResult
     }
 
@@ -305,7 +304,7 @@ class HttpdParser {
      * @return  true if no error during parsing
      */
     def check(String machineName, String fileName) {
-        boolean bResult = true;
+        boolean bResult = false;
         result = EMPTY;
 
         String strLine
@@ -316,7 +315,7 @@ class HttpdParser {
                     String confServerName = XmlParser.parseServerName(strLine)
                     Data data = new Data(null);
                     if (!machineName.equals(confServerName)) {
-                        data.saveCheck(machineName, fileName, confServerName)
+                        bResult = data.saveCheck(machineName, fileName, confServerName)
                     }
                 }
             }
