@@ -1,6 +1,7 @@
 package fr.edu.toolprod.bean
 
 import grails.validation.Validateable
+import org.apache.commons.logging.LogFactory
 
 /**
  * Bean to store temporaly state of a Server.
@@ -29,6 +30,12 @@ class ServerBean {
     List<String> modules = []
 
     /**
+     * Logger.
+     */
+    private static final log = LogFactory.getLog(this)
+
+
+    /**
      * Constructor.
      */
     ServerBean() {
@@ -40,7 +47,11 @@ class ServerBean {
      * @return
      */
     def addToModules(String moduleName) {
-       modules.add(moduleName)
+       if (moduleName != null) {
+            modules.add(moduleName)
+       } else {
+           log.warn("addToModules() Apache module name is null.Cannot add to the Apache module list (modules).")
+       }
     }
 
 

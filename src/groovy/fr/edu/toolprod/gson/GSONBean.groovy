@@ -3,11 +3,8 @@ package fr.edu.toolprod.gson
 import fr.edu.toolprod.bean.ServerBean
 
 /**
- * Created with IntelliJ IDEA.
- * User: drieu
- * Date: 12/12/14
- * Time: 14:13
- * To change this template use File | Settings | File Templates.
+ * Bean equivalent to TreeNode.
+ * Use to test GSON
  */
 class GSONBean {
 

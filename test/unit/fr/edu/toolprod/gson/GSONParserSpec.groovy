@@ -29,7 +29,7 @@ class GSONParserSpec extends GrailsUnitTestCase {
     }
 
     void testCreateTreeWithOneParent() {
-        GSONBean gsonBean = new GSONBean()
+        GSONBean gsonBean = new GSONBean(serverBean)
         gsonBean.name = "source_aeronautique"
 
         gsonBean.nodeData = serverBean
@@ -37,7 +37,7 @@ class GSONParserSpec extends GrailsUnitTestCase {
 //        nChild.addChild(serverBeanChild)
 
         GSONParser parser = new GSONParser()
-        String str = parser.createTree(gsonBean)
+        String str = parser.createTreeWithoutPersist(gsonBean)
         log.info(str)
         assertEquals("{name:'source_aeronautique_80',open:true}", str)
 

@@ -1,20 +1,57 @@
 package toolprod
 
+import fr.edu.toolprod.gson.GSONParser
 import org.apache.commons.logging.LogFactory
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 
+/**
+ * AppRetailController.
+ */
 class AppRetailController {
 
-
+    /**
+     * Constant.
+     */
     private static final String EMPTY = ""
 
+    /**
+     * name parameter.
+     */
     private static final String PARAM_NAME = "name"
 
-    private static final String PREFIX_PARENT_NODE_NAME = "source_"
+    /**
+     * vip parameter passed through view.
+     */
+    private static final String PARAM_VIP = "vip"
 
+    /**
+     * vipSelect parameter passed through view.
+     */
+    private static final String PARAM_VIP_SELECT = "vipSelect"
+
+    /**
+     * vipSelect parameter passed through view.
+     */
+    private static final String PARAM_SERVER = "server"
+
+    /**
+     * select parameter passed through view.
+     */
+    private static final String PARAM_SELECT = "select"
+
+    /**
+     * Report file name.
+     */
+    private static final String REPORT_FILE = "report.pdf"
+
+
+
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
 
     /**
@@ -29,7 +66,8 @@ class AppRetailController {
             myApp = App.findByName((String)selectApp)
 
             data += "\nvar zNodes = [\n"
-            data += createTree(myApp.node)
+            GSONParser parser = new GSONParser()
+            data += parser.createTree(myApp.node)
             data += "\n];"
             log.info(data)
         }
@@ -39,112 +77,6 @@ class AppRetailController {
 //        data += "\n];"
 //        log.info(data)
         return [app:myApp, data:data]
-    }
-
-/**
-    // Use to test
-    public String createDataTest() {
-        ServerBean serverBean
-
-        ServerBean child
-        ServerBean child2
-        ServerBean child3
-
-        ServerBean serverBeanChild
-        ServerBean serverBeanChild2
-
-        serverBean = new ServerBean()
-        serverBean.name = "source_aeronautique"
-        serverBean.portNumber = "80"
-
-        child = new ServerBean()
-        child.name = "appliloc6.ac-limoges.fr"
-        child.portNumber = "8015"
-
-        child2 = new ServerBean()
-        child2.name = "appliloc7.ac-limoges.fr"
-        child2.portNumber = "8016"
-
-        child3 = new ServerBean()
-        child3.name = "appliloc8.ac-limoges.fr"
-        child3.portNumber = "8019"
-
-        serverBeanChild = new ServerBean()
-        serverBeanChild.name = "web1.ac-limoges.fr"
-        serverBeanChild.portNumber = "8052"
-
-        serverBeanChild2 = new ServerBean()
-        serverBeanChild2.name = "web2.ac-limoges.fr"
-        serverBeanChild2.portNumber = "8063"
-
-        GSONBean gsonBean = new GSONBean()
-        gsonBean.name = "source_aeronautique"
-
-        gsonBean.nodeData = serverBean
-        GSONBean nChild = gsonBean.addChild(child)
-        GSONBean nChild2 = nChild.addChild(child2)
-        GSONBean nChild3 = nChild2.addChild(child3)
-
-        GSONBean sChild = gsonBean.addChild(serverBeanChild)
-        GSONBean sChild2 = sChild.addChild(serverBeanChild2)
-
-
-        GSONParser parser = new GSONParser()
-        return parser.createTree(gsonBean)
-    }
-**/
-    /**
-     * Generate GSON String from a TreeNode
-     * @param node
-     * @return GSON String e.g:{name:...
-     */
-    public String createTree(TreeNode node) {
-       String data = ""
-       if (node != null) {
-           data += "{name:'" + getRealParentName(node?.nodeData?.name, node?.nodeData?.portNumber) + "',open:true"
-
-           if (node.getChildren().size() != 0) {
-               data += ", children:["
-
-               int nbChild =  node.getChildren().size()
-               int cpt = 0
-               for (TreeNode child : node.getChildren()) {
-
-                   if (child.getChildren().size() == 0) {
-                       if (cpt == ( nbChild -1 )) { // if last
-                           data += "{name:'" + child?.nodeData?.name + "_" + child?.nodeData?.portNumber  + "',open:true}"
-                       } else {
-                           data += "{name:'" + child?.nodeData?.name + "_" + child?.nodeData?.portNumber  + "',open:true},"
-                       }
-                   } else {
-                       data += "\n"
-                       data += createTree(child)
-                       if (cpt != ( nbChild -1 )) {
-                           data += ","
-                       }
-                       data += "\n"
-                   }
-                   cpt = cpt + 1
-               }
-               data += "]}"
-           } else {
-               data += "}"
-           }
-       }
-
-       return data
-    }
-
-    public String getRealParentName(String name, Integer portNumber) {
-       String result = "?"
-       if (name != null) {
-          if (name.contains(PARAM_NAME)) {
-              result = name.substring(PARAM_NAME.size(), name.length())
-          } else {
-              result = name + "_" + portNumber.toString()
-          }
-       }
-       return result
     }
 
     /**
@@ -208,15 +140,6 @@ class AppRetailController {
        [ servers: results]
     }
 
-    public TreeNode getParent(TreeNode node) {
-        TreeNode result = node
-        if (result != null) {
-            if (result.parent != null) {
-                result = getParent(result.parent)
-            }
-        }
-        return result
-    }
 
     /**
      * Render a pdf with a list of applications.
@@ -226,20 +149,20 @@ class AppRetailController {
         List<App> apps = new ArrayList<>()
         String title = ""
 
-        String param = params.get("select").toString()
+        String param = params.get(PARAM_SELECT).toString()
         log.info("hidden value select is :" + param)
 
         if (param == null) {
             title= "Liste de toutes les applications"
             apps = App.findAll()
 
-        } else if (param.equals("vip")) {
-            final String nameParam = params.get("vipSelect")
+        } else if (param.equals(PARAM_VIP)) {
+            final String nameParam = params.get(PARAM_VIP_SELECT)
             Vip vip= Vip.findByTechnicalName(nameParam)
             apps=getApps(vip.servers)
             title= "Liste de toutes les applications sur " + nameParam
 
-        } else if (param.equals("server")) {
+        } else if (param.equals(PARAM_SERVER)) {
             final String nameParam = params.get("serverSelect")
             List<Server> servers = Server.findAllByMachineHostName(nameParam)
             apps=getApps(servers)
@@ -273,8 +196,9 @@ class AppRetailController {
                 if (max > apps.size()) {
                     max = apps.size() - 1
                 }
-
-                drawTable(page, contentStream, 700, 100, apps[countApp..max], title);
+                final float y = 700
+                final float margin = 700
+                drawTable(page, contentStream, y, margin, apps[countApp..max], title);
                 contentStream.close();
                 document.addPage(page);
                 int num = countApp + APPNUMBER_BY_SIZE + 1
@@ -286,9 +210,9 @@ class AppRetailController {
             }
         }
 
-        document.save("report.pdf");
+        document.save(REPORT_FILE);
         document.close();
-        render( file:new File("report.pdf"), fileName: "report.pdf")
+        render( file:new File(REPORT_FILE), fileName: REPORT_FILE)
     }
 
     /**
@@ -314,7 +238,6 @@ class AppRetailController {
             }
         }
         return apps
-
     }
 
     /**
