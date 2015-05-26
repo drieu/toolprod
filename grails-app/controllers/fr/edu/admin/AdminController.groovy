@@ -67,6 +67,7 @@ class AdminController {
                 flash.error = "FAILED : " + message
             }
         }
+        render(view:"initData")
     }
 
     /**
