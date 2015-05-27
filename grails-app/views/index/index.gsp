@@ -49,7 +49,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <a data-toggle="collapse" data-parent="#accordion" href="#collapse${vip?.name}_${vip?.type}">
-                                        ${vip?.name} </small>
+                                        ${vip?.name}
                                     </a>
                                     &nbsp;&nbsp&nbsp<small>( nom technique : ${vip.technicalName} )</small>
                                 </h4>
@@ -69,15 +69,17 @@
                                             <g:each in="${vip.servers}" var="server">
                                                 <tr>
                                                     <td><a href="<g:createLink controller="webServer" action="getWebServerByMachineName" params="[name:server?.machineHostName, type:'apache', port: server?.portNumber]" />">
-                                                        <span class="glyphicon glyphicon-search" aria-hidden="true">
-
-                                                    </span></a>
+                                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
                                                     </td>
                                                     <td>
                                                        ${server?.name}
                                                     </td>
                                                     <td>${server?.portNumber}</td>
-                                                    <td>${server?.linkToApps.toString()}</td>
+                                                    <td>
+                                                        <g:each in="${server?.linkToApps}" var="linkAppName">
+                                                                <a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />">${linkAppName}</a>
+                                                        </g:each>
+                                                    </td>
                                                 </tr>
                                             </g:each>
                                         </tbody>

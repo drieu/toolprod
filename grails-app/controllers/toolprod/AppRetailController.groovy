@@ -64,10 +64,11 @@ class AppRetailController {
         def selectApp = params.get(PARAM_NAME)
         if (selectApp != null) {
             myApp = App.findByName((String)selectApp)
-
             data += "\nvar zNodes = [\n"
-            GSONParser parser = new GSONParser()
-            data += parser.createTree(myApp.node)
+            if (myApp != null) {
+                GSONParser parser = new GSONParser()
+                data += parser.createTree(myApp.node)
+            }
             data += "\n];"
             log.info(data)
         }

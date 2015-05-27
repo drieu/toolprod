@@ -1,4 +1,4 @@
-<%@ page import="toolprod.Portal; toolprod.IndexController" %>
+<%@ page import="toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -54,7 +54,7 @@
 </body>
 </html>
 <script>
-    ${raw(data)};
+    ${raw(data)}
     $(document).ready(function() {
         $('#applis').dataTable({
             "data": dataSet,
