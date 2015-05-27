@@ -40,9 +40,13 @@ class WebServerController {
 
         String param = params.get(NAME_PARAM)
         String port = params.get(PORT_PARAM)
+        if (port == null || port.isEmpty()) {
+            port = Server.getDEFAULT_PORT()
+        }
+
         if (param != null) {
             selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
-            log.info("WebServerController:apache() linkapps :" + selectServer.linkToApps)
+            log.info("WebServerController:apache() linkapps :" + selectServer?.linkToApps)
 
         } else { //use by index.gsp because we search the server by machine name
             param = params.get("machineName")
@@ -54,12 +58,19 @@ class WebServerController {
 
         Map<String, List<String>> map = new TreeMap<>()
         for(Server s : servers) {
-            List<Integer> lst = map.get(s.name)
+            List<String> lst = map.get(s.name)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
             if (!lst.contains(s.portNumber)) {
-                lst.add(s.portNumber)
+                String portToAdd
+                Integer tmpPort = s.portNumber
+                if (tmpPort == null) {
+                    portToAdd = Integer.toString(Server.DEFAULT_WEBLOGIC_PORT)
+                } else {
+                    portToAdd = s.portNumber.toString()
+                }
+                lst.add(portToAdd)
                 lst.sort()
                 if ((s.name != null) && (!s.name.isEmpty())) {
                     map.put(s.name, lst)
@@ -83,12 +94,21 @@ class WebServerController {
         }
         Map<String, List<String>> map = new TreeMap<>()
         for(Server s : servers) {
-            List<Integer> lst = map.get(s.name)
+            List<String> lst = map.get(s.name)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
             if (!lst.contains(s.portNumber)) {
-                lst.add(s.portNumber)
+
+                String portToAdd
+                Integer tmpPort = s.portNumber
+                if (tmpPort == null) {
+                    portToAdd = Integer.toString(Server.DEFAULT_WEBLOGIC_PORT)
+                } else {
+                    portToAdd = s.portNumber.toString()
+                }
+
+                lst.add(portToAdd)
                 lst.sort()
                 if ((s.name != null) && (!s.name.isEmpty())) {
                     map.put(s.name, lst)
@@ -101,10 +121,13 @@ class WebServerController {
 
         String param = params.get(NAME_PARAM)
         String port = params.get(PORT_PARAM)
-
+        if (port == null || port.isEmpty()) {
+            port = Server.getDEFAULT_WEBLOGIC_PORT()
+        }
         if (param != null) {
-            selectServer = Server.findByNameAndPortNumber(param, port);
-            log.debug("WebServerController:weblogic() linkapps :" + selectServer.linkToApps)
+            final Integer p = port.toInteger()
+            selectServer = Server.findByNameAndPortNumber(param, p);
+            log.debug("WebServerController:weblogic() linkapps :" + selectServer?.linkToApps)
 
         }
         return [servers: servers, type: type, selectServer: selectServer, map:map]

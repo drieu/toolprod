@@ -142,7 +142,7 @@ class AppBean {
     }
 
     /**
-     * Set app port and if not set a DEFAULT_PORT
+     * Set app port and if not set a DEFAULT_APACHE_PORT
      * @param appPort
      */
     void setAppPort(String port) {

@@ -50,9 +50,22 @@ class Server implements Comparable{
     private static final log = LogFactory.getLog(this)
 
     /**
-     *  DEFAULT_PORT.
+     *  DEFAULT_APACHE_PORT.
      */
-    private static final int DEFAULT_PORT = 80
+    static int getDEFAULT_PORT() {
+        return DEFAULT_APACHE_PORT
+    }
+
+    private static final int DEFAULT_APACHE_PORT = 80
+
+    static int getDEFAULT_WEBLOGIC_PORT() {
+        return DEFAULT_WEBLOGIC_PORT
+    }
+
+    /**
+     *  DEFAULT_WEBLOGIC_PORT.
+     */
+    private static final int DEFAULT_WEBLOGIC_PORT = 8080
 
     /**
      *  DEFAULT_IP.
@@ -62,7 +75,7 @@ class Server implements Comparable{
 
     static constraints = {
         name()
-        portNumber(defaultValue:DEFAULT_PORT)
+        portNumber(defaultValue:DEFAULT_APACHE_PORT)
         machineHostName(defaultValue:DEFAULT_IP)
     }
 
@@ -75,9 +88,9 @@ class Server implements Comparable{
     Server(String name, String portNumber, String machineHostName) {
         this.name = name
         if (portNumber == null) {
-            portNumber = Integer.toString(DEFAULT_PORT)
+            portNumber = Integer.toString(DEFAULT_APACHE_PORT)
         } else if ( portNumber.isEmpty()) {
-            portNumber = Integer.toString(DEFAULT_PORT)
+            portNumber = Integer.toString(DEFAULT_APACHE_PORT)
         }
         this.portNumber = portNumber.toInteger()
         this.machineHostName = machineHostName
@@ -93,7 +106,7 @@ class Server implements Comparable{
     Server(String name, String machineHostName, Integer portNumber, Server.TYPE serverType ){
         this.name = name
         if (portNumber == null) {
-            portNumber = DEFAULT_PORT
+            portNumber = DEFAULT_APACHE_PORT
         }
         this.portNumber = portNumber
         this.serverType = serverType
@@ -143,13 +156,13 @@ class Server implements Comparable{
 
     /**
      * Get port number ( Listen line in apache conf ).
-     * return DEFAULT_PORT=80 if no values set.
+     * return DEFAULT_APACHE_PORT=80 if no values set.
      */
     Integer getPortNumber() {
 
         int portDefault
         if (this.portNumber == null) {
-            portDefault = DEFAULT_PORT
+            portDefault = DEFAULT_APACHE_PORT
         } else {
             portDefault = this.portNumber
         }
