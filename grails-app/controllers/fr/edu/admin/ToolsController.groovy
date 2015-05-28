@@ -6,8 +6,6 @@ import grails.converters.JSON
 import org.apache.directory.api.ldap.model.cursor.EntryCursor
 import org.apache.directory.api.ldap.model.entry.Attribute
 import org.apache.directory.api.ldap.model.message.SearchScope
-import org.apache.directory.api.ldap.model.schema.AttributeType
-import org.apache.directory.api.util.SequencedHashMap
 import org.apache.directory.ldap.client.api.LdapConnection
 import org.apache.directory.ldap.client.api.LdapNetworkConnection
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -18,9 +16,8 @@ import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 
 class ToolsController {
 
-    // Export service provided by Export plugin
-    def exportService
-    def grailsApplication  //inject GrailsApplication
+
+    private static final String EMPTY = ""
 
     /**
      * LDAP name.
@@ -36,14 +33,11 @@ class ToolsController {
 
     private static final String PARAM_SHORTNAME_TYPE = "shortNameType"
 
-
-
-
-
-
-
     def index() {}
 
+    /**
+     * Delete all data in status table.
+     */
     def clearCheckTable() {
         log.info("clearCheck() : DELETE all data in Status table")
         Status.executeUpdate('delete from Status')
@@ -51,41 +45,20 @@ class ToolsController {
         redirect(controller:'tools',action:'checkApacheConf')
     }
 
+    /**
+     * Check Apache conf.
+     */
     def checkApacheConf() {
-
-
-        if(!params.max) {
-            params.max = 10
-        }
-
-        if ((params.extension != null)) {
-            log.info(params.get('zest'))
-            def format=params.extension
-            if ("xls".equals(params.extension)) {
-                format="excel"
-            }
-            if(format && format != "html"){
-                response.contentType = grailsApplication.config.grails.mime.types[format]
-                response.setHeader("Content-disposition", "attachment; filename=check.${params.extension}")
-                List fields = ["machineName", "fileName", "name"]
-                Map labels = ["machineName": "Nom de machine", "fileName": "Nom de fichier", "name":"Valeur du ServerName"]
-
-                Map formatters = new HashMap()
-                Map parameters = new HashMap()
-                exportService.export(format, response.outputStream,Status.list(params), fields, labels, formatters, parameters)
-
-            }
-        }
+        flash.clear()
         log.info("ToolsController:init() action from ToolsController : checkApacheConf()")
         if (request instanceof MultipartHttpServletRequest) {
             def  machineName = request.getParameterValues("machinename")
             if (machineName != null && (machineName[0].size() != 0)) {
                 log.info("Name of machine : " + machineName[0])
-                def message = ""
+                def message = EMPTY
                 boolean bResult = true
                 request.getFiles("files[]").each { file ->
-                    log.debug("ToolsController:checkApacheConf() file to parse:" + file.originalFilename)
-
+                    log.info("ToolsController:checkApacheConf() file to parse:" + file.originalFilename)
 
                     if((file != null) && (!file.isEmpty())) {
                         MultipartFileBean f = new MultipartFileBean()
@@ -102,6 +75,7 @@ class ToolsController {
                         message += 'Import failed because file is null or is empty'
                     }
                 }
+
                 if (bResult) {
                     flash.message = "SUCCESS : " + message
                 } else {
@@ -116,20 +90,6 @@ class ToolsController {
         List<Status> checks = Status.findAll()
         int count = checks.size()
         return [checks:checks, count:count]
-    }
-
-    def list = {
-
-        if(!params.max) params.max = 10
-
-        if(params?.format && params.format != "html"){
-            response.contentType = grailsApplication.config.grails.mime.types[params.format]
-            response.setHeader("Content-disposition", "attachment; filename=books.${params.extension}")
-
-            exportService.export(params.format, response.outputStream,Status.list(params), [:], [:])
-        }
-
-        [ bookInstanceList: Status.list( params ) ]
     }
 
     /**
@@ -177,7 +137,7 @@ class ToolsController {
         String fileName = uid.toString() + ".ldif"
         File file = new File(fileName)
 
-        String content = ""
+        String content = EMPTY
 
         content +=  "dn: uid=" + uid + ",ou=fonctionnelles,ou=ac-limoges,ou=education,o=gouv,c=fr"
         content +=  System.getProperty("line.separator")
@@ -304,7 +264,7 @@ class ToolsController {
         log.info("ajaxCheckMailInLDAP()")
         def mailType
         boolean bCheck = true
-        String mail = ""
+        String mail = EMPTY
 
         // Init JSON data
         def data = [:]

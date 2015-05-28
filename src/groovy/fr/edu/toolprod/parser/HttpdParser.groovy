@@ -304,22 +304,27 @@ class HttpdParser {
      * @return  true if no error during parsing
      */
     def check(String machineName, String fileName) {
-        boolean bResult = false;
+        boolean bResult = true;
         result = EMPTY;
 
         String strLine
         try {
             br = new BufferedReader(new InputStreamReader(file.inputStream))
             while ((strLine = br.readLine()) != null) {
+                strLine = strLine.trim()
                 if (strLine.startsWith(SERVER_NAME)) { // If ServerName
+
                     String confServerName = XmlParser.parseServerName(strLine)
+                    log.info("====>confServerName:" + confServerName)
+                    log.info("====>machineName:" + machineName)
                     Data data = new Data(null);
                     if (!machineName.equals(confServerName)) {
-                        bResult = data.saveCheck(machineName, fileName, confServerName)
+                        data.saveCheck(machineName, fileName, confServerName)
+                        bResult = false
                     }
                 }
             }
-            result += ''
+            result += EMPTY
 
         } catch (IOException e) {
 
