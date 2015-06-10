@@ -70,6 +70,7 @@
 
             </div>
         </div>
+        <g:render template="/layouts/footer"></g:render>
     </div>
 </body>
 </html>

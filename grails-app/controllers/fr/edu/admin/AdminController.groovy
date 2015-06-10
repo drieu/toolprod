@@ -23,6 +23,13 @@ class AdminController {
         redirect(action:'init')
     }
 
+    def initFromHttpd() {
+        log.info("initFromHttpd()")
+        flash.clear()
+        boolean bResult = false
+    }
+
+
     /**
      * Initialize datas Step 1.
      */

@@ -63,6 +63,7 @@
             </g:each>
             </tbody>
         </table>
+        <g:render template="/layouts/footer"></g:render>
     </div>
 </div>
 </body>

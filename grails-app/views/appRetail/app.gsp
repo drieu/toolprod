@@ -122,7 +122,7 @@
     <g:else>
         <div class="well well-lg">Pas d'application !</div>
     </g:else>
-
+    <g:render template="/layouts/footer"></g:render>
 </div>
 </body>
 </html>

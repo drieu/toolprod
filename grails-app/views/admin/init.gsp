@@ -45,6 +45,7 @@
             <g:link controller="admin" action="initPortals">Etape 3 : Initialisation des portails</g:link>
         </div>
     </div>
+    <g:render template="/layouts/footer"></g:render>
 </div>
 </body>
 </html>

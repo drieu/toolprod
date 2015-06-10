@@ -41,6 +41,18 @@
                     </form>
 
                 </g:uploadForm>
+                %{--<g:uploadForm action="initFromHttpd" controller="admin">--}%
+
+                    %{--<form role="form">--}%
+                        %{--<div class="form-group">--}%
+                            %{--<label for="files">Choix du fichier à parser</label>--}%
+                            %{--<input type="file" id="dir" name="dir" multiple>--}%
+                            %{--<p class="help-block">Vous devez choisir un fichier de config</p>--}%
+                        %{--</div>--}%
+                        %{--<button type="submit" class="btn btn-info">Submit</button>--}%
+                    %{--</form>--}%
+
+                %{--</g:uploadForm>--}%
                 <g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link>
             </div>
         </div>
@@ -73,6 +85,7 @@
                 </div>
             </div>
         </g:if>
+        <g:render template="/layouts/footer"></g:render>
     </div>
 </body>
 </html>
