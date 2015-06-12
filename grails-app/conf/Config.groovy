@@ -98,6 +98,7 @@ environments {
             info "grails.app"
             debug "fr.edu.toolprod"
             info "fr.edu.toolprod.parser"
+            info "toolprod"
         }
     }
     test {

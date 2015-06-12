@@ -125,7 +125,7 @@ class AppRetailController {
      * Html print page.
      */
     def viplisting() {
-
+        log.info("viplisting()")
         List<String> results = new ArrayList<>()
         def servers = Server.findAll()
         for (Server server : servers) {
@@ -182,8 +182,8 @@ class AppRetailController {
         if (apps.size() > APPNUMBER_BY_SIZE) {
             pageNumber = apps.size()/APPNUMBER_BY_SIZE + 1
         }
-        log.debug("Apps size :" + apps.size())
-        log.debug("Page number :" + pageNumber)
+        log.info("Apps size :" + apps.size())
+        log.info("Page number :" + pageNumber)
 
         int countApp = 0
         if (apps.size() > 0) {
@@ -198,7 +198,7 @@ class AppRetailController {
                     max = apps.size() - 1
                 }
                 final float y = 700
-                final float margin = 700
+                final float margin = 100
                 drawTable(page, contentStream, y, margin, apps[countApp..max], title);
                 contentStream.close();
                 document.addPage(page);
@@ -279,6 +279,7 @@ class AppRetailController {
         contentStream.setFont(PDType1Font.HELVETICA_BOLD,14);
         contentStream.beginText();
         contentStream.moveTextPositionByAmount((float)margin+cellMargin+10,(float)(y+20));
+        log.info("==> title:" + title)
         contentStream.drawString(title);
         contentStream.endText();
 
@@ -312,9 +313,11 @@ class AppRetailController {
 
         apps.each {
 
+
             contentStream.setFont(PDType1Font.HELVETICA,9);
             contentStream.beginText();
             contentStream.moveTextPositionByAmount(textx,texty);
+            log.info("==> name:" + it.name)
             contentStream.drawString(it.name);
             contentStream.endText();
             textx += colWidth;
