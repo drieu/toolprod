@@ -30,7 +30,9 @@ class Machine {
 
     static hasMany = [apps : App, servers : Server]
 
-
+    static mapping = {
+        sort "name"
+    }
 
     static constraints = {
         name()

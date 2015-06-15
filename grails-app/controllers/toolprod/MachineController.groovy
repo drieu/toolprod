@@ -99,7 +99,6 @@ class MachineController {
                 log.warn("group() unknow machine group name")
             }
         }
-
         return [ apps: localApps, machines: machines, machine:machine, machineServers:machineServers, refs: refs, selectedMachineGroup:selectedMachineGroup]
     }
 
