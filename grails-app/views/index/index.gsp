@@ -50,15 +50,15 @@
                                         <thead>
                                         <tr>
                                             <th>Nom</th>
-                                            <th>Url</th>
                                             <th>Vip</th>
+                                            <th>Serveur</th>
                                             <th>Port</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr>
                                             <td>...</td>
-                                            <td>...</td>
+                                            <td class="col-md-3">...</td>
                                             <td>...</td>
                                             <td>...</td>
                                         </tr>
@@ -146,9 +146,9 @@
             "lengthMenu": [[10, 30, 40, -1], [10, 30, 40, "All"]],
             "columnDefs": [
                 { "width": "15%", "targets": 0 },
-                { "width": "10%", "targets": 1 },
+                { "width": "30%", "targets": 1 },
                 { "width": "30%", "targets": 2 },
-                { "width": "45%", "targets": 3 }
+                { "width": "15%", "targets": 3 }
             ],
             "language": {
                 "lengthMenu": "Affiche _MENU_ résultats par page",

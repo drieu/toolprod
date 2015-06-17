@@ -51,9 +51,9 @@ class AppBean {
 
     private static final String DEFAUL_DESCRIPTION = "EMPTY"
 
-    public static final String DEFAUL_SERVER_URL = "http://notdefined.com"
+    public static final String DEFAUL_SERVER_URL = ""
 
-    private static final String DEFAUL_SERVER_PORT = "http://notdefined.com"
+    private static final String DEFAUL_SERVER_PORT = ""
 
     private static final String DEFAULT_PORT = "80"
 

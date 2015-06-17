@@ -24,7 +24,7 @@
         <g:applyLayout name="menu" />
 
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-xs-12">
                 <div class="panel-heading">
                     <h4 class="panel-title">
                         Liste des applications &nbsp;&nbsp;<span class="badge">${count}</span>
@@ -62,8 +62,8 @@
             "lengthMenu": [[10, 30, 40, -1], [10, 30, 40, "All"]],
             "columnDefs": [
                 { "width": "15%", "targets": 0 },
-                { "width": "10%", "targets": 1 },
-                { "width": "75%", "targets": 2 }
+                { "width": "30%", "targets": 1 },
+                { "width": "55%", "targets": 2 }
             ],
             "language": {
                 "lengthMenu": "Affiche _MENU_ résultats par page",
