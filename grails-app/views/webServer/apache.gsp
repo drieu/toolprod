@@ -17,12 +17,13 @@
         <g:applyLayout name="menu"/>
 
         <div class="row">
+            <div class="col-xs-12">
                 <div class="panel-group" id="accordion">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <h4 class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                        Liste des serveurs web&nbsp;&nbsp;<span class="badge">${map?.size()}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>Merci de cliquer pour voir la liste !</small>
+                                        Liste des serveurs web Apache&nbsp;&nbsp;<span class="badge">${map?.size()}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>Merci de cliquer pour voir la liste !</small>
                                 </a>
                             </h4>
                         </div>
@@ -38,7 +39,7 @@
 
                                             <g:if test="${!((String)servername).startsWith('source_')}">
                                                    <tr>
-                                                       <td>
+                                                       <td class="col-md-3">
                                                         ${servername}
                                                        </td>
                                                        <td>
@@ -58,6 +59,7 @@
                         </div>
                     </div>
                 <br/>
+            </div>
         </div>
         <div class="row">
 
@@ -127,9 +129,6 @@
                             </div>
                         </div>
                 </g:if>
-                <g:else>
-                    <div class="well well-lg">Merci de choisir un serveur apache dans la liste !</div>
-                </g:else>
         </div>
         <g:render template="/layouts/footer"></g:render>
     </div>

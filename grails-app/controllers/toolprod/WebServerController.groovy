@@ -100,7 +100,6 @@ class WebServerController {
                 }
             }
         }
-        log.info("map:" + map)
         return map
     }
 

@@ -22,26 +22,29 @@
         <g:applyLayout name="menu" />
 
         <div class="row">
+            <div class="col-xs-12">
                     <blockquote>
                         <h1>Bienvenue sur Toolprod</h1>
                         <footer>Une boîte à outil pour la production</footer>
                     </blockquote>
                     <br/>
                     <br/>
+            </div>
         </div>
 
 
         <div class="row">
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#sectionA">Liste des applications &nbsp;&nbsp;<span class="badge">${count}</span></a></li>
-                <li><a data-toggle="tab" href="#sectionB">VIP</a></li>
-            </ul>
+            <div class="col-xs-12">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#sectionA">Liste des applications &nbsp;&nbsp;<span class="badge">${count}</span></a></li>
+                    <li><a data-toggle="tab" href="#sectionB">VIP</a></li>
+                </ul>
 
-            <div class="tab-content">
+                <div class="tab-content">
 
                     <div id="sectionA" class="tab-pane fade in active">
                         <div class="row">
-                            <div class="col-md-9">
+                            <div class="col-xs-12">
                                 <div class="panel-body">
                                     <table id="applis" class="display">
                                         <thead>
@@ -65,11 +68,11 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="sectionB" class="tab-pane fade">
 
                         <div class="row">
-                            <div class="panel-group" id="accordion">
+                            <div class="col-xs-12">
+                                <div class="panel-group" id="accordion">
                                 <% def panel = "panel-info" %>
                                 <g:each in="${Vip.findAll()}" var="vip">
                                     <g:if test="${panel=='panel-info'}">
@@ -124,10 +127,11 @@
                                 </g:each>
 
                             </div>
+                            </div>
                         </div>
 
                     </div>
-
+                </div>
                 </div>
             </div>
             <g:render template="/layouts/footer"></g:render>
