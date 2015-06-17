@@ -187,6 +187,8 @@ class Data {
         if (!app.urls.contains(appBean.serverUrl)) {
             app.urls.add(appBean.serverUrl)
             app.save(failOnError: true,flush:true)
+            log.debug("saveApacheApp() save server:" + server.name)
+            app.addServer(server)
         }
 
         app.save(failOnError: true,flush:true)

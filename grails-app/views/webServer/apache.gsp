@@ -34,7 +34,7 @@
                                            <th>Machine(s)</th>
                                            <th>Port(s)</th>
                                        </tr>
-                                        <g:each in="${map.keySet()}" var="servername">
+                                        <g:each in="${map?.keySet()}" var="servername">
 
                                             <g:if test="${!((String)servername).startsWith('source_')}">
                                                    <tr>

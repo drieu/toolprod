@@ -49,6 +49,9 @@ class Server implements Comparable{
      */
     private static final log = LogFactory.getLog(this)
 
+
+    private static final int DEFAULT_APACHE_PORT = 80
+
     /**
      *  DEFAULT_APACHE_PORT.
      */
@@ -56,16 +59,16 @@ class Server implements Comparable{
         return DEFAULT_APACHE_PORT
     }
 
-    private static final int DEFAULT_APACHE_PORT = 80
-
-    static int getDEFAULT_WEBLOGIC_PORT() {
-        return DEFAULT_WEBLOGIC_PORT
-    }
 
     /**
      *  DEFAULT_WEBLOGIC_PORT.
      */
     private static final int DEFAULT_WEBLOGIC_PORT = 8080
+
+
+    static int getDEFAULT_WEBLOGIC_PORT() {
+        return DEFAULT_WEBLOGIC_PORT
+    }
 
     /**
      *  DEFAULT_IP.
@@ -105,7 +108,7 @@ class Server implements Comparable{
      */
     Server(String name, String machineHostName, Integer portNumber, Server.TYPE serverType ){
         this.name = name
-        if (portNumber == null) {
+        if ( (portNumber == null) || (portNumber == 0)) {
             portNumber = DEFAULT_APACHE_PORT
         }
         this.portNumber = portNumber
@@ -161,7 +164,7 @@ class Server implements Comparable{
     Integer getPortNumber() {
 
         int portDefault
-        if (this.portNumber == null) {
+        if ( (portNumber == null) || (portNumber == 0)) {
             portDefault = DEFAULT_APACHE_PORT
         } else {
             portDefault = this.portNumber

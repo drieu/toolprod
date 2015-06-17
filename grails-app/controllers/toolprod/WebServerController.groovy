@@ -32,10 +32,6 @@ class WebServerController {
     def apache() {
         log.debug("WebServerController:apache()")
         def selectServer = null
-        def servers = Server.findAll("from Server as s where s.serverType=:type",[type:Server.TYPE.APACHE])
-        if (servers.isEmpty()) {
-            log.info("WebServerController:apache() No result return by query !")
-        }
         def type = Server.TYPE.APACHE.toString()
 
         String param = params.get(NAME_PARAM)
@@ -56,20 +52,47 @@ class WebServerController {
             }
         }
 
+        Map<String, List<String>> map = getServers(Server.TYPE.APACHE)
+
+        return [type: type, selectServer: selectServer, map:map]
+    }
+
+    /**
+     * Get a map with server and list port
+     * @param type APACHE/WEBLO
+     * @return
+     */
+    private Map<String, List<String>> getServers(Server.TYPE type) {
         Map<String, List<String>> map = new TreeMap<>()
+        String port
+        def servers = Server.findAll("from Server as s where s.serverType=:type",[type:type])
+        if (servers.isEmpty()) {
+            log.info("WebServerController:weblogic() No result return by query !")
+        }
+
+        if (type == Server.TYPE.WEBLOGIC) {
+            port = Server.DEFAULT_WEBLOGIC_PORT
+        } else {
+            port =  Server.DEFAULT_PORT
+        }
+
+
         for(Server s : servers) {
             List<String> lst = map.get(s.name)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
-            if (!lst.contains(s.portNumber)) {
-                String portToAdd
-                Integer tmpPort = s.portNumber
-                if (tmpPort == null) {
-                    portToAdd = Integer.toString(Server.DEFAULT_WEBLOGIC_PORT)
-                } else {
-                    portToAdd = s.portNumber.toString()
-                }
+
+            String portToAdd
+            Integer tmpPort = s.portNumber
+            if (tmpPort == null) {
+                portToAdd = port
+            } else {
+                portToAdd = s.portNumber.toString()
+            }
+
+
+            if (!lst.contains(portToAdd)) {
                 lst.add(portToAdd)
                 lst.sort()
                 if ((s.name != null) && (!s.name.isEmpty())) {
@@ -77,8 +100,8 @@ class WebServerController {
                 }
             }
         }
-
-        return [servers: servers, type: type, selectServer: selectServer, map:map]
+        log.info("map:" + map)
+        return map
     }
 
     /**
@@ -88,34 +111,8 @@ class WebServerController {
     def weblogic() {
         log.debug("WebServerController:weblogic()")
         def selectServer = null;
-        def servers = Server.findAll("from Server as s where s.serverType=:type",[type:Server.TYPE.WEBLOGIC])
-        if (servers.isEmpty()) {
-            log.info("WebServerController:weblogic() No result return by query !")
-        }
-        Map<String, List<String>> map = new TreeMap<>()
-        for(Server s : servers) {
-            List<String> lst = map.get(s.name)
-            if (lst == null ) {
-                lst = new ArrayList<>()
-            }
-            if (!lst.contains(s.portNumber)) {
 
-                String portToAdd
-                Integer tmpPort = s.portNumber
-                if (tmpPort == null) {
-                    portToAdd = Integer.toString(Server.DEFAULT_WEBLOGIC_PORT)
-                } else {
-                    portToAdd = s.portNumber.toString()
-                }
-
-                lst.add(portToAdd)
-                lst.sort()
-                if ((s.name != null) && (!s.name.isEmpty())) {
-                    map.put(s.name, lst)
-                }
-            }
-        }
-
+        Map<String, List<String>> map = getServers(Server.TYPE.WEBLOGIC)
 
         def type = Server.TYPE.WEBLOGIC.toString()
 
@@ -130,7 +127,7 @@ class WebServerController {
             log.debug("WebServerController:weblogic() linkapps :" + selectServer?.linkToApps)
 
         }
-        return [servers: servers, type: type, selectServer: selectServer, map:map]
+        return [type: type, selectServer: selectServer, map:map]
     }
 
     /**
