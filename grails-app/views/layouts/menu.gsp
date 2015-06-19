@@ -13,7 +13,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="/toolprod/">
-                    <asset:image src="logo.jpg" width="120" height="50"/>
+                    <asset:image src="logo.jpg"/>
                 </a>
             </div>
 
