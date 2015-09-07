@@ -17,7 +17,7 @@ class AppBeanSpec extends GrailsUnitTestCase   {
     void testSetUrlTestWithNull() {
         AppBean appBean = new AppBean()
         appBean.setUrl(null, null, null)
-        assertEquals("http://notdefined.com", appBean.serverUrl)
+        assertEquals("", appBean.serverUrl)
     }
 
     void testSetUrlWithShortNominal() {
@@ -29,7 +29,7 @@ class AppBeanSpec extends GrailsUnitTestCase   {
     void testSetUrlWithShortNull() {
         AppBean appBean = new AppBean()
         appBean.setUrl(null, null, null, null)
-        assertEquals("http://notdefined.com", appBean.serverUrl)
+        assertEquals("", appBean.serverUrl)
     }
 
     void testAppPortWithNull() {
