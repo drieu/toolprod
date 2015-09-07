@@ -1,3 +1,5 @@
+import org.apache.log4j.DailyRollingFileAppender
+
 // locations to search for config files that get merged into the main config;
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
@@ -114,22 +116,25 @@ environments {
         // Set level for all application artifacts
         log4j = {
             error "grails.app"
-            error "fr.edu.toolprod"
+            debug "fr.edu.toolprod"
         }
     }
 }
 
 // log4j configuration
 log4j = {
+
     // Example of changing the log pattern for the default console appender:
     //
     appenders {
         console name:'stdout', layout:pattern(conversionPattern: '[%-5p] %d %c{2} - %m%n')
+        rollingFile name: "myAppender",
+                maxFileSize: 1024,
+                file: "toolprod.log"
     }
 
-    logger {
-        info 'com.linkedin.grails.profiler'
-    }
+
+    info 'com.linkedin.grails.profiler'
 
 // Set for a specific controller in the default package debug "grails.app.controllers.YourController"
 // Set for a specific domain class debug "grails.app.domain.org.example.Book"
