@@ -42,7 +42,7 @@ class IndexController {
             }
         }
         data += "\n];"
-        log.info(data)
+        log.debug(data)
         def count = App.findAll().size()
         return [count:count, data:data]
     }
