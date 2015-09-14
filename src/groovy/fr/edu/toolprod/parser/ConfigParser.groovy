@@ -242,7 +242,7 @@ class ConfigParser {
                     }
                 }
             }
-            result=line
+            result+=line
         }
     }
 

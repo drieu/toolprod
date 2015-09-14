@@ -6,6 +6,7 @@ import fr.edu.toolprod.bean.AppBean
 import fr.edu.toolprod.bean.ServerBean
 import org.apache.commons.logging.LogFactory
 import toolprod.App
+import toolprod.MachineGroup
 import toolprod.Status
 import toolprod.Machine
 import toolprod.Server
@@ -240,6 +241,32 @@ class Data {
         TreeNodeData treeNodeData = new WeblogicTreeNodeData(suffixNodeName, webloServers)
         treeNodeData.saveTree(app, appBean, server)
         result = result + appBean.name + SPACE
+    }
+
+    /**
+     * Overwrite machine group by new group contains in config file.
+     * @param machineByGroup
+     */
+    def overwriteMachineGroup(Map<String, List<String>> machineByGroup) {
+        log.info("Delete all existing machine group.")
+        MachineGroup.executeUpdate("delete MachineGroup m")
+        for (String groupName : machineByGroup.keySet()) {
+
+            MachineGroup machineGroup = MachineGroup.findByGroupName(groupName)
+            if (machineGroup == null) {
+
+                machineGroup = new MachineGroup()
+                machineGroup.groupName = groupName
+                List<String> machines = machineByGroup.get(groupName)
+                for (String name : machines) {
+                    machineGroup.regex.add(name)
+                    log.debug("saveMachineGroup() Add machine name:" + name + " in group:" + groupName)
+                }
+                log.info("saveMachineGroup() Save group:" + groupName + " OK")
+                machineGroup.save(failOnError: true, flush:true)
+            }
+
+        }
     }
 
     /**

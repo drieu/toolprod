@@ -9,7 +9,7 @@ import org.apache.log4j.DailyRollingFileAppender
 //                             "file:${userHome}/.grails/${appName}-config.properties",
 //                             "file:${userHome}/.grails/${appName}-config.groovy"]
 
-grails.config.locations = [ "file:${userHome}/.grails/${appName}-servers.properties"]
+//grails.config.locations = [ "file:${userHome}/.grails/${appName}-servers.properties"]
 
 //if (System.properties["${appName}.config.location"]) {
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
@@ -92,66 +92,114 @@ grails.exceptionresolver.params.exclude = ['password']
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
 
+def appName="toolprod"
+
+// default for all environments
+log4j = { root ->
+    appenders {
+        console name: 'stdout', layout: pattern(conversionPattern: "%d [%t] %-5p %c %x - %m%n")
+        rollingFile name:'stdout', file:"${appName}.log".toString(), maxFileSize:'100KB'
+        rollingFile name:'stacktrace', file:"${appName}_stack.log".toString(), maxFileSize:'100KB'
+    }
+
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+            'org.codehaus.groovy.grails.web.pages', //  GSP
+            'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+            'org.codehaus.groovy.grails.web.mapping', // URL mapping
+            'org.codehaus.groovy.grails.commons', // core / classloading
+            'org.codehaus.groovy.grails.plugins', // plugins
+            'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+            'org.springframework',
+            'org.hibernate'
+    root.level = org.apache.log4j.Level.DEBUG
+}
+
+// special settings with production env
 environments {
     development {
-        grails.logging.jul.usebridge = true
-        // Set level for all application artifacts
-        log4j = {
+        log4j = { root ->
+            appenders {
+                rollingFile name:'stdout', file:"${appName}.log".toString(), maxFileSize:'10000KB'
+                rollingFile name:'stacktrace', file:"${appName}_stack.log".toString(), maxFileSize:'10000KB'
+            }
+            warn       'org.codehaus.groovy.grails.web.servlet',  //  controllers
+                    'org.codehaus.groovy.grails.web.pages', //  GSP
+                    'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+                    'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+                    'org.codehaus.groovy.grails.web.mapping', // URL mapping
+                    'org.codehaus.groovy.grails.commons', // core / classloading
+                    'org.codehaus.groovy.grails.plugins', // plugins
+                    'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+                    'org.springframework',
+                    'org.hibernate'
             info "grails.app"
             debug "fr.edu.toolprod"
             info "fr.edu.toolprod.parser"
             info "toolprod"
-        }
-    }
-    test {
-        grails.logging.jul.usebridge = false
-        // Set level for all application artifacts
-        log4j = {
-            info "grails.app"
-            debug "fr.edu.toolprod"
-        }
-    }
-    production {
-        grails.logging.jul.usebridge = false
-        // Set level for all application artifacts
-        log4j = {
-            error "grails.app"
-            debug "fr.edu.toolprod"
+            root.level = org.apache.log4j.Level.INFO
         }
     }
 }
 
-// log4j configuration
-log4j = {
 
-    // Example of changing the log pattern for the default console appender:
-    //
-    appenders {
-        console name:'stdout', layout:pattern(conversionPattern: '[%-5p] %d %c{2} - %m%n')
-        rollingFile name: "myAppender",
-                maxFileSize: 1024,
-                file: "toolprod.log"
-    }
-
-
-    info 'com.linkedin.grails.profiler'
-
-// Set for a specific controller in the default package debug "grails.app.controllers.YourController"
-// Set for a specific domain class debug "grails.app.domain.org.example.Book"
-// Set for all taglibs info "grails.app.taglib"
-
-    error  'org.codehaus.groovy.grails.web.servlet',        // controllers
-           'org.codehaus.groovy.grails.web.pages',          // GSP
-           'org.codehaus.groovy.grails.web.sitemesh',       // layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping',        // URL mapping
-           'org.codehaus.groovy.grails.commons',            // core / classloading
-           'org.codehaus.groovy.grails.plugins',            // plugins
-           'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
-           'org.springframework',
-           'org.hibernate',
-           'net.sf.ehcache.hibernate'
-}
+//environments {
+//    development {
+//        grails.logging.jul.usebridge = true
+//        // Set level for all application artifacts
+//        log4j = {
+//            info "grails.app"
+//            debug "fr.edu.toolprod"
+//            info "fr.edu.toolprod.parser"
+//            info "toolprod"
+//        }
+//    }
+//    test {
+//        grails.logging.jul.usebridge = false
+//        // Set level for all application artifacts
+//        log4j = {
+//            info "grails.app"
+//            debug "fr.edu.toolprod"
+//        }
+//    }
+//    production {
+//        grails.logging.jul.usebridge = false
+//        // Set level for all application artifacts
+//        log4j = {
+//            error "grails.app"
+//            debug "fr.edu.toolprod"
+//        }
+//    }
+//}
+//
+//// log4j configuration
+//log4j = {
+//
+//    // Example of changing the log pattern for the default console appender:
+//    //
+//    appenders {
+//        console name:'stdout', layout:pattern(conversionPattern: '[%-5p] %d %c{2} - %m%n')
+//    }
+//
+//
+//    info 'com.linkedin.grails.profiler'
+//
+//// Set for a specific controller in the default package debug "grails.app.controllers.YourController"
+//// Set for a specific domain class debug "grails.app.domain.org.example.Book"
+//// Set for all taglibs info "grails.app.taglib"
+//
+//    error  'org.codehaus.groovy.grails.web.servlet',        // controllers
+//           'org.codehaus.groovy.grails.web.pages',          // GSP
+//           'org.codehaus.groovy.grails.web.sitemesh',       // layouts
+//           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+//           'org.codehaus.groovy.grails.web.mapping',        // URL mapping
+//           'org.codehaus.groovy.grails.commons',            // core / classloading
+//           'org.codehaus.groovy.grails.plugins',            // plugins
+//           'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
+//           'org.springframework',
+//           'org.hibernate',
+//           'net.sf.ehcache.hibernate'
+//}
 
 plugin.crash.config = [
         'crash.ssh.port': 2001,

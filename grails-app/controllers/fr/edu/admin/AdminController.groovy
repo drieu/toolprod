@@ -5,6 +5,7 @@ import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.parser.ArenaParser
 import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
+import fr.edu.toolprod.parser.Data
 import fr.edu.toolprod.parser.HttpdParser
 import fr.edu.toolprod.parser.Parser
 import org.springframework.web.multipart.MultipartHttpServletRequest
@@ -29,6 +30,74 @@ class AdminController {
         boolean bResult = false
     }
 
+    /**
+     *
+     * @return
+     */
+    def reloadData() {
+        def path = "E:\\projet\\toolprod\\import\\"
+
+        log.info("Initializing configuration from config file...")
+        def initFile = new File(path + "config")
+        InputStream inputStream = new FileInputStream(initFile)
+        ConfigParser configParser = new ConfigParser(inputStream)
+        boolean bResult = configParser.parse()
+        if (bResult) {
+            log.info("result:" + configParser.result)
+            Data data = new Data()
+            data.overwriteMachineGroup(configParser.machineByGroup)
+            log.info("Init config : OK")
+        } else {
+            log.error("Init config : KO")
+        }
+
+        log.info("Initializing application from httpd.conf files in machine directory...")
+        new File(path).listFiles().findAll{
+            if (it.isDirectory()) {
+                println("Machine name ( Directory name ) :" + it.name)
+                String machineName = it.name
+                println(it.listFiles())
+                for (File f : it.listFiles()) {
+                    HttpdParser parser = new HttpdParser(machineName)
+                    parser.parse(f)
+                    bResult = parser.parse(f)
+                    if (!parser.overwrite()) { //TODO : overwrite
+                        bResult = false
+                    }
+                }
+
+            }
+
+        }
+
+//        log.info("Name of machine : " + machineName[0])
+//        request.getFiles("files[]").each { file ->
+//            log.debug("init() file to parse:" + file.originalFilename)
+//            if((machineName != null) && (file != null) && (!file.isEmpty())) {
+//                MultipartFileBean f = new MultipartFileBean()
+//                f.inputStream = file.inputStream
+//                f.originalFilename = file.originalFilename
+//                HttpdParser parser = new HttpdParser(f, machineName[0]);
+//                bResult = parser.parse()
+//                if (!parser.save()) {
+//                    bResult = false
+//                }
+//                message += parser.result
+//            } else {
+//                bResult = false
+//                log.debug("init() machineName:" + machineName)
+//                message += 'Import failed because file is null or is empty'
+//            }
+//        }
+//        if (bResult) {
+//            flash.message = "SUCCESS : " + message
+//        } else {
+//            flash.error = "FAILED : " + message
+//        }
+
+
+
+    }
 
     /**
      * Initialize datas Step 1.
@@ -46,22 +115,12 @@ class AdminController {
                     bResult = configParser.parse()
                     message = configParser.result
                     if (bResult) {
-                        Map<String, List<String>> machineByGroup = configParser.machineByGroup
-                        for (String groupName : machineByGroup.keySet()) {
-
-                            MachineGroup machineGroup = MachineGroup.findByGroupName(groupName)
-                            if (machineGroup == null) {
-                                machineGroup = new MachineGroup()
-                                machineGroup.groupName = groupName
-                                List<String> machines = machineByGroup.get(groupName)
-                                for (String name : machines) {
-                                    machineGroup.regex.add(name)
-                                    log.info("initData() Add machine name:" + name + " in group:" + groupName)
-                                }
-                                log.info("initData() Save group:" + groupName + " OK")
-                                machineGroup.save(failOnError: true, flush:true)
-                            }
-                        }
+                        log.info("result:" + configParser.result)
+                        Data data = new Data()
+                        data.overwriteMachineGroup(configParser.machineByGroup)
+                        log.info("Init config : OK")
+                    } else {
+                        log.error("Init config : KO")
                     }
                 } else {
                     message = "File is empty !"

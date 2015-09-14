@@ -5,6 +5,7 @@ import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.bean.ServerBean
 import org.apache.commons.logging.LogFactory
 import toolprod.Machine
+import toolprod.MachineGroup
 
 /**
  * Parse httpd.conf file.
@@ -117,7 +118,157 @@ class HttpdParser {
         machineName = name
     }
 
+    HttpdParser(final String name) {
+        machineName = name
+    }
 
+
+
+    def parse(File f) {
+        boolean bResult = true;
+
+        String strLine
+        serverBean = new ServerBean()
+        appBeans = new ArrayList<>()
+        serverBean.machineHostName = machineName
+        try {
+
+            boolean bLocationTag = false; // identify begin and end of xml tag Location
+
+            String name = EMPTY
+            String WebLogicHost = EMPTY
+            String WebLogicPort = EMPTY
+            List<String> weblos = new ArrayList<>()
+            List<String> shortUrls = new ArrayList<>()
+
+            log.info("Parse httpd.conf file :" + f.name)
+            InputStream inputStream = new FileInputStream(f)
+            br = new BufferedReader(new InputStreamReader(inputStream))
+            while ((strLine = br.readLine()) != null) {
+                strLine = strLine.trim()
+                if (strLine.startsWith(SERVER_NAME)) { // If ServerName
+                    serverBean.name = XmlParser.parseServerName(strLine)
+
+                } else if (strLine.startsWith(SERVER_PORT)) {// If port
+                    serverBean.portNumber = XmlParser.parseListen(strLine)
+
+                } else if (strLine.startsWith(SERVER_MODULE + SPACE)) { // If LoadModule
+                    def tmp = XmlParser.parseLoadModule(strLine);
+                    if (tmp != null && !tmp.isEmpty()) {
+                        serverBean.addToModules(tmp);
+                    }
+
+                } else if (strLine.startsWith(PROXY_PASS + SPACE)) { // If ProxyPass
+                    AppBean appBean = XmlParser.parseProxyPass(strLine, f.name)
+                    if ( (appBean != null)) {
+                        appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
+                        appBeans.add(appBean);
+                    }
+                } else if (( !strLine.startsWith(HASH) && strLine.contains(WEBLOGIC_HOST))) { // If WebLogicHost
+                    WebLogicHost = XmlParser.parseWebLogicHost(strLine)
+
+                } else if (( !strLine.startsWith(HASH) && strLine.contains(WEBLOGIC_PORT))) { // If WebLogicPort
+                    WebLogicPort = XmlParser.parseWebLogicPort(strLine)
+
+                } else if ( (strLine.startsWith(LOCATIONMATCH_START + SPACE))) {// If LocationMatch
+                    def params = strLine.tokenize()
+                    String xmlStart = params.get(0)
+
+                    name = XmlParser.parseLocationName(strLine, f.name) //extract name for Location
+                    shortUrls = XmlParser.parseLocationPathAfterName(strLine)
+                    if (xmlStart != null) {
+                        bLocationTag = true
+                    }
+
+                } else if (strLine.startsWith(LOCATIONMATCH_END)) {  // LocationMatch is parsed only for WebLogicCluster
+                    if (!weblos.isEmpty()) {
+                        AppBean appBean = getAppBean(name, serverBean)
+                        appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
+                        appBean.weblos = weblos
+                        appBeans.add(appBean)
+                    }
+                    weblos = new ArrayList<>()
+                    bLocationTag = false
+
+                } else if ( (strLine.startsWith(LOCATION_START + SPACE))) { // If Location
+                    def params = strLine.tokenize()
+                    String xmlStart = params.get(0)
+
+                    name = XmlParser.parseLocationName(strLine, f.name) //extract name for Location
+                    shortUrls = XmlParser.parseLocationPathAfterName(strLine)
+                    if (xmlStart != null) {
+                        bLocationTag = true
+                    }
+
+                } else if (strLine.startsWith(LOCATION_END)) { // Location is parsed only for WebLogicCluster
+                    if (!weblos.isEmpty()) {
+                        AppBean appBean = getAppBean(name, serverBean)
+                        appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
+                        appBean.weblos = weblos
+                        appBeans.add(appBean);
+                    }
+
+                    weblos = new ArrayList<>()
+                    bLocationTag = false
+
+                } else if (strLine.startsWith(VIRTUALHOST_START)) {
+                    AppBean appBean = new AppBean();
+                    String strName = XmlParser.getNameFromFileName(f.name);
+                    int pos = strName.indexOf(PERIOD)
+                    if (pos > 0) {
+                        strName = strName.substring(pos + 1, strName.length())
+                    }
+                    appBean.name = strName
+                    appBean.setUrls(serverBean.name, serverBean.portNumber, appBean.name, shortUrls)
+                    appBeans.add(appBean)
+
+                }
+
+                if (bLocationTag) {
+                    log.info("Location Tag:" + WebLogicHost + COLON + WebLogicPort)
+                    for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
+                        weblos.add(str);
+                    }
+
+                    if ((WebLogicHost != null) && !WebLogicHost.isEmpty() && (WebLogicPort != null) && !WebLogicPort.isEmpty()) {
+                        String str
+                        if ((WebLogicPort != null) && !WebLogicPort.isEmpty()) {
+                            str = WebLogicHost + COLON + WebLogicPort
+                        } else {
+                            str = WebLogicHost + COLON + DEFAULT_PORT
+                        }
+                        log.info("Add into weblos array : 'WebLogicHost:WebLogicPort' str=" + str)
+                        weblos.add(str)
+                        WebLogicHost = EMPTY
+                        WebLogicPort = EMPTY
+                    }
+
+                    log.debug("parse() weblos:" + weblos?.toString())
+                }
+            }
+
+        } catch (IOException e) {
+            bResult = false
+            result += "Impossible de parser le fichier !<br/>"
+            log.error("Failed to parse file : " + e.printStackTrace())
+        } finally {
+            closeResult = close()
+            if (!closeResult.isEmpty()) {
+                result += closeResult
+                bResult = false
+            }
+        }
+
+        // If EMPTY httpd.conf create application with name of http.conf.name
+        if(appBeans.size() == 0) {
+            log.info("parse() : appBeans.size() == 0")
+            AppBean appBean = new AppBean();
+            appBean.name = XmlParser.getNameFromFileName(f.name);
+            appBeans.add(appBean)
+        }
+
+        return bResult
+    }
     /**
      * Main method for parse a httpd file.
      * @return bResult true if OK and false if error. ( error message is stored in result private attribute ).
@@ -281,6 +432,24 @@ class HttpdParser {
         bResult = data.save(serverBean, appBeans)
         result += data.result
         return bResult
+    }
+
+    /**
+     * delete old data and replace.
+     * @return
+     */
+    public boolean overwrite() {
+        boolean bResult
+        if (machineName == null || machineName.isEmpty()) {
+            throw new IllegalArgumentException("MachineName must not be null !")
+        }
+        Machine machine = Machine.findOrCreateByName(machineName)
+        machine.save(failOnError: true, flush:true)
+        Data data = new Data(machine)
+        bResult = data.save(serverBean, appBeans)
+        result += data.result
+        return bResult
+
     }
 
     /**
