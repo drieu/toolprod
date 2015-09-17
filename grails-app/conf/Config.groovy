@@ -120,8 +120,8 @@ environments {
     development {
         log4j = { root ->
             appenders {
-                rollingFile name:'stdout', file:"${appName}.log".toString(), maxFileSize:'10000KB'
-                rollingFile name:'stacktrace', file:"${appName}_stack.log".toString(), maxFileSize:'10000KB'
+                rollingFile name:'stdout', file:"${appName}.log".toString(), maxFileSize:'1000KB'
+                rollingFile name:'stacktrace', file:"${appName}_stack.log".toString(), maxFileSize:'1000KB'
             }
             warn       'org.codehaus.groovy.grails.web.servlet',  //  controllers
                     'org.codehaus.groovy.grails.web.pages', //  GSP

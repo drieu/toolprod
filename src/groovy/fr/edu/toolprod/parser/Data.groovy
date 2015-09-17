@@ -10,6 +10,8 @@ import toolprod.MachineGroup
 import toolprod.Status
 import toolprod.Machine
 import toolprod.Server
+import toolprod.TreeNode
+import toolprod.Vip
 
 /**
  * Data is used to save App parsed in httpd conf and the result of check method in database.
@@ -248,7 +250,7 @@ class Data {
      * @param machineByGroup
      */
     def overwriteMachineGroup(Map<String, List<String>> machineByGroup) {
-        log.info("Delete all existing machine group.")
+        log.info("overwriteMachineGroup() Delete all existing machine group before creating news.")
         MachineGroup.executeUpdate("delete MachineGroup m")
         for (String groupName : machineByGroup.keySet()) {
 
@@ -260,13 +262,33 @@ class Data {
                 List<String> machines = machineByGroup.get(groupName)
                 for (String name : machines) {
                     machineGroup.regex.add(name)
-                    log.debug("saveMachineGroup() Add machine name:" + name + " in group:" + groupName)
+                    log.debug("overwriteMachineGroup() Add machine name:" + name + " in group:" + groupName)
                 }
-                log.info("saveMachineGroup() Save group:" + groupName + " OK")
+                log.info("overwriteMachineGroup() Save group:" + groupName + " OK")
                 machineGroup.save(failOnError: true, flush:true)
             }
 
         }
+    }
+
+    /**
+     * Clean all import data contains in table.
+     * It is used before importing new datas.
+     * @return
+     */
+    public boolean clean() {
+        log.info("clean()")
+        log.info("clean() Delete all existing machine.")
+        Machine.executeUpdate("delete Machine m")
+        log.info("clean() Delete all existing apps.")
+        App.executeUpdate("delete App m")
+        log.info("clean() Delete all existing TreeNode.")
+        TreeNode.executeUpdate("delete TreeNode m")
+        log.info("clean() Delete all existing vips.")
+        Vip.executeUpdate("delete Vip m")
+        log.info("clean() Delete all existing servers.")
+        Server.executeUpdate("delete Server m")
+        log.info("")
     }
 
     /**

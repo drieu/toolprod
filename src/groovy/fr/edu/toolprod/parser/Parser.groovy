@@ -10,7 +10,9 @@ abstract class Parser {
     /**
      * Contains file to parse
      */
-    public InputStream inputStream
+    public InputStream inputStream // TODO : delete because change in constructor
+
+    public File parserFile
 
     /**
      * Use to read inpustream.

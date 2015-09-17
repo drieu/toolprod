@@ -414,7 +414,7 @@ class XmlParser {
      * @return
      */
     public static String getNameFromFileName(String filename) {
-        log.warn("getNameFromFileName() Name not found => Get the name in filename:" + filename)
+        log.info("getNameFromFileName() Name not found => Get the name in filename:" + filename)
         //Get the name in filename
         String name = filename
         if (name.contains(HTTPD_FILENAME_START)) {

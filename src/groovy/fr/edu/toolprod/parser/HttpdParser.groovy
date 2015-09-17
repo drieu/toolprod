@@ -408,7 +408,7 @@ class HttpdParser {
 
         // If EMPTY httpd.conf create application with name of http.conf.name
         if(appBeans.size() == 0) {
-            log.info("parse() : appBeans.size() == 0")
+            log.debug("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
             appBean.name = XmlParser.getNameFromFileName(file.originalFilename);
             appBeans.add(appBean)
@@ -433,6 +433,8 @@ class HttpdParser {
         result += data.result
         return bResult
     }
+
+
 
     /**
      * delete old data and replace.

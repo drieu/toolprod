@@ -31,6 +31,10 @@ class BigIpParser extends Parser{
      * Constructor.
      * @param input
      */
+    BigIpParser(File file){
+        parserFile = file
+    }
+
     BigIpParser(InputStream input){
         inputStream = input
     }
@@ -42,6 +46,9 @@ class BigIpParser extends Parser{
         log.info("parse()")
         String line
         boolean bResult = false
+        if (inputStream == null) {
+            inputStream = new FileInputStream(parserFile)
+        }
         br = new BufferedReader(new InputStreamReader(inputStream))
         result = EMPTY
         String fullVipName = EMPTY

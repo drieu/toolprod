@@ -31,32 +31,32 @@ class AdminController {
     }
 
     /**
-     *
+     * Deleta all data in table and import new data.
      * @return
      */
     def reloadData() {
         def path = "E:\\projet\\toolprod\\import\\"
 
-        log.info("Initializing configuration from config file...")
+        Data data = new Data()
+        log.info("reloadData() Initializing configuration from config file in " + path + " directory ...")
         def initFile = new File(path + "config")
         InputStream inputStream = new FileInputStream(initFile)
         ConfigParser configParser = new ConfigParser(inputStream)
         boolean bResult = configParser.parse()
         if (bResult) {
-            log.info("result:" + configParser.result)
-            Data data = new Data()
+            log.debug("reloadData() result:" + configParser.result)
             data.overwriteMachineGroup(configParser.machineByGroup)
-            log.info("Init config : OK")
+            log.info("reloadData() Init config : OK")
         } else {
-            log.error("Init config : KO")
+            log.error("reloadData() Init config : KO")
         }
-
-        log.info("Initializing application from httpd.conf files in machine directory...")
+        data.clean()
+        log.info("reloadData() Initializing application from httpd.conf files in machine directory ...")
         new File(path).listFiles().findAll{
             if (it.isDirectory()) {
-                println("Machine name ( Directory name ) :" + it.name)
+                log.info("reloadData() Machine name ( Directory name ) :" + it.name)
                 String machineName = it.name
-                println(it.listFiles())
+                log.debug("reloadData() files list:" + it.listFiles())
                 for (File f : it.listFiles()) {
                     HttpdParser parser = new HttpdParser(machineName)
                     parser.parse(f)
@@ -65,38 +65,37 @@ class AdminController {
                         bResult = false
                     }
                 }
-
             }
-
         }
 
-//        log.info("Name of machine : " + machineName[0])
-//        request.getFiles("files[]").each { file ->
-//            log.debug("init() file to parse:" + file.originalFilename)
-//            if((machineName != null) && (file != null) && (!file.isEmpty())) {
-//                MultipartFileBean f = new MultipartFileBean()
-//                f.inputStream = file.inputStream
-//                f.originalFilename = file.originalFilename
-//                HttpdParser parser = new HttpdParser(f, machineName[0]);
-//                bResult = parser.parse()
-//                if (!parser.save()) {
-//                    bResult = false
-//                }
-//                message += parser.result
-//            } else {
-//                bResult = false
-//                log.debug("init() machineName:" + machineName)
-//                message += 'Import failed because file is null or is empty'
-//            }
-//        }
-//        if (bResult) {
-//            flash.message = "SUCCESS : " + message
-//        } else {
-//            flash.error = "FAILED : " + message
-//        }
+        log.info("reloadData() Initialisating VIP ...")
 
+        File bigipconfFile = new File(path + File.separator + "bigip.conf")
+        log.info("reloadData() file to parse :" + bigipconfFile.name)
+        if (!bigipconfFile.name.isEmpty()) {
+            BigIpParser bigIpParser = new BigIpParser(bigipconfFile)
+            bResult = bigIpParser.parse()
+        } else {
+            log.warn("reloadData() File not found : bigip.conf. Can't parse VIP")
+        }
 
-
+        log.info("reloadData() initFromArena()")
+        def filePattern = ~/ARENA_.*xml/
+        new File(path).listFiles().findAll{
+            if (filePattern.matcher(it.name).find()) {
+                InputStream arenaStream = new FileInputStream(it)
+                Parser parser = new ArenaParser(arenaStream)
+                List<ArenaBean> arenaBeans = parser.parse()
+                parser.save(arenaBeans)
+                def message = parser.result
+                if (message.isEmpty()) {
+                    log.warn("reloadData() import from ARENA : 0 application initialisée.")
+                } else {
+                    log.info("reloadData() import from ARENA :" + message)
+                }
+            }
+        }
+        render "SUCCESS"
     }
 
     /**
