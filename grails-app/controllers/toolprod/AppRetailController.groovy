@@ -1,11 +1,23 @@
 package toolprod
 
+import com.cronutils.descriptor.CronDescriptor
+import com.cronutils.htime.HDateTimeFormatBuilder
+import com.cronutils.model.Cron
+import com.cronutils.model.definition.CronDefinition
+import com.cronutils.model.definition.CronDefinitionBuilder
+import com.cronutils.model.time.ExecutionTime
+import com.cronutils.parser.CronParser
+import com.cronutils.model.CronType;
+import com.cronutils.validator.CronValidator
 import fr.edu.toolprod.gson.GSONParser
 import org.apache.commons.logging.LogFactory
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 
 /**
  * AppRetailController.
@@ -367,6 +379,96 @@ class AppRetailController {
      * Affiche la liste des crontab dans un planing
      */
     def crontab() {
+          //define your own cron: arbitrary fields are allowed and last field can be optional
+//        CronDefinition cronDefinition =
+//            CronDefinitionBuilder.defineCron()
+//                    .withSeconds().and()
+//                    .withMinutes().and()
+//                    .withHours().and()
+//                    .withDayOfMonth()
+//                    .supportsHash().supportsL().supportsW().and()
+//                    .withMonth().and()
+//                    .withDayOfWeek()
+//                    .withIntMapping(7, 0) //we support non-standard non-zero-based numbers!
+//                    .supportsHash().supportsL().supportsW().and()
+//                    .withYear().and()
+//                    .lastFieldOptional()
+//                    .instance();
+//
+//        //or get a predefined instance
+//        cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(com.cronutils.model.CronType.QUARTZ);
+//
+//        //create a parser based on provided definition
+//        CronParser parser = new CronParser(cronDefinition);
+//
+//        DateTime now = DateTime.now();
+//        ExecutionTime executionTime = ExecutionTime.forCron(parser.parse("0 23 ? * * 1-5 *"));
+//        DateTime nextExecution = executionTime.nextExecution(now);
+//
+//
+//        String tmpStr = nextExecution.toString()
+//        println("DATE:" + tmpStr)
+//        String nextDateStr = tmpStr.split("\\.")[0]
+//
+//        String planning = "{"
+//        planning += "title  : 'event1',"
+//        planning += "start  : '"
+//        planning += nextDateStr
+//        planning += "'"
+//        planning += "}"
 
+        String planning = ""
+
+        planning += getOnePlanningRow("event1", "0 23 ? * * 1-5 *")
+        planning += ","
+        planning += getOnePlanningRow("event2", "0 12 ? * * * *")
+
+        [planning:planning ]
+    }
+
+    /**
+     * Get one planning row.
+     * @param cron
+     */
+    def getOnePlanningRow(String definition, String cron) {
+        CronDefinition cronDefinition =
+            CronDefinitionBuilder.defineCron()
+                    .withSeconds().and()
+                    .withMinutes().and()
+                    .withHours().and()
+                    .withDayOfMonth()
+                    .supportsHash().supportsL().supportsW().and()
+                    .withMonth().and()
+                    .withDayOfWeek()
+                    .withIntMapping(7, 0) //we support non-standard non-zero-based numbers!
+                    .supportsHash().supportsL().supportsW().and()
+                    .withYear().and()
+                    .lastFieldOptional()
+                    .instance();
+
+        //or get a predefined instance
+        cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(com.cronutils.model.CronType.QUARTZ);
+
+        //create a parser based on provided definition
+        CronParser parser = new CronParser(cronDefinition);
+
+        DateTime now = DateTime.now();
+        ExecutionTime executionTime = ExecutionTime.forCron(parser.parse(cron));
+        DateTime nextExecution = executionTime.nextExecution(now);
+
+
+        String tmpStr = nextExecution.toString()
+        println("DATE:" + tmpStr)
+        String nextDateStr = tmpStr.split("\\.")[0]
+
+        String planning = "{"
+        planning += "title  : '"
+        planning  += definition
+        planning  += "',"
+        planning += "start  : '"
+        planning += nextDateStr
+        planning += "'"
+        planning += "}"
+        return planning
     }
 }

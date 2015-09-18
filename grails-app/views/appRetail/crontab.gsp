@@ -21,41 +21,42 @@
 
             $('#calendar').fullCalendar({
                 events: [
-                    {
-                        title  : 'event1',
-                        start  : '2015-09-01T00:32:00',
-                        allDay : false // will make the time show
-                    },
-                    {
-                        title  : 'event2',
-                        start  : '2015-09-01T01:32:00',
-                        allDay : false // will make the time show
-                    },
-                    {
-                        title  : 'event3',
-                        start  : '2015-09-01T02:32:00',
-                        allDay : false // will make the time show
-                    },
-                    {
-                        title  : 'event4',
-                        start  : '2015-09-01T03:32:00',
-                        allDay : false // will make the time show
-                    },
-                    {
-                        title  : 'event5',
-                        start  : '2015-09-01T04:32:00',
-                        allDay : false // will make the time show
-                    },
-                    {
-                        title  : 'event6',
-                        start  : '2015-09-01T05:32:00',
-                        allDay : false // will make the time show
-                    },
-                    {
-                        title  : 'event7',
-                        start  : '2015-09-01T06:32:00',
-                        allDay : false // will make the time show
-                    }
+                         ${raw(planning)}
+//                    {
+//                        title  : 'event1',
+//                        start  : '2015-09-01T00:32:00',
+//                        allDay : false // will make the time show
+//                    },
+//                    {
+//                        title  : 'event2',
+//                        start  : '2015-09-01T01:32:00',
+//                        allDay : false // will make the time show
+//                    },
+//                    {
+//                        title  : 'event3',
+//                        start  : '2015-09-01T02:32:00',
+//                        allDay : false // will make the time show
+//                    },
+//                    {
+//                        title  : 'event4',
+//                        start  : '2015-09-01T03:32:00',
+//                        allDay : false // will make the time show
+//                    },
+//                    {
+//                        title  : 'event5',
+//                        start  : '2015-09-01T04:32:00',
+//                        allDay : false // will make the time show
+//                    },
+//                    {
+//                        title  : 'event6',
+//                        start  : '2015-09-01T05:32:00',
+//                        allDay : false // will make the time show
+//                    },
+//                    {
+//                        title  : 'event7',
+//                        start  : '2015-09-01T06:32:00',
+//                        allDay : false // will make the time show
+//                    }
 
                 ],
                 timeFormat: 'HH(:mm)' // uppercase H for 24-hour clock

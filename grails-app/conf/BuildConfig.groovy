@@ -51,6 +51,7 @@ grails.project.dependency.resolution = {
         compile 'com.google.code.gson:gson:2.3.1'
         compile "org.apache.directory.api:api-all:1.0.0-M28"
         compile "org.apache.pdfbox:pdfbox:1.8.9"
+        compile "com.cronutils:cron-utils:3.0.0"
 
     }
 
@@ -65,6 +66,7 @@ grails.project.dependency.resolution = {
         //compile ":export:1.6"  // Pb with Grails 2.4.4
         compile ":profiler:0.5"
         compile ":rendering:1.0.0"
+
 //        compile ':quartz:1.0.1'
 
 
