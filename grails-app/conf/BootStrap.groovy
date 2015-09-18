@@ -1,5 +1,6 @@
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import toolprod.MailType
 
 class BootStrap {
 
@@ -14,6 +15,7 @@ class BootStrap {
             log.error("ENVIRONNEMENT : " +  Environment.PRODUCTION)
             return
         }
+
         log.info("Nothing to load at startup ...")
     }
 

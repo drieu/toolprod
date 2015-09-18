@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Table>
+    <Row>
+        <Cell>
+            <Data>12</Data>
+        </Cell>
+        <Cell>
+            <Data>2</Data>
+        </Cell>
+        <Cell>
+            <Data>1</Data>
+        </Cell>
+        <Cell>
+            <Data>Ressources documentaires</Data>
+        </Cell>
+        <Cell>
+            <Data>Notes techniques</Data>
+        </Cell>
+        <Cell>
+            <Data>appli locale</Data>
+        </Cell>
+        <Cell>
+            <Data>about:blank</Data>
+        </Cell>
+        <Cell>
+            <Data>N</Data>
+        </Cell>
+    </Row>
+    <Row>
+        <Cell>
+            <Data>9</Data>
+        </Cell>
+        <Cell>
+            <Data>1</Data>
+        </Cell>
+        <Cell>
+            <Data>4</Data>
+        </Cell>
+        <Cell>
+            <Data>Intranet, Referentiels et Outils</Data>
+        </Cell>
+        <Cell>
+            <Data>Annuaires </Data>
+        </Cell>
+        <Cell>
+            <Data>GAAS  - test</Data>
+        </Cell>
+        <Cell>
+            <Data>/trombi_test/responsable/responsable.php</Data>
+        </Cell>
+        <Cell>
+            <Data>N</Data>
+        </Cell>
+    </Row>
+    <Row>
+        <Cell>
+            <Data>11</Data>
+        </Cell>
+        <Cell>
+            <Data>3</Data>
+        </Cell>
+        <Cell>
+            <Data>3</Data>
+        </Cell>
+        <Cell>
+            <Data>Applications techniques</Data>
+        </Cell>
+        <Cell>
+            <Data>Acces developpeur </Data>
+        </Cell>
+        <Cell>
+            <Data>moodle</Data>
+        </Cell>
+        <Cell>
+            <Data>/redirectionhub/redirect.jsp?applicationname=moodle</Data>
+        </Cell>
+        <Cell>
+            <Data>N</Data>
+        </Cell>
+    </Row>
+</Table>

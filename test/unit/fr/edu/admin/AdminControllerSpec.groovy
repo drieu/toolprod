@@ -4,23 +4,35 @@ import grails.test.mixin.TestFor
 import spock.lang.Specification
 
 /**
- * Test for AdminController
+ * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
 @TestFor(AdminController)
 class AdminControllerSpec extends Specification {
 
-    def setup() {
+    void "test index redirect"() {
+        when:
+        controller.index()
+
+        then:
+        response.redirectedUrl == '/admin/init'
     }
 
-    def cleanup() {
+    void "test show initData"() {
+        when:
+        controller.initData()
+
+        then:
+        view == '/admin/initData'
     }
 
-//    void "test initData"() {
-//        when :
-//        controller.initData()
-//
-//        then :
-//        view == 'admin/initData'
-//        model.title == 'Welcome to Production !'
-//    }
+    void "test show initDataBis"() {
+        when:
+        controller.initData()
+
+        then:
+        view == '/admin/initData'
+    }
+
+
+
 }

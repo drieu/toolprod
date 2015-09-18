@@ -15,4 +15,5 @@
 			</ul>
 		</g:else>
 	</body>
+    <g:render template="/layouts/footer"></g:render>
 </html>

@@ -1,14 +1,11 @@
 package toolprod
 
-import fr.edu.toolprod.bean.AppBean
 import org.apache.commons.logging.LogFactory
 
 /**
  * Application class.
  */
 class App {
-
-    static searchable = true
 
     /**
      * Application name.
@@ -29,18 +26,29 @@ class App {
     /**
      * Portail in which app will be shown.
      */
-    List<Portal> portals = []
+    List<String> vips = []
 
+    /**
+     * Save ARENA path
+     */
+    String arenaPath
+
+    /**
+     * TreeNode to store servers tree.
+     */
+    TreeNode node
 
     /**
      * Server list.
      */
     List<Server> servers = []
-    static hasMany = [servers : Server, portals : Portal, urls : String]
+    static hasMany = [servers : Server, vips: String, urls : String]
 
+    /**
+     * Logger.
+     */
     private static final log = LogFactory.getLog(this)
 
-    private static final String  EMPTY = "";
 
     static mapping = {
         sort "name":"asc";
@@ -49,8 +57,15 @@ class App {
     static constraints = {
         name(blank:false)
         description(size:0..400)
+        node(nullable: true)
+        arenaPath(nullable: true, size:0..200)
     }
 
+    /**
+     * Add a server to List<Server>.
+     * @throws IllegalArgumentException
+     * @param server
+     */
     def addServer(Server server) {
 
         if (server == null) {
@@ -69,14 +84,16 @@ class App {
 
     }
 
+
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "App{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", urls='" + urls.toString() + '\'' +
-                ", portals=" + portals +
+                ", urls=" + urls +
+                ", vips=" + vips +
+                ", node=" + node +
                 ", servers=" + servers +
                 ", version=" + version +
                 '}';

@@ -6,116 +6,131 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <g:javascript library='bootstrap'/>
-    <r:layoutResources/>
+    <asset:javascript src="jquery.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:stylesheet href="mybootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
-
 <body>
-<div class="container">
-    <g:applyLayout name="menu"/>
+    <div class="container">
+        <g:applyLayout name="menu"/>
 
-    <div class="row">
-        <div class="col-md-3">
-                    <g:each in="${map.keySet()}" var="servername">
-                        <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-warning">
-                                Serveur ${servername}
-                            </a>
-                            <g:each in="${map.get(servername)}" var="portNumber">
-                                <a href="<g:createLink action="getWebServer" params="[name:servername, type:'weblogic', port: portNumber]" />" class="list-group-item">
-                                    ${portNumber}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                        Liste des serveurs web Apache&nbsp;&nbsp;<span class="badge">${map?.size()}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>Merci de cliquer pour voir la liste !</small>
                                 </a>
-                            </g:each>
-
+                            </h4>
                         </div>
-                    </g:each>
+                        <div id="collapseOne" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                   <table class="table table-hover">
+                                       <tr class="info">
+                                           <th>Machine(s)</th>
+                                           <th>Port(s)</th>
+                                       </tr>
+                                        <g:each in="${map?.keySet()}" var="servername">
 
+                                            <g:if test="${!((String)servername).startsWith('source_')}">
+                                                   <tr>
+                                                       <td class="col-md-3">
+                                                        ${servername}
+                                                       </td>
+                                                       <td>
+                                                            <g:each in="${map.get(servername)}" var="portNumber">
+                                                                <a href="<g:createLink action="getWebServer" params="[name:servername, type:'apache', port: portNumber]" />">
+                                                                    ${portNumber}
+                                                                </a>
+                                                            </g:each>
+                                                       </td>
+                                                   </tr>
+
+                                            </g:if>
+                                        </g:each>
+                                   </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <br/>
+            </div>
         </div>
+        <div class="row">
 
-        <div class="col-md-9">
-            <g:if test="${selectServer != null}">
-                <div class="row">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Serveur web</h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom</th>
-                                    <th>Port</th>
+                <g:if test="${selectServer != null}">
+                        <h1>${selectServer?.name}:${selectServer?.portNumber} </h1>
+                        <br/>
+                        <table class="table table-hover">
+                            <tbody>
+                                <tr scope="row">
+                                    <td>Serveur web</td>
+                                    <td>${selectServer?.name}:${selectServer?.portNumber}</td>
                                 </tr>
-                                </thead>
-                                <tr>
-                                    <td></td>
-                                    <td>${selectServer?.name}</td>
-                                    <td>${selectServer?.portNumber}</td>
+                                <tr scope="row">
+                                    <td>Type</td>
+                                    <td>${selectServer?.serverType}</td>
                                 </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Liste des applications référencées</h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom de l'application</th>
+                                <tr scope="row">
+                                    <td>Machine</td>
+                                    <td>${selectServer?.machineHostName}</td>
                                 </tr>
-                                </thead>
-                                <g:each in="${selectServer?.linkToApps}" var="linkAppName">
+                            </tbody>
+                        </table>
+                        <br/>
+
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Liste des applications référencées</h3>
+                            </div>
+
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped">
+                                    <thead>
                                     <tr>
-                                        <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                        <td>${linkAppName}</td>
+                                        <th>#</th>
+                                        <th>Nom de l'application</th>
                                     </tr>
-                                </g:each>
-                            </table>
+                                    </thead>
+                                    <g:each in="${selectServer?.linkToApps}" var="linkAppName">
+                                        <tr>
+                                            <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
+                                            <td>${linkAppName}</td>
+                                        </tr>
+                                    </g:each>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Liste des modules</h3>
-                        </div>
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Liste des modules</h3>
+                            </div>
 
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nom du modules</th>
-                                </tr>
-                                </thead>
-                                <g:each in="${selectServer?.modules}" var="module">
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped">
+                                    <thead>
                                     <tr>
-                                        <td></td>
-                                        <td>${module}</td>
+                                        <th>#</th>
+                                        <th>Nom du modules</th>
                                     </tr>
-                                </g:each>
-                            </table>
+                                    </thead>
+                                    <g:each in="${selectServer?.modules}" var="module">
+                                        <tr>
+                                            <td></td>
+                                            <td>${module}</td>
+                                        </tr>
+                                    </g:each>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </g:if>
-            <g:else>
-                <div class="well well-lg">Merci de choisir un serveur apache dans la liste !</div>
-            </g:else>
+                </g:if>
         </div>
+        <g:render template="/layouts/footer"></g:render>
     </div>
-</div>
-
-<r:layoutResources/>
 </body>
 </html>

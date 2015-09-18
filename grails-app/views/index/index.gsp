@@ -1,4 +1,4 @@
-<%@ page import="toolprod.IndexController" %>
+<%@ page import="toolprod.Vip; toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,267 +7,162 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <r:require module="jquery-ui"/>
-    <g:javascript library='bootstrap'/>
-    <r:layoutResources/>
+    <asset:stylesheet href="jquery.dataTables.css"/>
+
+    <asset:javascript src="jquery.js"/>
+
+    <asset:javascript src="jquery.dataTables.min.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
 
 <body>
-<div class="container">
-    <g:applyLayout name="menu" />
+    <div class="container">
+        <g:applyLayout name="menu" />
 
-    <div class="row">
-        <div class="col-md-3">
-
-            <g:each in="${machineGroups}" var="machineGroup">
-                <g:if test="${machineGroup.groupName.equals(selectedMachineGroup)}">
-                    <a href="#" class="list-group-item active">
-                        Machines ${machineGroup.groupName}
-                    </a>
-                    <g:each in="${machines}" var="machine">
-                        <g:each in="${machineGroup.regex}" var="regex">
-                                <g:if test="${machine.name.contains(regex)}">
-                                    <a href="<g:createLink action="getMachineApps" params="[machine:machine.name,group:machineGroup.groupName]" />" class="list-group-item">
-                                        ${machine.name}
-                                    </a>
-                                </g:if>
-                        </g:each>
-                    </g:each>
-                    <br/>
-                </g:if>
-            </g:each>
-        </div>
-
-        <div class="col-md-9">
-
-            <g:if test="${searchResults != null && searchResults.isEmpty()}">
-                <div class="alert alert-success alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <p class="alert-link">Search return no result !</p>
-                </div>
-            </g:if>
-            <g:if test="${searchResults != null && !searchResults.isEmpty()}">
-                <div class="row">
-
-                    <div class="alert alert-success alert-dismissable">
-                        <i>Résultats de la recherche&nbsp;&nbsp;<span class="badge">${searchResults?.size()}</span></i>
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <table class="table table-hover table-striped">
-                            <tbody>
-                            <g:each in="${searchResults}" var="app">
-                                <tr>
-                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                    <td>${app?.name}</td>
-                                    <td>${app?.description}</td>
-                                    <td>
-                                        <g:each in="${app?.urls}">
-                                            <a href="${it}" target="_blank">${it}</a>&nbsp;<br/>
-                                        </g:each>
-                                    </td>
-                                </tr>
-                            </g:each>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </g:if>
-            <g:if test="${machine != null}">
-                <div class="row">
-                    <h1>${machine?.name}</h1>
-                    <br/>
-                    <br/>
-                    <p class="text-left">
-                        <dl class="dl-horizontal">
-                            <dt>Détails </dt>
-                            <dd>Nom : ${machine?.name}</dd>
-                            %{--<dd>Ping machine :<%--}%
-                                %{--boolean status = false--}%
-                                %{--try {--}%
-                                    %{--def address = InetAddress.getByName(machine?.name);--}%
-                                    %{--def timeoutMillis = 3000 ;--}%
-                                    %{--if (address.isReachable(timeoutMillis)) {--}%
-                                        %{--status = true--}%
-                                    %{--}--}%
-                                %{--} catch( Exception e) {--}%
-                                    %{--status = false--}%
-                                %{--}--}%
-                                %{--%>--}%
-                                %{--<g:if test="${status}">--}%
-                                    %{--<span class="label label-success">OK</span>--}%
-                                %{--</g:if>--}%
-                                %{--<g:else>--}%
-                                    %{--<span class="label label-danger">KO</span>--}%
-                                %{--</g:else>--}%
-                                ${machine?.ipAddress}</dd>
-                        </dl>
-                    </p>
-                </div>
-                <div class="row">
-                    <div class="panel-group" id="accordion">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                        Liste des serveurs web&nbsp;&nbsp;<span class="badge">${machineServers?.size()}</span>
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseOne" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nom</th>
-                                            <th>Liste des applications</th>
-                                            <th>Port</th>
-                                            <th>type</th>
-                                        </tr>
-                                        </thead>
-                                        <g:each in="${machineServers}" var="mServ">
-                                            <tr>
-                                                <td><a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:mServ?.name, type:mServ?.serverType.toString(), port:mServ?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                                <td>${mServ?.name}</td>
-                                                <td><small>
-                                                    <%
-                                                        String result = "";
-                                                        for(String str : mServ?.linkToApps) {
-                                                            result += str;
-                                                            result += " ";
-                                                        }
-                                                        print(result + " ")
-                                                    %></small></td>
-                                                <td>${mServ?.portNumber}</td>
-                                                <td>${mServ?.serverType}</td>
-                                            </tr>
-                                        </g:each>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                        Liste des applications locales&nbsp;&nbsp;<span class="badge">${apps?.size()}
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseTwo" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nom</th>
-                                            <th>Description </th>
-                                            <th>url</th>
-                                        </tr>
-                                        </thead>
-                                        <g:each in="${apps}" var="app">
-                                                <tr>
-                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                                    <td>${app?.name}</td>
-                                                    <td>${app?.description}</td>
-                                                    <td>
-                                                        <g:each in="${app?.urls}">
-                                                            <a href="${it}" target="_blank">${it}</a>&nbsp;<br/>
-                                                        </g:each>
-                                                    </td>
-                                                </tr>
-                                        </g:each>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                                        Liste des applications référencées&nbsp;&nbsp;<span class="badge">${refs?.size()}</span>
-                                    </a>
-                                </h4>
-                            </div>
-                            <div id="collapseThree" class="panel-collapse collapse">
-                                <div class="panel-body">
-                                    <table class="table table-hover table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Nom</th>
-                                        </tr>
-                                        </thead>
-                                        <g:each in="${refs}" var="ref">
-                                                <tr>
-                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:ref]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                                    <td>${ref}</td>
-                                                </tr>
-
-                                        </g:each>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </g:if>
-            <g:else>
-                <g:if test="${searchResults == null}">
-
+        <div class="row">
+            <div class="col-xs-12">
                     <blockquote>
                         <h1>Bienvenue sur Toolprod</h1>
                         <footer>Une boîte à outil pour la production</footer>
                     </blockquote>
                     <br/>
-                    <div class="well well-lg">
-                        Pour le moment, cet outil permet de :
-                        <ul>
-                            <li>Répertoriez les applications existantes</li>
-                            <li>Répertoriez les machines, les serveurs apache et weblogic pour chaque application</li>
-                            <li>Faire un contrôle simple des fichiers Apache</li>
-                        </ul>
-                    </div>
                     <br/>
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Erreurs dans les fichiers Apache  <span class="badge">${count}</span></h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <table class="table table-hover table-striped">
-                                <caption>
-                                    Etat des fichiers de configuration Apache
-                                </caption>
-                                <thead>
-                                <tr>
-                                    <th>Machine</th>
-                                    <th>Fichier à vérifier</th>
-                                    <th>ServerName</th>
-                                    <th>Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                        <g:each in="${toolprod.Status.findAll()}" var="check">
-                                            <tr>
-                                                <td>${check?.machineName}</td>
-                                                <td>${check?.fileName}</td>
-                                                <td>${check?.name}</td>
-                                                <td>
-                                                    <span class="label label-warning">WARNING</span>
-                                                </td>
-                                            </tr>
-                                        </g:each>
-                                        </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </g:if>
-            </g:else>
             </div>
         </div>
-    </div>
 
-<r:layoutResources/>
+
+        <div class="row">
+            <div class="col-xs-12">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#sectionA">Liste des applications &nbsp;&nbsp;<span class="badge">${count}</span></a></li>
+                    <li><a data-toggle="tab" href="#sectionB">VIP</a></li>
+                </ul>
+
+                <div class="tab-content">
+
+                    <div id="sectionA" class="tab-pane fade in active">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel-body">
+                                    <table id="applis" class="display">
+                                        <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Vip</th>
+                                            <th>Serveur</th>
+                                            <th>Port</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>...</td>
+                                            <td class="col-md-3">...</td>
+                                            <td>...</td>
+                                            <td>...</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sectionB" class="tab-pane fade">
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel-group" id="accordion">
+                                <% def panel = "panel-info" %>
+                                <g:each in="${Vip.findAll()}" var="vip">
+                                    <g:if test="${panel=='panel-info'}">
+                                        <% panel = "panel-success" %>
+                                    </g:if>
+                                    <g:else>
+                                        <% panel = "panel-info" %>
+                                    </g:else>
+
+                                    <div class="panel ${panel}">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse${vip?.name}_${vip?.type}">
+                                                    ${vip?.name}
+                                                </a>
+                                                &nbsp;&nbsp&nbsp<small>( nom technique : ${vip.technicalName} )</small>
+                                            </h4>
+                                        </div>
+                                        <div id="collapse${vip?.name}_${vip?.type}" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <table class="table table-hover table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Nom</th>
+                                                        <th>Port</th>
+                                                        <th>Applications</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <g:each in="${vip.servers}" var="server">
+                                                        <tr>
+                                                            <td><a href="<g:createLink controller="webServer" action="getWebServerByMachineName" params="[name:server?.machineHostName, type:'apache', port: server?.portNumber]" />">
+                                                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span></a>
+                                                            </td>
+                                                            <td>
+                                                                ${server?.name}
+                                                            </td>
+                                                            <td>${server?.portNumber}</td>
+                                                            <td>
+                                                                <g:each in="${server?.linkToApps}" var="linkAppName">
+                                                                    <a href="<g:createLink controller="AppRetail" action="app" params="[name:linkAppName]" />">${linkAppName}</a>
+                                                                </g:each>
+                                                            </td>
+                                                        </tr>
+                                                    </g:each>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </g:each>
+
+                            </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+            <g:render template="/layouts/footer"></g:render>
+        </div>
 </body>
 </html>
+<script>
+    ${raw(data)}
+    $(document).ready(function() {
+        $('#applis').dataTable({
+            "data": dataSet,
+            "lengthMenu": [[10, 30, 40, -1], [10, 30, 40, "All"]],
+            "columnDefs": [
+                { "width": "15%", "targets": 0 },
+                { "width": "30%", "targets": 1 },
+                { "width": "30%", "targets": 2 },
+                { "width": "15%", "targets": 3 }
+            ],
+            "language": {
+                "lengthMenu": "Affiche _MENU_ résultats par page",
+                "zeroRecords": "Aucun résultat - désolé",
+                "info": "Affichage page _PAGE_ / _PAGES_",
+                "infoEmpty": "Aucun enregistrement",
+                "infoFiltered": "( nombre de résultats _MAX_ )"
+            },
+            "columns": [
+                { "title": "Nom" },
+                { "title": "Vip" },
+                { "title": "Serveur" },
+                { "title": "Port" }
+            ]
+        });
+    });
+</script>

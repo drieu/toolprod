@@ -7,9 +7,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <g:javascript library='bootstrap'/>
-    <r:layoutResources/>
+    <asset:javascript src="jquery.js"/>
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
 <body>
 <div class="container">
@@ -38,20 +39,13 @@
                         <label for="machinename">Nom de la machine</label>
                         <input type="text" class="form-control" id="machinename" name="machinename" placeholder="....ac-limoges.fr" value="">
                     </div>
-                    <div class="form-group">
-                        <label for="machinename">Portails</label>
-                        <select name='portalsChoice' multiple class="form-control">
-                            <g:each in="${portals}" var="portal">
-                                <option>${portal.name}</option>
-                            </g:each>
-                        </select>
-                    </div>
                     <button type="submit" class="btn btn-info">Submit</button>
                 </form>
             </g:uploadForm>
+            <g:link controller="admin" action="initPortals">Etape 3 : Initialisation des portails</g:link>
         </div>
     </div>
+    <g:render template="/layouts/footer"></g:render>
 </div>
-<r:layoutResources/>
 </body>
 </html>

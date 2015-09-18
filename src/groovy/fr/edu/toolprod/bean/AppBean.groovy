@@ -1,8 +1,11 @@
 package fr.edu.toolprod.bean
 
+import grails.validation.Validateable
+
 /**
  * AppBean class.
  */
+@Validateable
 class AppBean {
 
     /**
@@ -16,40 +19,53 @@ class AppBean {
     String description = ""
 
     /**
-     * url of Server which launch the application.
+     * url of web Server which launch the application.
      */
     String serverUrl = ""
 
-    /**
-     * Store temporaly all urls
-     */
-    List<String> serverUrls = []
 
     /**
-     * port of Server which launch the application.
+     * port of web Server which launch the application.
      */
     String serverPort = ""
-
-    /**
-     * Portal list.
-     */
-    List<String> portals = new ArrayList<>()
 
     /**
      * Weblogic list.
      */
     List<String> weblos = new ArrayList<>()
 
+    /**
+     * Server location for this application.
+     * In case of proxypass we know the value of server.
+     */
+    String appServer
+
+    /**
+     * Server location for this application.
+     * In case of proxypass we know the value of port.
+     */
+    String appPort
+
 
     private static final String DEFAUL_APPNAME = "UNEUSED_APP"
 
     private static final String DEFAUL_DESCRIPTION = "EMPTY"
 
-    private static final String DEFAUL_SERVER_URL = "http://notdefined.com"
+    public static final String DEFAUL_SERVER_URL = ""
 
-    private static final String DEFAUL_SERVER_PORT = "http://notdefined.com"
+    private static final String DEFAUL_SERVER_PORT = ""
 
+    private static final String DEFAULT_PORT = "80"
 
+    private static final String DEFAULT_PROTOCOL = "http://"
+
+    private static final String COLON = ":"
+
+    private static final String SLASH = "/"
+
+    /**
+     * Constructor.
+     */
     AppBean() {
         this.name = DEFAUL_APPNAME
         this.description = DEFAUL_DESCRIPTION
@@ -57,23 +73,85 @@ class AppBean {
         this.serverPort = DEFAUL_SERVER_PORT
     }
 
-    public boolean isDefaulApp() {
-        if (description.equals(DEFAUL_DESCRIPTION) && serverUrl.equals(DEFAUL_SERVER_URL) &&  description.equals(DEFAUL_DESCRIPTION)) {
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * Set an url for this application.
+     * This url is built automaticaly with given parameters or set with DEFAUL_SERVER_URL.
+     * @param hostname
+     * @param port
+     * @param app
+     */
     public def setUrl(String hostname, String port, String app) {
         String url = DEFAUL_SERVER_URL
         if ((hostname != null) && (!hostname.isEmpty()) && (app != null) && (!app.isEmpty())) {
             if ((port != null)  && (!port.isEmpty())) {
-                url = "http://" + hostname + ":" + port + "/" + app
+                url = DEFAULT_PROTOCOL + hostname + COLON + port + SLASH + app
             } else {
-                url = "http://" + hostname + "/" + app
+                url = DEFAULT_PROTOCOL + hostname + SLASH + app
             }
         }
         this.serverUrl = url
+    }
+
+    /**
+     * Set an url for this application.
+     * Add shortUrl to this url ( exemple http://..../racvision )
+     * This url is built automaticaly with given parameters or set with DEFAUL_SERVER_URL.
+     * @param hostname
+     * @param port
+     * @param app
+     * @param shortUrl ( e.g : racvision )
+     */
+    public def setUrl(String hostname, String port, String app, String shortUrl) {
+        String url = DEFAUL_SERVER_URL
+        if ((hostname != null) && (!hostname.isEmpty()) && (app != null) && (!app.isEmpty())) {
+            if ((port != null)  && (!port.isEmpty())) {
+                url = DEFAULT_PROTOCOL + hostname + COLON + port + SLASH + app
+            } else {
+                url = DEFAULT_PROTOCOL + hostname + SLASH + app
+            }
+            if ((shortUrl != null) && (!shortUrl.isEmpty())) {
+                url = url + SLASH + shortUrl
+            }
+        }
+        this.serverUrl = url
+    }
+
+    /**
+     * Set an url for this application.
+     * Add shortUrl from the list to this url ( exemple http://..../racvision ).
+     * This url is built automaticaly with given parameters or set with DEFAUL_SERVER_URL.
+     * @param hostname
+     * @param port
+     * @param app
+     * @param shortUrl ( e.g : racvision )
+     */
+    public def setUrls(String hostname, String port, String app,List<String> shortUrls) {
+        if(shortUrls != null) {
+            for(String shortUrl : shortUrls) {
+                setUrl(hostname, port, app, shortUrl)
+            }
+        }
+    }
+
+    /**
+     * Getter.
+     * @return
+     */
+    String getAppPort() {
+        return appPort
+    }
+
+    /**
+     * Set app port and if not set a DEFAULT_APACHE_PORT
+     * @param appPort
+     */
+    void setAppPort(String port) {
+        this.appPort = port
+        if (port == null) {
+            appPort = DEFAULT_PORT
+        } else if (appPort.isEmpty()) {
+            appPort = DEFAULT_PORT
+        }
     }
 
 
@@ -84,7 +162,9 @@ class AppBean {
                 ", description='" + description + '\'' +
                 ", serverUrl='" + serverUrl + '\'' +
                 ", serverPort='" + serverPort + '\'' +
-                ", portals=" + portals +
+                ", weblos=" + weblos +
+                ", appServer='" + appServer + '\'' +
+                ", appPort='" + appPort + '\'' +
                 '}';
     }
 }

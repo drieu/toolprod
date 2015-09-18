@@ -7,3 +7,6 @@ toolprod.iml
 toolprod-grailsPlugins.iml
 servers.properties
 Bugs
+toolprod.log
+report.pdf
+test.png

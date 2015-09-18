@@ -1,4 +1,4 @@
-<%@ page import="toolprod.Portal; toolprod.IndexController" %>
+<%@ page import="toolprod.IndexController" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,103 +7,76 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Welcome to Production !</title>
-    <g:javascript library='jquery'/>
-    <g:javascript library='bootstrap'/>
-    <r:require module="export"/>
-    <r:layoutResources/>
+
+    <asset:stylesheet href="jquery.dataTables.css"/>
+
+    <asset:javascript src="jquery.js"/>
+
+    <asset:javascript src="jquery.dataTables.min.js"/>
+
+    <asset:javascript src="application.js"/>
+    <asset:stylesheet href="bootstrap/bootstrap.css"/>
+    <asset:javascript src="bootstrap/bootstrap.js"/>
 </head>
 
 <body>
-<div class="container">
-    <g:applyLayout name="menu" />
+    <div class="container">
+        <g:applyLayout name="menu" />
 
-    <div class="row">
-        <div class="col-md-9">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    Liste des applications &nbsp;&nbsp;<span class="badge">${apps?.size()}</span>
-                </h4>
-            </div>
-            <div class="panel-body">
-
-
-                <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle " type="button" id="dropdownMenu1" data-toggle="dropdown">
-                        Choix du portail
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-                        <g:each in="${portals}" var="portal">
-
-                            <g:if test="${portalChoice.equals(portal.name)}">
-                                <li role="presentation" class="active"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/listing/?choice=${portal.name}">${portal.name}</a></li>
-                            </g:if>
-                            <g:else>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="/toolprod/appRetail/listing/?choice=${portal.name}">${portal.name}</a></li>
-                            </g:else>
-                        </g:each>
-                    </ul>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        Liste des applications &nbsp;&nbsp;<span class="badge">${count}</span>
+                    </h4>
                 </div>
-                <br/>
-                <br/>
-                <table class="table table-hover table-striped">
-                    <thead>
-                    <caption>
-                        ${portalChoice}
-                    </caption>
-                    <tr>
-                        <th>#</th>
-                        <th>Nom</th>
-                        <th>url</th>
-                        <th>Portail </th>
-                    </tr>
-                    </thead>
-                    <g:each in="${appBeans}" var="app">
-                        <g:if test="${portalChoice != null}" >
-
-                            <g:if test="${app.portals.contains(portalChoice)}" >
-                                <tr>
-                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                    <td>${app?.name}</td>
-                                    <td>
-                                        <g:each in="${app?.serverUrls}">
-                                            <a href="${it}">${it}</a>
-                                            <br/>
-                                        </g:each>
-                                        </td>
-                                    <th>
-                                        <g:each in="${app?.portals?.findAll()}">
-                                            <span class="label label-info">${it}</span>
-                                        </g:each>
-                                    </th>
-                                </tr>
-                            </g:if>
-                        </g:if>
-                        <g:else>
+                <div class="panel-body">
+                    <table id="applis" class="display">
+                        <thead>
                             <tr>
-                                <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                <td>${app?.name}</td>
-                                <td>
-                                    <g:each in="${app?.serverUrls}">
-                                        <a href="${it}">${it}</a>
-                                        <br/>
-                                    </g:each>
-                                </td>
-                                <th>
-                                    <g:each in="${app?.portals?.findAll()}">
-                                        <span class="label label-info">${it}</span>
-                                    </g:each>
-                                </th>
+                                <th>Nom</th>
+                                <th>Url</th>
+                                <th>Vip</th>
                             </tr>
-                        </g:else>
-                    </g:each>
-                </table>
-                <export:formats />
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>...</td>
+                                <td>...</td>
+                                <td>...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+        <g:render template="/layouts/footer"></g:render>
     </div>
-</div>
-
-<r:layoutResources/>
 </body>
 </html>
+<script>
+    ${raw(data)}
+    $(document).ready(function() {
+        $('#applis').dataTable({
+            "data": dataSet,
+            "lengthMenu": [[10, 30, 40, -1], [10, 30, 40, "All"]],
+            "columnDefs": [
+                { "width": "15%", "targets": 0 },
+                { "width": "30%", "targets": 1 },
+                { "width": "55%", "targets": 2 }
+            ],
+            "language": {
+                "lengthMenu": "Affiche _MENU_ résultats par page",
+                "zeroRecords": "Aucun résultat - désolé",
+                "info": "Affichage page _PAGE_ / _PAGES_",
+                "infoEmpty": "Aucun enregistrement",
+                "infoFiltered": "( nombre de résultats _MAX_ )"
+            },
+            "columns": [
+                { "title": "Nom" },
+                { "title": "Vip" },
+                { "title": "Serveurs" }
+            ]
+        });
+    });
+</script>

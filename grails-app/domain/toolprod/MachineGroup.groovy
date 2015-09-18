@@ -2,11 +2,18 @@ package toolprod
 
 /**
  * Group of machine.
+ * Group parsed from config file then saved in MachineGroup table.
  */
 class MachineGroup {
 
+    /**
+     * Name of group.
+     */
     String groupName
 
+    /**
+     * Description.
+     */
     String description
 
     /**
