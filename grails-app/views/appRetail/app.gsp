@@ -84,7 +84,7 @@
                         <g:if test="${server?.serverType?.toString() == "APACHE"}">
                             <tr>
                                 <td>
-                                    <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.name}:${server?.portNumber}
+                                    <a href="<g:createLink controller="WebServer" action="getWebServer" params="[name:server?.name, type:server?.serverType?.toString(), port:server?.portNumber]" />"><span class="glyphicon glyphicon-zoom-in"></span></a>&nbsp;&nbsp;${server?.machineHostName}:${server?.portNumber}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>(${server?.name})</small>
                                 </td>
                             </tr>
                         </g:if>

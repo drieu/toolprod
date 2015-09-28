@@ -102,41 +102,42 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                            Liste des applications locales&nbsp;&nbsp;<span class="badge">${apps?.size()}
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="collapseTwo" class="panel-collapse collapse">
-                                    <div class="panel-body">
-                                        <table class="table table-hover table-striped">
-                                            <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Nom</th>
-                                                <th>Description </th>
-                                                <th>url</th>
-                                            </tr>
-                                            </thead>
-                                            <g:each in="${apps}" var="app">
-                                                <tr>
-                                                    <td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>
-                                                    <td>${app?.name}</td>
-                                                    <td>${app?.description}</td>
-                                                    <td>
-                                                        <g:each in="${app?.urls}">
-                                                            <a href="${it}" target="_blank">${it}</a>&nbsp;<br/>
-                                                        </g:each>
-                                                    </td>
-                                                </tr>
-                                            </g:each>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
+                            %{--UNUSED--}%
+                            %{--<div class="panel panel-default">--}%
+                                %{--<div class="panel-heading">--}%
+                                    %{--<h4 class="panel-title">--}%
+                                        %{--<a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">--}%
+                                            %{--Liste des applications locales&nbsp;&nbsp;<span class="badge">${apps?.size()}--}%
+                                        %{--</a>--}%
+                                    %{--</h4>--}%
+                                %{--</div>--}%
+                                %{--<div id="collapseTwo" class="panel-collapse collapse">--}%
+                                    %{--<div class="panel-body">--}%
+                                        %{--<table class="table table-hover table-striped">--}%
+                                            %{--<thead>--}%
+                                            %{--<tr>--}%
+                                                %{--<th>#</th>--}%
+                                                %{--<th>Nom</th>--}%
+                                                %{--<th>Description </th>--}%
+                                                %{--<th>url</th>--}%
+                                            %{--</tr>--}%
+                                            %{--</thead>--}%
+                                            %{--<g:each in="${apps}" var="app">--}%
+                                                %{--<tr>--}%
+                                                    %{--<td><a href="<g:createLink controller="AppRetail" action="app" params="[name:app?.name]" />"><span class="glyphicon glyphicon-zoom-in"></span></a></td>--}%
+                                                    %{--<td>${app?.name}</td>--}%
+                                                    %{--<td>${app?.description}</td>--}%
+                                                    %{--<td>--}%
+                                                        %{--<g:each in="${app?.urls}">--}%
+                                                            %{--<a href="${it}" target="_blank">${it}</a>&nbsp;<br/>--}%
+                                                        %{--</g:each>--}%
+                                                    %{--</td>--}%
+                                                %{--</tr>--}%
+                                            %{--</g:each>--}%
+                                        %{--</table>--}%
+                                    %{--</div>--}%
+                                %{--</div>--}%
+                            %{--</div>--}%
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
