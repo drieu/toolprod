@@ -113,7 +113,7 @@ class AppRetailController {
             String link = "<a href=/toolprod/appRetail/app?name=" + p.name + ">" + p.name + "</a>"
             String servs = EMPTY
             for(Server serv:p.servers) {
-                servs += serv.name + " "
+                servs += serv.machineHostName + " "
             }
             String vips = EMPTY
             for( String portal : p.vips) {

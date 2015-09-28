@@ -38,7 +38,7 @@ class IndexController {
                 }
             }
             for(Server serv:p.servers) {
-                data += "['" + link + "','" + vips + "','" + serv.name + "','" + serv.portNumber + "'],"
+                data += "['" + link + "','" + vips + "','" + serv.machineHostName + "','" + serv.portNumber + "'],"
             }
         }
         data += "\n];"

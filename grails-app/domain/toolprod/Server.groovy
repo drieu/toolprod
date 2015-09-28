@@ -134,15 +134,17 @@ class Server implements Comparable{
 
         Server server = (Server) o
 
-        if (name != server.name) return false
+        if (machineHostName != server.machineHostName) return false
         if (portNumber != server.portNumber) return false
 
         return true
     }
 
+
+
     int hashCode() {
         int result
-        result = (name != null ? name.hashCode() : 0)
+        result = (machineHostName != null ? machineHostName.hashCode() : 0)
         result = 31 * result + (portNumber != null ? portNumber.hashCode() : 0)
         return result
     }
@@ -150,7 +152,7 @@ class Server implements Comparable{
     @Override
     int compareTo(Object o) {
         if (o instanceof Server) {
-            if ( (this.name.equals(o.name)) && (this.portNumber.equals(o.portNumber)) ) {
+            if ( (this.machineHostName.equals(o.machineHostName)) && (this.portNumber.equals(o.portNumber)) ) {
                 return 0
             }
         }

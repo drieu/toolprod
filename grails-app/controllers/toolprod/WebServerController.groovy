@@ -41,7 +41,8 @@ class WebServerController {
         }
 
         if (param != null) {
-            selectServer = Server.findByNameAndPortNumber(param, port.toInteger());
+
+            selectServer = Server.findByMachineHostNameAndPortNumber(param, port.toInteger());
             log.info("WebServerController:apache() linkapps :" + selectServer?.linkToApps)
 
         } else { //use by index.gsp because we search the server by machine name
@@ -78,7 +79,7 @@ class WebServerController {
 
 
         for(Server s : servers) {
-            List<String> lst = map.get(s.name)
+            List<String> lst = map.get(s.machineHostName)
             if (lst == null ) {
                 lst = new ArrayList<>()
             }
@@ -95,8 +96,8 @@ class WebServerController {
             if (!lst.contains(portToAdd)) {
                 lst.add(portToAdd)
                 lst.sort()
-                if ((s.name != null) && (!s.name.isEmpty())) {
-                    map.put(s.name, lst)
+                if ((s.machineHostName != null) && (!s.machineHostName.isEmpty())) {
+                    map.put(s.machineHostName, lst)
                 }
             }
         }
