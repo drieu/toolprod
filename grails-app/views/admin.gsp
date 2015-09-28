@@ -27,6 +27,7 @@
                         <li><g:link controller="admin" action="init">Etape 2 : Import de fichiers Httpd.conf</g:link></li>
                         <li><g:link controller="admin" action="initPortals">Etape 3 : Initialisation des portails</g:link></li>
                         <li><g:link controller="admin" action="initFromArena">Etape 4 : Initialisation à partir du fichier XML ARENA</g:link></li>
+                        %{--<li><g:link controller="admin" action="initCrontab">Etape 5 : Initialisation à partir des fichiers de crontab ( EXPERIMENTAL )</g:link></li>--}%
                     </ul>
                 </div>
             </div>
@@ -37,6 +38,7 @@
                 </div>
                 <div class="panel-body">
                     <ul class="nav nav-pills nav-stacked">
+
                         <li><g:link controller="admin" action="info">Informations techniques</g:link></li>
                     </ul>
                 </div>

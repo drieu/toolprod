@@ -5,6 +5,7 @@ import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.parser.ArenaParser
 import fr.edu.toolprod.parser.BigIpParser
 import fr.edu.toolprod.parser.ConfigParser
+import fr.edu.toolprod.parser.CrontabParser
 import fr.edu.toolprod.parser.Data
 import fr.edu.toolprod.parser.HttpdParser
 import fr.edu.toolprod.parser.Parser
@@ -226,6 +227,35 @@ class AdminController {
                 message = parser.result
                 if (message.isEmpty()) {
                     message += " 0 application initialisée."
+                }
+            }
+            if (bResult) {
+                flash.message = "SUCCESS : " + message
+            } else {
+                flash.error = "FAILED : " + message
+            }
+        }
+        [errs:errs]
+    }
+
+    /**
+     * Init crontab by parsing crontab files .
+     */
+    def initCrontab() {
+        log.info("initCrontab()")
+        List<String> errs = new ArrayList<>()
+        flash.clear()
+        def machineName = request.getParameterValues("machinename")
+        if (request instanceof MultipartHttpServletRequest) {
+            def message = EMPTY
+            boolean bResult = true
+            request.getFiles("files[]").each { file ->
+                log.debug("init() file to parse:" + file.originalFilename)
+                Parser parser = new CrontabParser(file.inputStream, machineName[0])
+                parser.parse()
+                message = parser.result
+                if (message.isEmpty()) {
+                    message += " No crontab parsed."
                 }
             }
             if (bResult) {

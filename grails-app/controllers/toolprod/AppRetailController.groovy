@@ -379,51 +379,47 @@ class AppRetailController {
      * Affiche la liste des crontab dans un planing
      */
     def crontab() {
-          //define your own cron: arbitrary fields are allowed and last field can be optional
-//        CronDefinition cronDefinition =
-//            CronDefinitionBuilder.defineCron()
-//                    .withSeconds().and()
-//                    .withMinutes().and()
-//                    .withHours().and()
-//                    .withDayOfMonth()
-//                    .supportsHash().supportsL().supportsW().and()
-//                    .withMonth().and()
-//                    .withDayOfWeek()
-//                    .withIntMapping(7, 0) //we support non-standard non-zero-based numbers!
-//                    .supportsHash().supportsL().supportsW().and()
-//                    .withYear().and()
-//                    .lastFieldOptional()
-//                    .instance();
+
+// TEST
+//        Crontab crontab = new Crontab()
+//        crontab.crontab = "00 11 * * *"
+//        crontab.description = " /root/shell.sh"
+//        crontab.command = " /root/shell.sh"
 //
-//        //or get a predefined instance
-//        cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(com.cronutils.model.CronType.QUARTZ);
+//        Machine machine1 = new Machine()
+//        machine1.name = "serveur_1"
+//        machine1.save()
 //
-//        //create a parser based on provided definition
-//        CronParser parser = new CronParser(cronDefinition);
-//
-//        DateTime now = DateTime.now();
-//        ExecutionTime executionTime = ExecutionTime.forCron(parser.parse("0 23 ? * * 1-5 *"));
-//        DateTime nextExecution = executionTime.nextExecution(now);
-//
-//
-//        String tmpStr = nextExecution.toString()
-//        println("DATE:" + tmpStr)
-//        String nextDateStr = tmpStr.split("\\.")[0]
-//
-//        String planning = "{"
-//        planning += "title  : 'event1',"
-//        planning += "start  : '"
-//        planning += nextDateStr
-//        planning += "'"
-//        planning += "}"
+//        crontab.machine = machine1
+//        crontab.save(failOnError: true)
+
+
+
+
+//        Crontab crontab2 = new Crontab()
+//        crontab2.crontab = "0 12 ? * * 1-5 *"
+//        crontab2.description = "ma description 2"
+//        Machine machine2 = new Machine()
+//        machine2.name = "titi"
+//        machine2.save()
+//        crontab2.save()
 
         String planning = ""
 
-        planning += getOnePlanningRow("event1", "0 23 ? * * 1-5 *")
-        planning += ","
-        planning += getOnePlanningRow("event2", "0 12 ? * * * *")
+        List<Crontab> lst = Crontab.findAll()
+        int size = lst.size()
+        int cpt = 0
+        for(Crontab cron : lst) {
+            String definition = cron.command
+            planning += getOnePlanningRow(definition, cron.crontab)
+            if (cpt <= size -1) {
+                planning += ","
+            }
+            cpt++
+        }
 
-        [planning:planning ]
+
+        [planning:planning]
     }
 
     /**
@@ -433,7 +429,6 @@ class AppRetailController {
     def getOnePlanningRow(String definition, String cron) {
         CronDefinition cronDefinition =
             CronDefinitionBuilder.defineCron()
-                    .withSeconds().and()
                     .withMinutes().and()
                     .withHours().and()
                     .withDayOfMonth()
@@ -447,7 +442,7 @@ class AppRetailController {
                     .instance();
 
         //or get a predefined instance
-        cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(com.cronutils.model.CronType.QUARTZ);
+        //cronDefinition = CronDefinitionBuilder.instanceDefinitionFor(com.cronutils.model.CronType.QUARTZ);
 
         //create a parser based on provided definition
         CronParser parser = new CronParser(cronDefinition);

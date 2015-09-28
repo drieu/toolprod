@@ -59,7 +59,12 @@
 //                    }
 
                 ],
-                timeFormat: 'HH(:mm)' // uppercase H for 24-hour clock
+                timeFormat: 'HH(:mm)', // uppercase H for 24-hour clock
+                header: {
+                    center: 'agendaDay,agendaWeek' // buttons for switching between views
+                },
+                defaultView: 'agendaDay',
+                duration: '00:30:00'
             })
 
         });
