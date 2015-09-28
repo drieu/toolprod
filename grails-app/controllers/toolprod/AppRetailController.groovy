@@ -290,7 +290,7 @@ class AppRetailController {
         //now add the text
         contentStream.setFont(PDType1Font.HELVETICA_BOLD,14);
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount((float)margin+cellMargin+10,(float)(y+20));
+        contentStream.moveTextPositionByAmount((float)(margin+cellMargin+10),(float)(y+20));
         log.info("==> title:" + title)
         contentStream.drawString(title);
         contentStream.endText();
