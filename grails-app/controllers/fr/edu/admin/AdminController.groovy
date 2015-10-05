@@ -18,6 +18,8 @@ import toolprod.Vip
  */
 class AdminController {
 
+    def grailsApplication
+
     private static final String EMPTY = ""
 
     def index() {
@@ -36,7 +38,8 @@ class AdminController {
      * @return
      */
     def reloadData() {
-        def path = "E:\\projet\\toolprod\\import\\"
+
+        def path = grailsApplication.getConfig().getProperty('reloadPath')
 
         Data data = new Data()
         log.info("reloadData() Initializing configuration from config file in " + path + " directory ...")

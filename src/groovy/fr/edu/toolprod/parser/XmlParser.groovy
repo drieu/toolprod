@@ -205,6 +205,7 @@ class XmlParser {
      */
     def static parseWebLogicCluster(String line) {
         List<String> weblos = new ArrayList<>()
+
         log.debug("parseWebLogicCluster() line:" + line)
         if ( (line!= null) && (line.contains(WEBLOGIC_CLUSTER))) {
             line = line.trim()
@@ -418,7 +419,7 @@ class XmlParser {
         //Get the name in filename
         String name = filename
         if (name.contains(HTTPD_FILENAME_START)) {
-            name = name.substring(HTTPD_FILENAME_START.length(), name.length())
+                name = name.substring(HTTPD_FILENAME_START.length(), name.length())
         }
         name
     }

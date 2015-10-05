@@ -9,7 +9,7 @@ import org.apache.log4j.DailyRollingFileAppender
 //                             "file:${userHome}/.grails/${appName}-config.properties",
 //                             "file:${userHome}/.grails/${appName}-config.groovy"]
 
-//grails.config.locations = [ "file:${userHome}/.grails/${appName}-servers.properties"]
+grails.config.locations = [ "file:${userHome}/${appName}.properties"]
 
 //if (System.properties["${appName}.config.location"]) {
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
@@ -118,6 +118,7 @@ log4j = { root ->
 // special settings with production env
 environments {
     development {
+        reloadPath= "E:\\projet\\toolprod\\import\\"
         log4j = { root ->
             appenders {
                 rollingFile name:'stdout', file:"${appName}.log".toString(), maxFileSize:'1000KB'
@@ -138,6 +139,15 @@ environments {
             info "fr.edu.toolprod.parser"
             info "toolprod"
             root.level = org.apache.log4j.Level.INFO
+        }
+    }
+    production {
+        reloadPath= "/opt/toolprod/import"
+        grails.logging.jul.usebridge = false
+        // Set level for all application artifacts
+        log4j = {
+            error "grails.app"
+            error "fr.edu.toolprod"
         }
     }
 }

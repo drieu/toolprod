@@ -264,7 +264,8 @@ class HttpdParser {
             log.info("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
             appBean.name = XmlParser.getNameFromFileName(f.name);
-            appBeans.add(appBean)
+                appBeans.add(appBean)
+            appBean = null
         }
 
         return bResult
@@ -372,7 +373,7 @@ class HttpdParser {
                 }
 
                 if (bLocationTag) {
-                    log.info("Location Tag:" + WebLogicHost + COLON + WebLogicPort)
+                    log.debug("Location Tag:" + WebLogicHost + COLON + WebLogicPort)
                     for(String str : XmlParser.parseWebLogicCluster(strLine)) { // If WebLogicCluster
                         weblos.add(str);
                     }
@@ -408,10 +409,13 @@ class HttpdParser {
 
         // If EMPTY httpd.conf create application with name of http.conf.name
         if(appBeans.size() == 0) {
-            log.debug("parse() : appBeans.size() == 0")
+
+            log.info("parse() : appBeans.size() == 0")
             AppBean appBean = new AppBean();
             appBean.name = XmlParser.getNameFromFileName(file.originalFilename);
+            println(appBean.name)
             appBeans.add(appBean)
+
         }
 
         return bResult

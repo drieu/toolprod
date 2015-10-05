@@ -109,7 +109,7 @@ class Data {
         if (!machine.save(failOnError: true,flush:true)) {
             log.error("addAppToServer() : Can't Save machine " + machine)
         } else {
-            log.info("addAppToServer() : Save machine OK:" + machine)
+            log.info("addAppToServer() : Save machine OK:" + machine.name)
         }
     }
 

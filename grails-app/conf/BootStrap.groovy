@@ -4,12 +4,17 @@ import toolprod.MailType
 
 class BootStrap {
 
+    def reloadPath
+
     def init = { servletContext ->
         if (Environment.current == Environment.DEVELOPMENT) {
+
             log.info("ENVIRONNEMENT : " + Environment.DEVELOPMENT)
         } else if (Environment.current == Environment.TEST){
+
             log.info("ENVIRONNEMENT : " +  Environment.TEST)
         } else if (Environment.current == Environment.PRODUCTION){
+
             log.info("ENVIRONNEMENT : " +  Environment.PRODUCTION)
         } else {
             log.error("ENVIRONNEMENT : " +  Environment.PRODUCTION)
@@ -21,4 +26,6 @@ class BootStrap {
 
     def destroy = {
     }
+
+
 }
