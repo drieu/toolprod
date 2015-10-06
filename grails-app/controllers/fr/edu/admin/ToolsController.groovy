@@ -9,8 +9,12 @@ import org.apache.directory.api.ldap.model.message.SearchScope
 import org.apache.directory.ldap.client.api.LdapConnection
 import org.apache.directory.ldap.client.api.LdapNetworkConnection
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import toolprod.App
+import toolprod.Archive
 import toolprod.Ldap
+import toolprod.Machine
 import toolprod.MailType
+import toolprod.Server
 import toolprod.Status
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 
@@ -343,6 +347,89 @@ class ToolsController {
             }
         }
         return check
+    }
+
+    /**
+     * Check difference between old import ( server, application ... )
+     */
+    def checkAll() {
+
+        List<String> machineDiffs = new ArrayList<>()
+        List<String> appDiffs = new ArrayList<>()
+        List<String> disappearApps = new ArrayList<>()
+
+       int count = 0
+
+        Archive archive = Archive.findByName("OLD")
+        if(archive != null) {
+            int countNow = App.count()
+            int archCount = archive.apps.size()
+            if ( archCount != countNow ) {
+                count = countNow - archCount
+            }
+
+
+            println("Hello")
+            for(Machine m :Machine.findAll()) {
+                if (!archive.machines.contains(m.name)) {
+                   machineDiffs.add(m.name)
+                }
+            }
+
+            for(App a:App.findAll()) {
+                if (!archive.apps.contains(a.name)) {
+                    appDiffs.add(a.name)
+                }
+            }
+
+            List<App> apps = App.findAll()
+            Archive arch = Archive.findByName("OLD")
+            for(String str : arch.apps) {
+                if (App.findByName(str) == null) {
+                    disappearApps.add(str)
+                }
+            }
+        }
+
+       [ count : count, machineDiffs: machineDiffs, appDiffs: appDiffs, disappearApps: disappearApps ]
+    }
+
+    def archive() {
+        Archive archive = new Archive()
+        archive.name = "OLD"
+        archive.countApp = App.count()
+
+        // Machines list
+        List<String> machines = new ArrayList<>()
+        for(Machine m :Machine.findAll()) {
+            machines.add(m.name)
+        }
+        archive.machines = machines
+
+        // Web server list
+        List<String> servers = new ArrayList<>()
+        for(Server s :Server.findAllByServerType(Server.TYPE.APACHE)) {
+            servers.add(s.name)
+        }
+        archive.apacheWebServer = servers
+
+        // Weblogic list
+        List<String> weblos = new ArrayList<>()
+        for(Server w :Server.findAllByServerType(Server.TYPE.WEBLOGIC)) {
+            weblos.add(w.name)
+        }
+        archive.apacheWebServer = weblos
+
+
+        //Application list
+        List<String> apps = new ArrayList<>()
+        for(App w :App.findAll()) {
+            apps.add(w.name)
+        }
+        archive.apps = apps
+
+        archive.save(failOnError: true)
+        checkAll()
     }
 
 }

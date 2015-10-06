@@ -219,7 +219,7 @@ class Data {
                 machine.addApplication(app)
                 machine.addServer(webloServer)
                 machine.save(failOnError: true,flush:true)
-                log.info("saveWebloApp() Machine find or create:" + machine)
+                log.info("saveWebloApp() Machine find or create:" + machine.name)
 
                 // Why equals method of webloServer cannot be call ???
                 boolean bFind = false

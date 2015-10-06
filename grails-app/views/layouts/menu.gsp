@@ -53,6 +53,7 @@
                             %{--<li><a href="">Recherche dans le LDAP</a></li>--}%
                             <li><a href="/toolprod/admin">Page d'admin</a></li>
                             <li><a href="/toolprod/tools/checkApacheConf">Vérification des fichiers Apache</a></li>
+                            <li><a href="/toolprod/tools/checkAll">Vérification de la configuration</a></li>
                             <li><a href="/toolprod/tools/mail">Création automatique de fiche LDAP</a></li>
                         </ul>
                     </li>
