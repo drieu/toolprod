@@ -3,6 +3,7 @@ package fr.edu.admin
 import fr.edu.toolprod.bean.MultipartFileBean
 import fr.edu.toolprod.parser.HttpdParser
 import grails.converters.JSON
+import grails.plugin.mail.MailService
 import org.apache.directory.api.ldap.model.cursor.EntryCursor
 import org.apache.directory.api.ldap.model.entry.Attribute
 import org.apache.directory.api.ldap.model.message.SearchScope
@@ -20,6 +21,7 @@ import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 
 class ToolsController {
 
+    def mailService
 
     private static final String EMPTY = ""
 
@@ -36,6 +38,10 @@ class ToolsController {
     private static final String PARAM_TYPE = "type"
 
     private static final String PARAM_SHORTNAME_TYPE = "shortNameType"
+
+    List<String> machineDiffs = new ArrayList<>()
+    List<String> appDiffs = new ArrayList<>()
+    List<String> disappearApps = new ArrayList<>()
 
     def index() {}
 
@@ -354,9 +360,6 @@ class ToolsController {
      */
     def checkAll() {
 
-        List<String> machineDiffs = new ArrayList<>()
-        List<String> appDiffs = new ArrayList<>()
-        List<String> disappearApps = new ArrayList<>()
 
        int count = 0
 
@@ -368,8 +371,6 @@ class ToolsController {
                 count = countNow - archCount
             }
 
-
-            println("Hello")
             for(Machine m :Machine.findAll()) {
                 if (!archive.machines.contains(m.name)) {
                    machineDiffs.add(m.name)
@@ -382,7 +383,6 @@ class ToolsController {
                 }
             }
 
-            List<App> apps = App.findAll()
             Archive arch = Archive.findByName("OLD")
             for(String str : arch.apps) {
                 if (App.findByName(str) == null) {
@@ -394,7 +394,31 @@ class ToolsController {
        [ count : count, machineDiffs: machineDiffs, appDiffs: appDiffs, disappearApps: disappearApps ]
     }
 
+    /**
+     * Send mail with difference from previous archives
+     */
+    def sendMail() {
+        String dest = params.get("dest")
+        if (dest != null) {
+            mailService.sendMail {
+                to dest,dest
+                from "Toolprod@ac-limoges.fr"
+                subject "TOOLPROD : Récapitulatif des modifications des configurations Apache"
+                html g.render(template:'/tools/message', model:[count:0, machineDiffs : machineDiffs, appDiffs: appDiffs, disappearApps : disappearApps])
+            }
+            flash.message = "Mail envoyé !"
+        } else {
+            flash.error = "le mail n'est pas envoyé car le destinataire est vide !"
+        }
+        redirect(action:"checkAll")
+    }
+
+    /**
+     * Make an archive of the current configuration
+     * @return
+     */
     def archive() {
+
         Archive archive = new Archive()
         archive.name = "OLD"
         archive.countApp = App.count()
@@ -402,21 +426,27 @@ class ToolsController {
         // Machines list
         List<String> machines = new ArrayList<>()
         for(Machine m :Machine.findAll()) {
-            machines.add(m.name)
+            if (!machines.contains(m.name)) {
+                machines.add(m.name)
+            }
         }
         archive.machines = machines
 
         // Web server list
         List<String> servers = new ArrayList<>()
         for(Server s :Server.findAllByServerType(Server.TYPE.APACHE)) {
-            servers.add(s.name)
+            if (!servers.contains(s.name)) {
+                servers.add(s.name)
+            }
         }
         archive.apacheWebServer = servers
 
         // Weblogic list
         List<String> weblos = new ArrayList<>()
         for(Server w :Server.findAllByServerType(Server.TYPE.WEBLOGIC)) {
-            weblos.add(w.name)
+            if (!weblos.contains(w.name)) {
+                weblos.add(w.name)
+            }
         }
         archive.apacheWebServer = weblos
 
@@ -424,12 +454,15 @@ class ToolsController {
         //Application list
         List<String> apps = new ArrayList<>()
         for(App w :App.findAll()) {
-            apps.add(w.name)
+            if (!apps.contains(w.name)) {
+                apps.add(w.name)
+            }
         }
         archive.apps = apps
 
         archive.save(failOnError: true)
-        checkAll()
+        flash.message = "Archive effectuée !"
+        redirect(action:"checkAll")
     }
 
 }

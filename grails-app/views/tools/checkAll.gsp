@@ -39,6 +39,13 @@
                     </form>
                 </g:uploadForm>
                 <br/>
+                <g:uploadForm action="sendMail" controller="tools">
+                    <form role="form">
+                        <label for="dest">Envoyer à :</label>
+                        <input type="text" id="dest" name="dest" />
+                        <button type="submit" class="btn btn-info">Send mail</button>
+                    </form>
+                </g:uploadForm>
                 <br/>
             </div>
         </div>

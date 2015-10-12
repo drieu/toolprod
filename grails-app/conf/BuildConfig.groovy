@@ -66,6 +66,7 @@ grails.project.dependency.resolution = {
         //compile ":export:1.6"  // Pb with Grails 2.4.4
         compile ":profiler:0.5"
         compile ":rendering:1.0.0"
+        compile ":mail:1.0.7"
 
 //        compile ':quartz:1.0.1'
 

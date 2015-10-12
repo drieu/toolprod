@@ -112,7 +112,7 @@ log4j = { root ->
             'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
             'org.springframework',
             'org.hibernate'
-    root.level = org.apache.log4j.Level.DEBUG
+    root.level = DEBUG
 }
 
 // special settings with production env
@@ -221,4 +221,15 @@ plugin.crash.config = [
 
 cacheManager {
     shared = true
+}
+
+grails {
+    mail {
+        host = "smtp.ac-limoges.fr"
+        port = 25
+        username = "drieu"
+        password = ""
+        props = ["mail.smtp.auth":"false"]
+
+    }
 }
