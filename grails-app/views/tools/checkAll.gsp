@@ -30,7 +30,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Choix des fichiers de configuration Apache à vérifier</h3>
+                <h3 class="panel-title">Archivage</h3>
             </div>
             <div class="panel-body">
                 <g:uploadForm action="archive" controller="tools">
@@ -38,6 +38,8 @@
                         <button type="submit" class="btn btn-info">Archivage</button>
                     </form>
                 </g:uploadForm>
+                <br/>
+                <label>Dernière archive : ${archive?.date}</label>
                 <br/>
                 <g:uploadForm action="sendMail" controller="tools">
                     <form role="form">

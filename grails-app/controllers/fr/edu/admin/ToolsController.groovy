@@ -17,7 +17,9 @@ import toolprod.Machine
 import toolprod.MailType
 import toolprod.Server
 import toolprod.Status
-import org.apache.directory.api.ldap.model.entry.DefaultEntry;
+import org.apache.directory.api.ldap.model.entry.DefaultEntry
+
+import java.text.SimpleDateFormat;
 
 class ToolsController {
 
@@ -360,9 +362,11 @@ class ToolsController {
      */
     def checkAll() {
 
-
-       int count = 0
-
+        Archive arch = Archive.findByName("OLD")
+        int count = 0
+        machineDiffs = new ArrayList<>()
+        appDiffs = new ArrayList<>()
+        disappearApps = new ArrayList<>()
         Archive archive = Archive.findByName("OLD")
         if(archive != null) {
             int countNow = App.count()
@@ -378,12 +382,12 @@ class ToolsController {
             }
 
             for(App a:App.findAll()) {
-                if (!archive.apps.contains(a.name)) {
+                List<String> archApps = archive.apps
+                if (!archApps.contains(a.name)) {
                     appDiffs.add(a.name)
                 }
             }
 
-            Archive arch = Archive.findByName("OLD")
             for(String str : arch.apps) {
                 if (App.findByName(str) == null) {
                     disappearApps.add(str)
@@ -391,7 +395,7 @@ class ToolsController {
             }
         }
 
-       [ count : count, machineDiffs: machineDiffs, appDiffs: appDiffs, disappearApps: disappearApps ]
+       [ count : count, machineDiffs: machineDiffs, appDiffs: appDiffs, disappearApps: disappearApps, archive:arch ]
     }
 
     /**
@@ -399,12 +403,24 @@ class ToolsController {
      */
     def sendMail() {
         String dest = params.get("dest")
+
         if (dest != null) {
+            if (dest.contains(";")) {
+                dest = dest.replace(";",",")
+            }
+            String[] destArr = dest.split(",")
+            List<String> lst = new ArrayList<>()
+            for (String str : destArr) {
+                lst.add(str)
+            }
+
+
+            Archive archive = Archive.findByName("OLD")
             mailService.sendMail {
-                to dest,dest
+                to lst.toArray()
                 from "Toolprod@ac-limoges.fr"
                 subject "TOOLPROD : Récapitulatif des modifications des configurations Apache"
-                html g.render(template:'/tools/message', model:[count:0, machineDiffs : machineDiffs, appDiffs: appDiffs, disappearApps : disappearApps])
+                html g.render(template:'/tools/message', model:[count:0, machineDiffs : machineDiffs, appDiffs: appDiffs, disappearApps : disappearApps, archDate:archive?.date])
             }
             flash.message = "Mail envoyé !"
         } else {
@@ -414,12 +430,19 @@ class ToolsController {
     }
 
     /**
-     * Make an archive of the current configuration
+     * Make an archive of the current configuration.
+     * We delete old archive to replace by the new one.
      * @return
      */
     def archive() {
 
-        Archive archive = new Archive()
+        Archive archive = Archive.findByName("OLD")
+        if (archive == null) {
+            archive = new Archive()
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date();
+        archive.date = sdf.format(date);
         archive.name = "OLD"
         archive.countApp = App.count()
 

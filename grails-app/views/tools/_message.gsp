@@ -37,17 +37,17 @@
 <p>Bonjour,</p>
 <p>un nouveau import de fichiers de configuration vient d'être r&eacute;alis&eacute; dans Toolprod.
 Les diff&eacute;rences avec les configurations pr&eacute;c&eacute;dentes sont consign&eacute;es dans le tableau ci-dessous.</p>
-<p>Merci de prendre contact avec le p&ocirc;le IE ou de d&eacute;poser un signalement si des valeurs vous semblent anormales.</p>
+<p>Merci de prendre contact avec le p&ocirc;le IE si des valeurs vous semblent anormales.</p>
 <br/>
 <table class="table table-hover table-striped">
     <tbody>
     <tr>
-        <th colspan="3">Tableau des v&eacute;rifications de configuration</th>
+        <th colspan="3">Tableau des v&eacute;rifications de configuration ( derni&egrave;re archive le ${archDate} )</th>
     </tr>
     <tr>
         <td>Liste des nouvelles machines </td>
         <td>
-            <g:each in="${machineDiffs}" var="str">${it} </g:each></td>
+            <g:each in="${machineDiffs}">${it} </g:each></td>
         <td>
             <g:if test="${machineDiffs.size() == 0}">
                 <span class="label label-success">OK</span>
@@ -58,8 +58,8 @@ Les diff&eacute;rences avec les configurations pr&eacute;c&eacute;dentes sont co
         </td>
     </tr>
     <tr>
-        <td>Listes des applications en PLUS</td>
-        <td><g:each in="${appDiffs}" var="str">${it} </g:each></td>
+        <td>Liste des applications en PLUS</td>
+        <td><g:each in="${appDiffs}">${it} </g:each></td>
         <td>
             <g:if test="${appDiffs.size() == 0}">
                 <span class="label label-success">OK</span>
@@ -70,8 +70,8 @@ Les diff&eacute;rences avec les configurations pr&eacute;c&eacute;dentes sont co
         </td>
     </tr>
     <tr>
-        <td>Listes des applications en MOINS</td>
-        <td><g:each in="${disappearApps}" var="str">${it} </g:each></td>
+        <td>Liste des applications en MOINS</td>
+        <td><g:each in="${disappearApps}">${it} </g:each></td>
         <td>
             <g:if test="${disappearApps.size() == 0}">
                 <span class="label label-success">OK</span>
