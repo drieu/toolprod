@@ -112,7 +112,7 @@ log4j = { root ->
             'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
             'org.springframework',
             'org.hibernate'
-    root.level = DEBUG
+    root.level= org.apache.log4j.Level.DEBUG
 }
 
 // special settings with production env
@@ -138,16 +138,28 @@ environments {
             debug "fr.edu.toolprod"
             info "fr.edu.toolprod.parser"
             info "toolprod"
-            root.level = org.apache.log4j.Level.INFO
+            root.level= org.apache.log4j.Level.INFO
+        }
+    }
+    test {
+        log4j = {root ->
+            info "grails.app"
+            debug "fr.edu.toolprod"
+            root.level= org.apache.log4j.Level.INFO
         }
     }
     production {
-        reloadPath= "/opt/toolprod/import"
+        reloadPath= "/opt/toolprod/import/"
         grails.logging.jul.usebridge = false
         // Set level for all application artifacts
-        log4j = {
+        log4j = {root ->
+            appenders {
+                rollingFile name:'stdout', file:"/opt/toolprod/logs/${appName}.log".toString(), maxFileSize:'1000KB'
+                rollingFile name:'stacktrace', file:"/opt/toolprod/logs/${appName}_stack.log".toString(), maxFileSize:'1000KB'
+            }
             error "grails.app"
             error "fr.edu.toolprod"
+            root.level= org.apache.log4j.Level.ERROR
         }
     }
 }
