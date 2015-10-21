@@ -35,6 +35,20 @@ class Server implements Comparable{
     List<String> modules = []
     static hasMany = [ linkToApps: String, modules: String]
 
+    static belongsTo = [ treenode : TreeNode, app : App, machine : Machine ]
+
+
+
+    static constraints = {
+        name()
+        portNumber(defaultValue:DEFAULT_APACHE_PORT)
+        machineHostName(defaultValue:DEFAULT_IP)
+//        treenode(nullable: true)    // constraint for delete cascade
+//        app(nullable: true)         // constraint for delete cascade
+//        machine(nullable: true)         // constraint for delete cascade
+    }
+
+
     /**
      * TYPE of server ( apache, weblogic )
      */
@@ -76,11 +90,6 @@ class Server implements Comparable{
     private static final String DEFAULT_IP = "127.0.0.1"
 
 
-    static constraints = {
-        name()
-        portNumber(defaultValue:DEFAULT_APACHE_PORT)
-        machineHostName(defaultValue:DEFAULT_IP)
-    }
 
     /**
      * Constructor.
@@ -196,12 +205,12 @@ class Server implements Comparable{
         if (serverBean == null) {
             throw new IllegalArgumentException("Can't save a Server with a null serverBean !")
         }
-        log.info("saveServer() Save serverBean:" + serverBean)
+        log.info("saveServer() Save serverBean:" + serverBean.name)
         Integer port = 0
         if (serverBean.portNumber != null) {
            port = serverBean.portNumber.toInteger()
         }
-        Server server = findByMachineHostNameAndPortNumber(serverBean.machineHostName, port)
+        Server server = Server.findByMachineHostNameAndPortNumber(serverBean.machineHostName, port)
         if (server == null) {
             server = new Server(serverBean.name, serverBean.machineHostName, port, Server.TYPE.APACHE)
             server.modules = serverBean.modules;

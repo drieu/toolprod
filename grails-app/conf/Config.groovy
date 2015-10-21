@@ -159,7 +159,7 @@ environments {
             }
             error "grails.app"
             error "fr.edu.toolprod"
-            root.level= org.apache.log4j.Level.ERROR
+            root.level= org.apache.log4j.Level.INFO
         }
     }
 }

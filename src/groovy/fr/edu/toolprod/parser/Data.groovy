@@ -27,6 +27,7 @@ class Data {
 
     private static final String COLON = ":"
 
+    def sessionFactory
 
     /**
      * Default port for Apache server.
@@ -271,6 +272,12 @@ class Data {
         }
     }
 
+    public boolean singleClean() {
+        log.info("clean()")
+        Machine.executeUpdate("delete Machine m")
+        log.info("end single clean !")
+    }
+
     /**
      * Clean all import data contains in table.
      * It is used before importing new datas.
@@ -278,17 +285,35 @@ class Data {
      */
     public boolean clean() {
         log.info("clean()")
+
         log.info("clean() Delete all existing machine.")
         Machine.executeUpdate("delete Machine m")
         log.info("clean() Delete all existing apps.")
         App.executeUpdate("delete App m")
-        log.info("clean() Delete all existing TreeNode.")
-        TreeNode.executeUpdate("delete TreeNode m")
+//        log.info("clean() Delete all existing TreeNode.")
+//        List<TreeNode> nodes = TreeNode.findAll()
+
+//        for (TreeNode node : nodes) {
+//            deleteTreeNodeParent(node)
+//        }
+        //TreeNode.executeUpdate("delete TreeNode m")
         log.info("clean() Delete all existing vips.")
         Vip.executeUpdate("delete Vip m")
         log.info("clean() Delete all existing servers.")
         Server.executeUpdate("delete Server m")
         log.info("")
+        TreeNode.deleteAll()
+    }
+
+    TreeNode deleteTreeNodeParent(TreeNode node) {
+        if (node != null) {
+            if (node.parent != null) {
+                deleteTreeNodeParent(node.parent)
+            } else {
+                node.delete()
+            }
+        }
+        return null
     }
 
     /**

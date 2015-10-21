@@ -40,6 +40,9 @@
                     <ul class="nav nav-pills nav-stacked">
 
                         <li><g:link controller="admin" action="info">Informations techniques</g:link></li>
+                        <li><g:link controller="admin" action="reloadData">Rechargement des données</g:link></li>
+                        <li><g:link controller="admin" action="clearData">Clear All Data</g:link></li>
+                        <li><g:link controller="admin" action="clearTestData">Clear Test Data</g:link></li>
                     </ul>
                 </div>
             </div>

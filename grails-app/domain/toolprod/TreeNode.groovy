@@ -22,6 +22,9 @@ class TreeNode  {
        parent(nullable: true)
     }
 
+//    static belongsTo = [ Server, TreeNode ]
+
+
     public TreeNode(Server nodeData) {
         this.nodeData = nodeData;
         this.children = new LinkedList<TreeNode>();

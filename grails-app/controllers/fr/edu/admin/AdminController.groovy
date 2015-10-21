@@ -33,6 +33,36 @@ class AdminController {
         boolean bResult = false
     }
 
+    def clearData() {
+        Data data = new Data()
+
+        def path = grailsApplication.getConfig().getProperty('reloadPath')
+
+        log.info("reloadData() Initializing configuration from config file in " + path + " directory ...")
+        def initFile = new File(path + "config")
+        InputStream inputStream = new FileInputStream(initFile)
+        ConfigParser configParser = new ConfigParser(inputStream)
+        boolean bResult = configParser.parse()
+        if (bResult) {
+            log.debug("reloadData() result:" + configParser.result)
+            data.overwriteMachineGroup(configParser.machineByGroup)
+            log.info("reloadData() Init config : OK")
+        } else {
+            log.error("reloadData() Init config : KO")
+        }
+        data.clean()
+
+        data.clean()
+        render "OK"
+    }
+
+    def clearTestData() {
+        Data data = new Data()
+        data.singleClean()
+        render "OK"
+    }
+
+
     /**
      * Deleta all data in table and import new data.
      * @return
@@ -40,13 +70,14 @@ class AdminController {
     def reloadData() {
 
         def path = grailsApplication.getConfig().getProperty('reloadPath')
+        boolean bResult
 
         Data data = new Data()
         log.info("reloadData() Initializing configuration from config file in " + path + " directory ...")
         def initFile = new File(path + "config")
         InputStream inputStream = new FileInputStream(initFile)
         ConfigParser configParser = new ConfigParser(inputStream)
-        boolean bResult = configParser.parse()
+        bResult = configParser.parse()
         if (bResult) {
             log.debug("reloadData() result:" + configParser.result)
             data.overwriteMachineGroup(configParser.machineByGroup)
