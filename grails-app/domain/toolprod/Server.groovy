@@ -35,15 +35,13 @@ class Server implements Comparable{
     List<String> modules = []
     static hasMany = [ linkToApps: String, modules: String]
 
-    static belongsTo = [ treenode : TreeNode, app : App, machine : Machine ]
-
+//    static belongsTo = [ app : App, machine : Machine ]
 
 
     static constraints = {
         name()
         portNumber(defaultValue:DEFAULT_APACHE_PORT)
         machineHostName(defaultValue:DEFAULT_IP)
-//        treenode(nullable: true)    // constraint for delete cascade
 //        app(nullable: true)         // constraint for delete cascade
 //        machine(nullable: true)         // constraint for delete cascade
     }

@@ -149,6 +149,15 @@ class XmlParser {
             def params = line.tokenize()
             if ((params != null) && (params.size()>=2)) {
                 result = params.get(1);
+                if (result.contains(":")) { // Listen 0.0.0.0:8000
+                    int pos = result.indexOf(":")
+                    if (pos > 0) {
+                        result = result.substring(pos + 1,result.size())
+                    } else {
+                        result = 0
+                        log.warn("parseListen() : bad values in httpd.conf for Listen :" + line)
+                    }
+                }
             }
         }
         return result

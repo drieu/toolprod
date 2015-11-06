@@ -42,7 +42,7 @@ class App {
      * Server list.
      */
     List<Server> servers = []
-    static hasMany = [servers : Server, vips: String, urls : String]
+    static hasMany = [servers : Server,vips: String, urls : String]
 
     /**
      * Logger.
@@ -51,7 +51,8 @@ class App {
 
 
     static mapping = {
-        sort "name":"asc";
+        sort "name":"asc"
+//        servers cascade: "all-delete-orphan"
     }
 
     static constraints = {

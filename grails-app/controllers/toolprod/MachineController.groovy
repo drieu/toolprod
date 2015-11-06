@@ -50,15 +50,11 @@ class MachineController {
         List<App> results = null
 
         String param = params.get(MACHINE_PARAM)
+
         if (param != null) {
             machine = Machine.findByName(param);
             if ( machine != null) {
                 apps = machine.apps
-                for(App app : apps) {
-                    if( (app?.servers?.size() == 1) && (app?.urls?.contains(machine?.name))) {
-                        localApps.add(app)
-                    }
-                }
                 apps = apps.sort{it.name}
                 machineServers = machine?.servers?.sort {it.portNumber }
                 log.info("IndexController:index() Machine:" + machine.toString())
@@ -99,7 +95,7 @@ class MachineController {
                 log.warn("group() unknow machine group name")
             }
         }
-        return [ apps: localApps, machines: machines, machine:machine, machineServers:machineServers, refs: refs, selectedMachineGroup:selectedMachineGroup]
+        return [ machines: machines, machine:machine, machineServers:machineServers, refs: refs, selectedMachineGroup:selectedMachineGroup]
     }
 
 

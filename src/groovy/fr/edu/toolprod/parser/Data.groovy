@@ -274,7 +274,7 @@ class Data {
 
     public boolean singleClean() {
         log.info("clean()")
-        Machine.executeUpdate("delete Machine m")
+        App.executeUpdate("delete App m")
         log.info("end single clean !")
     }
 

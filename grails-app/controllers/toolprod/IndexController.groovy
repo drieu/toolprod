@@ -38,7 +38,12 @@ class IndexController {
                 }
             }
             for(Server serv:p.servers) {
-                data += "['" + link + "','" + vips + "','" + serv.machineHostName + "','" + serv.portNumber + "'],"
+                if ( serv != null) {
+                    data += "['" + link + "','" + vips + "','" + serv?.machineHostName + "','" + serv?.portNumber + "'],"
+                } else {
+                    data += "['" + link + "','" + vips + "','',''],"
+
+                }
             }
         }
         data += "\n];"

@@ -113,7 +113,7 @@ class AppRetailController {
             String link = "<a href=/toolprod/appRetail/app?name=" + p.name + ">" + p.name + "</a>"
             String servs = EMPTY
             for(Server serv:p.servers) {
-                servs += serv.machineHostName + " "
+                servs += serv?.machineHostName + " "
             }
             String vips = EMPTY
             for( String portal : p.vips) {
@@ -122,6 +122,14 @@ class AppRetailController {
                     String vipname = vip?.name + "_" + vip?.type
                     vips += vipname
                     vips += " "
+                }
+            }
+            for(Server serv:p.servers) {
+                if ( serv != null) {
+                    data += "['" + link + "','" + vips + "','" + serv?.machineHostName + "','" + serv?.portNumber + "'],"
+                } else {
+                    data += "['" + link + "','" + vips + "','',''],"
+
                 }
             }
 
