@@ -474,4 +474,129 @@ class AppRetailController {
         planning += "}"
         return planning
     }
+
+    def graph() {
+
+
+        String dataVip = generateDataVip();
+        println(dataVip)
+
+        String dataVipEnum = generateDataVipEnum()
+        println(dataVipEnum)
+        [dataVip:dataVip, dataVipEnum:dataVipEnum]
+    }
+
+    /**
+     * Generate string with vip number
+     * @return
+     */
+    String generateDataVipEnum() {
+        String data = "vip,"
+        List<Vip> vips = Vip.findAll()
+        int cpt = 1
+        for(Vip vip : vips) {
+            println("vip" + vip.name)
+            String name = "vip" + cpt
+            data += name
+            if (cpt < vips.size()) {
+                data += ","
+            // TODO : add data enum server !!!
+                List<Server> servers = vip.servers
+                int cpts = 1
+                for(Server server : servers) {
+                    String nameServ = "serv" + cpt
+                    data += nameServ
+                    if (cpt < servers.size()) {
+                        data += ","
+                    }
+                    cpts++
+                }
+            }
+            cpt++
+            data += generateDataServerEnum(vip)
+        }
+        return data
+    }
+
+    String generateDataServerEnum(Vip vip) {
+        String data = ""
+        List<Server> servers = vip.servers
+
+        int cpt = 1
+        for(Server server : servers) {
+            String name = "serv" + cpt
+            data += name
+            if (cpt < servers.size()) {
+                data += ","
+            }
+            cpt++
+        }
+        return data
+    }
+
+    /**
+     * Generate vip tree format with an existing list of vips.
+     *  vip = {
+     * text: {
+     * name: "VIP",
+     * title: "Description de la vip"
+     },
+     },
+     * @return
+     */
+    String generateDataVip() {
+        String data = ""
+        List<Vip> vips = Vip.findAll()
+
+        int cpt = 1
+        for(Vip vip : vips) {
+            String vipNumStr = "\nvip" + cpt + " = {\n"
+            data += vipNumStr
+            data += "\t\t\t\tparent: vip,\n"
+            data += "\t\t\t\tHTMLclass: 'blue',\n"
+            data += "\t\t\t\ttext: {\n"
+            String name = "\t\t\t\t\tname: \"" + vip.name + "\",\n"
+            data += name
+
+            String title = "\t\t\t\t\ttitle: \"" + vip.technicalName + "\",\n"
+            data += title
+            data += "\t\t\t\t},\n"
+            data += "\t\t\t},\n\t"
+            cpt++
+            String tmp = "vip" + cpt
+            data += generateDataMachinesForVip(vip,tmp)
+        }
+        return data
+    }
+
+    String generateDataMachinesForVip(Vip vip, String node) {
+        String data = ""
+        List<Server> servers = vip.servers
+
+        int cpt = 1
+        for(Server server : servers) {
+            String machNumStr = "\nserv" + cpt + " = {\n"
+            data += machNumStr
+            data += "\t\t\t\tparent: " + node + ",\n"
+            data += "\t\t\t\tHTMLclass: 'blue',\n"
+            data += "\t\t\t\ttext: {\n"
+            String name = "\t\t\t\t\tname: \"" + server.name + "\",\n"
+            data += name
+
+            String title = "\t\t\t\t\ttitle: \"" + server.name + "\",\n"
+            data += title
+            data += "\t\t\t\t},\n"
+            data += "\t\t\t},\n\t"
+            cpt++
+        }
+        return data
+    }
+
+
+    def network() {
+
+    }
+
+
+
 }
