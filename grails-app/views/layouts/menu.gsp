@@ -44,6 +44,7 @@
                             <li><a href="/toolprod/appRetail/listing">Liste des applications</a></li>
                             <li><a href="/toolprod/appRetail/viplisting">Imprimer</a></li>
                             <li><a href="/toolprod/appRetail/graph" target="_blank">Graph</a></li>
+                            <li><a href="/toolprod/appRetail/network" target="_blank">Network graph</a></li>
                             %{--<li><a href="/toolprod/appRetail/status">Status</a></li>--}%
                         </ul>
                     </li>
