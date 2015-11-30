@@ -518,7 +518,7 @@ class AppRetailController {
             String strName = "\t\t\t\t\tname: \"" + name + "\",\n"
             data += strName
 
-            String strTitle = "\t\t\t\t\ttitle: \"" + title + "\",\n"
+            String strTitle = "\t\t\t\t\tdesc: \"" + title + "\",\n"
             data += strTitle
             data += "\t\t\t\t},\n"
             String htmlId = "\n\t\t\t\tHTMLid: " + nodeName + "\n"
@@ -582,8 +582,8 @@ class AppRetailController {
             for(String str : maps.keySet()) {
                 String result = ""
                 for(String strApp : maps.get(str) ) {
+                    result += " "
                     result += strApp
-                    result += "    "
                 }
                 data += generateStrData("serv" + i + "_" + cpt, parent, str, result)
                 i++
