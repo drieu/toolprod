@@ -17,30 +17,30 @@
     %{--<asset:javascript src="treant/custom-colored.js"/>--}%
 
     <asset:javascript src="application.js"/>
-    <asset:stylesheet href="bootstrap/bootstrap.css"/>
-    <asset:javascript src="bootstrap/bootstrap.js"/>
+    %{--<asset:stylesheet href="bootstrap/bootstrap.css"/>--}%
+    %{--<asset:javascript src="bootstrap/bootstrap.js"/>--}%
     <script>
     var config = {
                 container: "#custom-colored",
-
-                nodeAlign: "BOTTOM",
+                scrollbar: "native",
+                rootOrientation:  'NORTH', // NORTH || EAST || WEST || SOUTH
+                hideRootNode: true,
+                // levelSeparation: 30,
+                siblingSeparation:   40,
+                subTeeSeparation:    30,
 
                 connectors: {
-                    type: 'step'
+                    type: 'curve'
                 },
                 node: {
                     HTMLclass: 'nodeExample1'
                 }
             },
-            vip = {
-                text: {
-                    name: "Entry",
-                },
-            },
+            root = {},
             ${raw(dataVip)}
 
             chart_config = [
-                config,
+                config,root,
                 ${raw(dataVipEnum)}
             ];
 
@@ -49,6 +49,7 @@
 
     <body>
         <div class="container">
+            <h1 class="title">Liste des VIPS et des applications associées</h1>
             <div class="chart" id="custom-colored"> --@-- </div>
             <script>
                 new Treant( chart_config );
