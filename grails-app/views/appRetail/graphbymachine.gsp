@@ -48,10 +48,12 @@
 </head>
 
     <body>
-            <h1 class="title">Liste des VIPS et des applications associées</h1>
+        <div class="container">
+            <h1 class="title">Liste des frontaux et des applications associées</h1>
             <div class="chart" id="custom-colored"> --@-- </div>
             <script>
                 new Treant( chart_config );
             </script>
+        </div>
     </body>
 </html>

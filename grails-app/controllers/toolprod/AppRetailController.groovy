@@ -10,6 +10,7 @@ import com.cronutils.parser.CronParser
 import com.cronutils.model.CronType;
 import com.cronutils.validator.CronValidator
 import fr.edu.toolprod.gson.GSONParser
+import fr.edu.toolprod.js.Generator
 import org.apache.commons.logging.LogFactory
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
@@ -59,7 +60,7 @@ class AppRetailController {
      */
     private static final String REPORT_FILE = "report.pdf"
 
-    private List<String> chartConfig
+//    private List<String> chartConfig
 
     /**
      * Logger.
@@ -461,7 +462,6 @@ class AppRetailController {
 
 
         String tmpStr = nextExecution.toString()
-        println("DATE:" + tmpStr)
         String nextDateStr = tmpStr.split("\\.")[0]
 
         String planning = "{"
@@ -475,146 +475,24 @@ class AppRetailController {
         return planning
     }
 
+    /**
+     * Show graph with vip and associate application.
+     * @return
+     */
     def graph() {
+        Generator generator = new Generator()
+        String dataVip = generator.generateDataVip();
 
-        chartConfig = new ArrayList<>()
-        String dataVip = generateDataVip();
-
-        String dataVipEnum = generateDataVipEnum()
+        String dataVipEnum = generator.generateDataVipEnum()
         [dataVip:dataVip, dataVipEnum:dataVipEnum]
     }
 
-    /**
-     * Generate string with vip number
-     * @return
-     */
-    String generateDataVipEnum() {
-        String data = ""
-        int cpt = 1
-        for(String chartConf : chartConfig) {
-            data += chartConf
-            if (cpt <= (chartConfig.size() - 1))  {
-                data += ","
-            }
-            cpt++
-        }
-        return data
-    }
+    def graphByMachine() {
+        Generator generator = new Generator()
+        String dataVip = generator.generateDataMachines();
 
-    String generateStrData(String nodeName, String parentName, String name, String title) {
-        String data = ""
-
-            String vipNumStr = "\n" + nodeName + " = {\n"
-            data += vipNumStr
-            data += "\t\t\t\tparent: " + parentName + ",\n"
-            if (parentName.contains("root")) {
-                data += "stackChildren: true,"
-            }
-            if (parentName.contains("root")) {
-                data += "\t\t\t\tHTMLclass: 'blue',\n"
-            }
-
-            data += "\t\t\t\ttext: {\n"
-            String strName = "\t\t\t\t\tname: \"" + name + "\",\n"
-            data += strName
-
-            String strTitle = "\t\t\t\t\tdesc: \"" + title + "\",\n"
-            data += strTitle
-            data += "\t\t\t\t},\n"
-            String htmlId = "\n\t\t\t\tHTMLid: " + nodeName + "\n"
-            data += htmlId
-            data += "\t\t\t},\n\t"
-
-
-            chartConfig.add(nodeName)
-
-        return data
-    }
-
-
-    /**
-     * Generate vip tree format with an existing list of vips.
-     *  vip = {
-     * text: {
-     * name: "VIP",
-     * title: "Description de la vip"
-     },
-     },
-     * @return
-     */
-    String generateDataVip() {
-        String data = ""
-        List<Vip> vips = Vip.findAll()
-
-        int cpt = 1
-        for(Vip vip : vips) {
-            String parent = "vip" + cpt
-            String title = ""
-            if (vip.technicalName.contains("_http")) {
-                title = "HTTP"
-            }
-            if (vip.technicalName.contains("_ssl")) {
-                title = "SSL"
-            }
-            data += generateStrData("vip" + cpt, "root", vip.name, title)
-
-            List<String> machines = new ArrayList<>()
-            Map<String, List<String>> maps = new TreeMap<>()
-            for(Server server : vip.servers) {
-                List<String> lst = new ArrayList<>()
-                String appStr = ""
-                for(String app : server.linkToApps) {
-                    appStr += app
-                    appStr += " "
-                }
-
-                if (!maps.containsKey(server.machineHostName)) {
-                    lst.add(server.portNumber + ":" + appStr)
-
-                } else {
-                    lst = maps.get(server.machineHostName)
-                    lst.add(server.portNumber + ":" + appStr)
-
-                }
-                maps.put(server.machineHostName, lst)
-            }
-            int i = 0
-            for(String str : maps.keySet()) {
-                String result = ""
-                for(String strApp : maps.get(str) ) {
-                    result += " "
-                    result += strApp
-                }
-                data += generateStrData("serv" + i + "_" + cpt, parent, str, result)
-                i++
-            }
-
-//            int i = 0
-//            for(String machineName : machines) {
-//                data += generateStrData("serv" + i + "_" + cpt, parent, machineName, "app1,app2")
-//                i++
-//            }
-
-//            String vipNumStr = "\nvip" + cpt + " = {\n"
-//            data += vipNumStr
-//            data += "\t\t\t\tparent: root,\n"
-//            data += "\t\t\t\tHTMLclass: 'blue',\n"
-//            data += "\t\t\t\ttext: {\n"
-//            String name = "\t\t\t\t\tname: \"" + vip.name + "\",\n"
-//            data += name
-//
-//            String title = "\t\t\t\t\ttitle: \"" + vip.technicalName + "\",\n"
-//            data += title
-//            data += "\t\t\t\t},\n"
-//            String htmlId = "\n\t\t\t\tHTMLid: vip" + cpt + "\n"
-//            data += htmlId
-//            data += "\t\t\t},\n\t"
-//
-//
-//            chartConfig.add("vip" + cpt)
-            cpt++
-        }
-        return data
+        String dataVipEnum = generator.generateDataMachinepEnum()
+        [dataVip:dataVip, dataVipEnum:dataVipEnum]
     }
 
 
