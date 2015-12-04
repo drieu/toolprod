@@ -44,8 +44,8 @@
                             <li><a href="/toolprod/appRetail/listing">Liste des applications</a></li>
                             <li><a href="/toolprod/appRetail/viplisting">Imprimer</a></li>
                             <li><a href="/toolprod/appRetail/graph" target="_blank">Représentation graphiques des VIPS et des applications associees</a></li>
-                            <li><a href="/toolprod/appRetail/graphByMachine" target="_blank">Représentation graphiques des machines et applications</a></li>
-                            <li><a href="/toolprod/appRetail/network" target="_blank">Network graph</a></li>
+                            <li><a href="/toolprod/appRetail/graphmach" target="_blank">Représentation graphiques des machines et applications</a></li>
+                            %{--<li><a href="/toolprod/appRetail/network" target="_blank">Network graph</a></li>--}%
                             %{--<li><a href="/toolprod/appRetail/status">Status</a></li>--}%
                         </ul>
                     </li>

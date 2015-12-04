@@ -487,7 +487,7 @@ class AppRetailController {
         [dataVip:dataVip, dataVipEnum:dataVipEnum]
     }
 
-    def graphByMachine() {
+    def graphmach() {
         Generator generator = new Generator()
         String dataVip = generator.generateDataMachines();
 
