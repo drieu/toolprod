@@ -11,6 +11,9 @@ import toolprod.Vip
  */
 class Generator {
 
+    /**
+     * Will contain all node name available for chart_config variable in js section of the GSP.
+     */
     private List<String> chartConfig = new ArrayList<>()
 
     /**
@@ -31,12 +34,12 @@ class Generator {
     }
 
     /**
-     * Generate a section of css graph.
-     * @param nodeName
-     * @param parentName
-     * @param name
-     * @param title
-     * @return
+     * Generate a section in javascript for a node in tree graph.
+     * @param nodeName name of the node.
+     * @param parentName name of the parent.
+     * @param name name shows in tree.
+     * @param title tiutle shows in tree.
+     * @return String to inject in <script><script>.
      */
     String generateStrData(String nodeName, String parentName, String name, String title) {
         String data = ""
@@ -44,11 +47,13 @@ class Generator {
         String vipNumStr = "\n" + nodeName + " = {\n"
         data += vipNumStr
         data += "\t\t\t\tparent: " + parentName + ",\n"
-        if (parentName.contains("root")) {
-            data += "stackChildren: true,"
-        }
-        if (parentName.contains("root")) {
-            data += "\t\t\t\tHTMLclass: 'blue',\n"
+        if (parentName != null) {
+            if (parentName.contains("root")) {
+                data += "stackChildren: true,"
+            }
+            if (parentName.contains("root")) {
+                data += "\t\t\t\tHTMLclass: 'blue',\n"
+            }
         }
 
         data += "\t\t\t\ttext: {\n"
@@ -72,12 +77,12 @@ class Generator {
     /**
      * Generate vip tree format with an existing list of vips.
      *  vip = {
-     * text: {
-     * name: "VIP",
-     * title: "Description de la vip"
-     },
-     },
-     * @return
+     *    text: {
+     *      name: "VIP",
+     *     title: "Description de la vip"
+     *     },
+     *    },
+     * @return String
      */
     String generateDataVip() {
         String data = ""
@@ -95,7 +100,6 @@ class Generator {
             }
             data += generateStrData("vip" + cpt, "root", vip.name, title)
 
-            List<String> machines = new ArrayList<>()
             Map<String, List<String>> maps = new TreeMap<>()
             for(Server server : vip.servers) {
                 List<String> lst = new ArrayList<>()
@@ -144,11 +148,10 @@ class Generator {
     String generateDataMachines() {
         String data = ""
 
-        List<Machine> machines = Machine.findAll()
         int cpt = 1
         def machineGroup = MachineGroup.findByGroupName("frontaux")
         for (String frontal : machineGroup.regex) {
-                println("frontal:" + frontal)
+
                 Machine machine = Machine.findByNameLike(frontal +"%")
                 if (machine != null) {
                     String parent = "mach" + cpt
@@ -202,6 +205,14 @@ class Generator {
         return data
     }
 
+    /**
+     * Generate data for variable dataVipEnum in javascirpt section of GSP :
+     *             chart_config = [
+     *                   config,root,
+     *                   ${raw(dataVipEnum)}
+     *                   ];
+     * @return
+     */
     String generateDataMachinepEnum() {
         String data = ""
         int cpt = 1
